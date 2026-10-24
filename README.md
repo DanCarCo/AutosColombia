@@ -892,7 +892,7 @@ es distinta de la ruta API `/vehiculos` para evitar conflictos con el proxy.
 
 - El listado usa páginas de 10 vehículos, ordenadas por id, con Anterior y Siguiente.
 - **Nuevo vehículo** abre un formulario reactivo con placa, marca, año, color y tipo.
-  Todos son obligatorios; el año es entero entre 1 y 9999. La placa se recorta y
+  Todos son obligatorios; el año es entero entre 1900 y 2200 (validado en el formulario y en la API). La placa se recorta y
   convierte a mayúsculas. Los tipos son MOTO, AUTOMOVIL y CAMIONETA.
 - **Editar** consulta la versión actual del vehículo y guarda mediante PATCH sin id.
 - **Eliminar** muestra una confirmación con placa, marca y año. Solo se envía DELETE

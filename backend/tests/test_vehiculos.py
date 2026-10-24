@@ -28,6 +28,17 @@ def test_patch_only_supplied_fields_and_no_id():
         VehiculoActualizar(id=1)
 
 
+@pytest.mark.parametrize("value", [1900, 2025, 2200])
+def test_year_accepts_1900_to_2200(value):
+    assert VehiculoActualizar(modelo=value).modelo == value
+
+
+@pytest.mark.parametrize("value", [0, 1, 1899, 2201, 9999, True, "2025", 2025.5])
+def test_year_rejects_values_outside_1900_to_2200(value):
+    with pytest.raises(ValidationError):
+        VehiculoActualizar(modelo=value)
+
+
 def test_creation_requires_every_field():
     with pytest.raises(ValidationError):
         VehiculoCrear(placa="ABC123")

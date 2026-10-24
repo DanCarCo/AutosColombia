@@ -84,6 +84,21 @@ describe('Gestión de vehículos', () => {
     http.expectNone((request) => request.method === 'POST');
   });
 
+  it('acepta años entre 1900 y 2200 y rechaza los demás', () => {
+    flushList();
+    const modelo = component.form.controls.modelo;
+    for (const value of [1900, 2025, 2200]) {
+      modelo.setValue(value);
+      expect(modelo.valid).toBe(true);
+    }
+    for (const value of [1, 1899, 2201, 9999]) {
+      modelo.setValue(value);
+      expect(modelo.valid).toBe(false);
+    }
+    modelo.markAsTouched();
+    expect(component.fieldError('modelo')).toContain('entre 1900 y 2200');
+  });
+
   it('crea con placa normalizada, bloquea doble envío y actualiza el listado', () => {
     flushList();
     component.newVehicle();

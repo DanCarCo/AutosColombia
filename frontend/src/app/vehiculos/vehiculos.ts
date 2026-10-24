@@ -14,7 +14,7 @@ import {
 const nonBlank: ValidatorFn = (control) =>
   typeof control.value === 'string' && control.value.trim() ? null : { required: true };
 const year: ValidatorFn = (control) =>
-  Number.isInteger(control.value) && control.value >= 1 && control.value <= 9999
+  Number.isInteger(control.value) && control.value >= 1900 && control.value <= 2200
     ? null
     : { year: true };
 type Field = keyof VehiculoCrear;
@@ -23,7 +23,7 @@ type Field = keyof VehiculoCrear;
   selector: 'app-vehiculos',
   imports: [ReactiveFormsModule],
   templateUrl: './vehiculos.html',
-  styleUrl: './vehiculos.css',
+  styleUrls: ['./vehiculos.css', '../shared/gestion-tema.css'],
 })
 export class Vehiculos {
   private readonly api = inject(ApiService);
@@ -137,7 +137,7 @@ export class Vehiculos {
     if (!control.touched || !control.errors) return '';
     if (control.errors['server']) return String(control.errors['server']);
     if (control.errors['required']) return 'Este campo es obligatorio y no puede estar vacío.';
-    if (field === 'modelo') return 'Introduce un año entero entre 1 y 9999.';
+    if (field === 'modelo') return 'Introduce un año entero entre 1900 y 2200.';
     if (field === 'tipo') return 'Selecciona un tipo válido.';
     return 'Revisa este campo.';
   }

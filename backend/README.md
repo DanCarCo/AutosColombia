@@ -151,7 +151,8 @@ y de la configuración (`app/config.py`). La revisión `0001`, en
   esa forma normalizada mediante `CHECK` y garantiza su unicidad con `UNIQUE`.
   SQL directo y operaciones masivas que omiten validadores deben normalizar antes;
   la base rechaza valores sin normalizar en lugar de transformarlos silenciosamente.
-- `modelo` es un año entero entre 1 y 9999, no un nombre comercial; no se impone
+- `modelo` es un año entero, no un nombre comercial: el modelo ORM y la base
+  admiten 1–9999, pero la API solo acepta 1900–2200; no se impone
   un límite vinculado al año actual. `telefono` es texto y conserva prefijos y ceros.
 - El tipo de vehículo admite únicamente `MOTO`, `AUTOMOVIL` y `CAMIONETA`.
   El tipo de celda es texto no vacío, sin catálogo ni reglas de compatibilidad todavía.
@@ -223,7 +224,8 @@ La lista se ordena por id ascendente; `offset` empieza en 0 y `limit` admite de
 la página. Los ids deben ser enteros positivos dentro del rango de BIGINT.
 
 Al crear se requieren placa, color, modelo, marca y tipo. El año debe ser un
-entero JSON entre 1 y 9999; no se aceptan cadenas, booleanos ni decimales. Los
+entero JSON entre 1900 y 2200 (la restricción de base de datos y el modelo ORM
+conservan el rango más amplio 1–9999; la API es la que acota); no se aceptan cadenas, booleanos ni decimales. Los
 textos no pueden estar vacíos. La placa se recorta y se convierte a mayúsculas.
 Los tipos admitidos son `MOTO`, `AUTOMOVIL` y `CAMIONETA`.
 

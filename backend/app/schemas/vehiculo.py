@@ -7,7 +7,7 @@ from app.models import required_text
 
 Texto = Annotated[str, BeforeValidator(lambda value: required_text(value, "El campo"))]
 Placa = Annotated[Texto, AfterValidator(str.upper)]
-Anio = Annotated[int, Field(strict=True, ge=1, le=9999)]
+Anio = Annotated[int, Field(strict=True, ge=1900, le=2200)]
 TipoVehiculo = Annotated[
     Literal["MOTO", "AUTOMOVIL", "CAMIONETA"],
     BeforeValidator(lambda value: required_text(value, "tipo")),

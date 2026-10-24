@@ -69,7 +69,7 @@ def test_crud_and_errors_in_postgres(client):
     assert patched.json()["placa"] == f"CHANGED-{suffix}"
     assert patched.json()["marca"] == "Prueba"
     for invalid in ({"color": None}, {"id": first_id}, {"placa": " "}, {"tipo": "BUS"},
-                    {"modelo": 0}, {"modelo": True}, {"modelo": "2025"}, {"marca": "\t"}):
+                    {"modelo": 0}, {"modelo": 1899}, {"modelo": 2201}, {"modelo": True}, {"modelo": "2025"}, {"marca": "\t"}):
         assert client.patch(f"/vehiculos/{first_id}", json=invalid).status_code == 422
     assert client.post("/vehiculos", json={}).status_code == 422
     assert client.post("/vehiculos", json={**payload, "color": None}).status_code == 422
