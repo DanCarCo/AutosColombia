@@ -14,7 +14,7 @@ type Field = keyof CeldaCrear;
   selector: 'app-celdas',
   imports: [ReactiveFormsModule],
   templateUrl: './celdas.html',
-  styleUrl: './celdas.css',
+  styleUrls: ['./celdas.css', '../shared/gestion-tema.css'],
 })
 export class Celdas {
   private readonly api = inject(CeldasService);

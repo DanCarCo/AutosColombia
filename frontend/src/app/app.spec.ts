@@ -15,4 +15,15 @@ describe('Navegación', () => {
         ?.textContent,
     ).toBe('Vehículos');
   });
+
+  it('muestra Inicio como primer enlace del menú', async () => {
+    await TestBed.configureTestingModule({
+      imports: [App],
+      providers: [provideRouter([])],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const links = (fixture.nativeElement as HTMLElement).querySelectorAll('nav a');
+    expect(links[0].textContent).toBe('Inicio');
+  });
 });

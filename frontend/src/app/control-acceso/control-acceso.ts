@@ -16,7 +16,7 @@ const placa = (value: string) => value.trim().toUpperCase();
   selector: 'app-control-acceso',
   imports: [ReactiveFormsModule],
   templateUrl: './control-acceso.html',
-  styleUrl: './control-acceso.css',
+  styleUrls: ['./control-acceso.css', '../shared/gestion-tema.css'],
 })
 export class ControlAcceso {
   private readonly api = inject(EstanciasService);

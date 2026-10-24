@@ -883,6 +883,17 @@ Reinicia `npm.cmd start` si cambias el proxy. Este proxy solo funciona con el
 servidor de desarrollo; en producción se debe configurar el servidor web para
 redirigir esas rutas de API al backend y las rutas de pantalla al archivo `index.html`.
 
+## Tema visual (verdes y azules)
+
+La paleta vive como variables CSS en `frontend/src/styles.css` (`--primary`,
+`--primary-strong`, `--accent-green`, `--accent-blue`, `--gradient-brand`,
+`--border`, `--tint`, etc.). Los componentes usan `var(--...)` en lugar de colores
+fijos; para cambiar la identidad visual basta con editar ese bloque `:root`. Los
+rojos de error se mantienen por ser semánticos. Los estilos comunes de las pantallas de
+gestión (paneles, botones, campos, tablas) están en
+`frontend/src/app/shared/gestion-tema.css`, que se suma al CSS de cada componente.
+En el menú, **Inicio** es el primer enlace.
+
 ## Pantalla de gestión de vehículos
 
 Con las dos terminales anteriores activas, abre

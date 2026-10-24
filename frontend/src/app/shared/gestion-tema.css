@@ -1,0 +1,89 @@
+/* Refinamiento visual: gama de verdes y azules */
+.management {
+  padding-top: 40px;
+}
+.eyebrow {
+  display: inline-block;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--tint);
+  border: 1px solid var(--border);
+  color: var(--primary-strong);
+}
+h1 {
+  color: var(--ink);
+  font-weight: 700;
+}
+.panel {
+  border-radius: 18px;
+  box-shadow: var(--shadow-sm);
+}
+button {
+  border-radius: 10px;
+  font-weight: 500;
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+button:hover:not(:disabled) {
+  background: var(--tint);
+}
+button.primary {
+  background: var(--gradient-brand);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgb(15 118 110 / 30%);
+}
+button.primary:hover:not(:disabled) {
+  background: var(--gradient-brand);
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+input,
+select {
+  border-radius: 10px;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+input:focus,
+select:focus {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px rgb(45 127 208 / 18%);
+}
+thead th {
+  background: var(--gradient-soft);
+  color: var(--primary-strong);
+  font-weight: 600;
+}
+thead th:first-child {
+  border-top-left-radius: 10px;
+}
+thead th:last-child {
+  border-top-right-radius: 10px;
+}
+tbody tr {
+  transition: background 0.12s ease;
+}
+tbody tr:hover {
+  background: var(--surface-alt);
+}
+.count {
+  background: var(--tint-strong);
+  color: var(--primary-strong);
+  font-weight: 600;
+}
+.type-tag {
+  background: #e1eefa;
+  color: var(--primary-strong);
+  font-weight: 600;
+}
+.notice {
+  border: 1px solid transparent;
+}
+.success {
+  border-color: #b9e4d1;
+}
+.error {
+  border-color: #f0c4b9;
+}

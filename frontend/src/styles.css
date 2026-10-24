@@ -1,16 +1,56 @@
+:root {
+  /* Paleta en gama de verdes y azules */
+  --ink: #0f2f3a;
+  --ink-soft: #274f5e;
+  --muted: #4d6b76;
+  --primary: #0f766e;
+  --primary-strong: #0b4f6c;
+  --primary-hover: #083d56;
+  --accent-green: #2fa37a;
+  --accent-blue: #2d7fd0;
+  --gradient-brand: linear-gradient(135deg, #0f9d74 0%, #0f766e 45%, #1f6fb8 100%);
+  --gradient-soft: linear-gradient(135deg, #e3f6ee 0%, #e4f1fb 100%);
+  --surface: #ffffff;
+  --surface-alt: #f3f9fa;
+  --tint: #e5f2f3;
+  --tint-strong: #d3e9ee;
+  --border: #d5e4e8;
+  --border-strong: #b6cfd6;
+  --success: #0e7a55;
+  --success-bg: #e2f5ec;
+  --danger: #a03930;
+  --danger-bg: #fff0ec;
+  --focus: #2d7fd0;
+  --radius: 14px;
+  --shadow-sm: 0 1px 2px rgb(15 47 58 / 6%), 0 2px 8px rgb(15 47 58 / 5%);
+  --shadow-md: 0 8px 28px rgb(11 79 108 / 12%);
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  background: #f6f7f4;
-  color: #203a33;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 520px at 8% -10%, #d9f2e7 0%, transparent 60%),
+    radial-gradient(900px 480px at 100% 0%, #d6e9f8 0%, transparent 55%), #f3f9fa;
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 a:focus-visible {
-  outline: 3px solid #94610e;
-  outline-offset: 6px;
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

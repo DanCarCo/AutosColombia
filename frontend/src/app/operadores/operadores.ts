@@ -14,7 +14,7 @@ type Field = keyof OperadorCrear;
   selector: 'app-operadores',
   imports: [ReactiveFormsModule],
   templateUrl: './operadores.html',
-  styleUrl: './operadores.css',
+  styleUrls: ['./operadores.css', '../shared/gestion-tema.css'],
 })
 export class Operadores {
   private readonly api = inject(OperadoresService);
