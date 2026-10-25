@@ -1,14 +1,17 @@
 import { Celda } from './celda';
 import { Vehiculo } from './vehiculo';
 
+// El operador que actúa se toma del token de sesión (RF-16); ya no viaja aquí.
 export interface EntradaCrear {
   placa: string;
   celda_id: number;
-  operador_id: number;
 }
 export interface SalidaCrear {
   placa: string;
-  operador_id: number;
+}
+export interface CambiarCeldaCrear {
+  placa: string;
+  celda_id: number;
 }
 export interface Estancia {
   id: number;

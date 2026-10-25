@@ -3,6 +3,8 @@ import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { ApiService } from '../services/api.service';
+import { ClientesService } from '../services/clientes.service';
+import { Cliente } from '../models/cliente';
 import {
   ErrorApi,
   TIPOS_VEHICULO,
@@ -27,6 +29,7 @@ type Field = keyof VehiculoCrear;
 })
 export class Vehiculos {
   private readonly api = inject(ApiService);
+  private readonly clientsApi = inject(ClientesService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   readonly types = TIPOS_VEHICULO;
@@ -46,7 +49,11 @@ export class Vehiculos {
       Validators.required,
       (control) => (this.types.includes(control.value) ? null : { type: true }),
     ]),
+    cliente_id: this.fb.control<number | null>(null, Validators.required),
   });
+  readonly clientes = signal<Cliente[]>([]);
+  readonly clientesLoading = signal(false);
+  readonly clientesError = signal('');
   readonly items = signal<Vehiculo[]>([]);
   readonly total = signal(0);
   readonly offset = signal(0);
@@ -65,6 +72,29 @@ export class Vehiculos {
 
   constructor() {
     this.load();
+    this.cargarClientes();
+  }
+
+  cargarClientes(): void {
+    if (this.clientesLoading()) return;
+    this.clientesLoading.set(true);
+    this.clientesError.set('');
+    this.clientsApi
+      .todos()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.clientesLoading.set(false);
+          this.clientes.set(data);
+        },
+        error: () => {
+          this.clientesLoading.set(false);
+          this.clientes.set([]);
+          this.clientesError.set(
+            'No se pudieron cargar los clientes. Actualiza antes de registrar un vehículo.',
+          );
+        },
+      });
   }
 
   load(offset = this.offset()): void {
@@ -132,6 +162,10 @@ export class Vehiculos {
     this.actionError.set('');
   }
 
+  nombreCliente(id: number): string {
+    return this.clientes().find((c) => c.id === id)?.nombre ?? `#${id}`;
+  }
+
   fieldError(field: Field): string {
     const control = this.form.controls[field];
     if (!control.touched || !control.errors) return '';
@@ -139,6 +173,7 @@ export class Vehiculos {
     if (control.errors['required']) return 'Este campo es obligatorio y no puede estar vacío.';
     if (field === 'modelo') return 'Introduce un año entero entre 1900 y 2200.';
     if (field === 'tipo') return 'Selecciona un tipo válido.';
+    if (field === 'cliente_id') return 'Selecciona el cliente dueño del vehículo.';
     return 'Revisa este campo.';
   }
 
@@ -156,6 +191,7 @@ export class Vehiculos {
       marca: value.marca.trim(),
       modelo: value.modelo!,
       tipo: value.tipo as TipoVehiculo,
+      cliente_id: value.cliente_id!,
     };
     this.form.controls.placa.setValue(payload.placa);
     this.saving.set(true);
@@ -233,6 +269,8 @@ export class Vehiculos {
   }
 
   private errorMessage(error: HttpErrorResponse, deleting = false): string {
+    if (error.status === 404 && typeof error.error?.detail === 'string' && error.error.detail.includes('liente'))
+      return 'El cliente seleccionado ya no existe. Actualiza la lista de clientes.';
     if (error.status === 404) return 'El vehículo ya no existe. Actualiza el listado.';
     if (error.status === 409)
       return deleting

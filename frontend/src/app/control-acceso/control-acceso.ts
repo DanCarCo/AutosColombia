@@ -2,10 +2,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
-import { forkJoin } from 'rxjs';
 import { Celda } from '../models/celda';
-import { Operador } from '../models/operador';
 import { EstadoVehiculo } from '../models/estancia';
+import { AuthService } from '../services/auth.service';
 import { EstanciasService } from '../services/estancias.service';
 
 const nonBlank: ValidatorFn = (c) =>
@@ -22,28 +21,33 @@ export class ControlAcceso {
   private readonly api = inject(EstanciasService);
   private readonly fb = inject(FormBuilder);
   private readonly destroy = inject(DestroyRef);
+  readonly auth = inject(AuthService);
   private version = 0;
   readonly entrada = this.fb.group({
     placa: this.fb.nonNullable.control('', nonBlank),
     celda_id: this.fb.control<number | null>(null, Validators.required),
-    operador_id: this.fb.control<number | null>(null, Validators.required),
   });
   readonly consulta = this.fb.group({
     placa: this.fb.nonNullable.control('', nonBlank),
-    operador_id: this.fb.control<number | null>(null, Validators.required),
+  });
+  readonly cambioCelda = this.fb.group({
+    placa: this.fb.nonNullable.control('', nonBlank),
+    celda_id: this.fb.control<number | null>(null, Validators.required),
   });
   readonly celdas = signal<Celda[]>([]);
-  readonly operadores = signal<Operador[]>([]);
   readonly catalogLoading = signal(false);
   readonly catalogError = signal('');
   readonly saving = signal(false);
   readonly querying = signal(false);
-  readonly busy = computed(() => this.saving() || this.querying());
+  readonly movingCell = signal(false);
+  readonly busy = computed(() => this.saving() || this.querying() || this.movingCell());
   readonly estado = signal<EstadoVehiculo | null>(null);
   readonly errorEntrada = signal('');
   readonly errorConsulta = signal('');
   readonly exitoEntrada = signal('');
   readonly exitoSalida = signal('');
+  readonly errorCambioCelda = signal('');
+  readonly exitoCambioCelda = signal('');
 
   constructor() {
     this.consulta.controls.placa.valueChanges
@@ -62,22 +66,20 @@ export class ControlAcceso {
     this.catalogLoading.set(true);
     this.catalogError.set('');
     this.entrada.controls.celda_id.reset();
-    this.entrada.controls.operador_id.reset();
-    this.consulta.controls.operador_id.reset();
-    forkJoin({ celdas: this.api.celdas(), operadores: this.api.operadores() })
+    this.cambioCelda.controls.celda_id.reset();
+    this.api
+      .celdas()
       .pipe(takeUntilDestroyed(this.destroy))
       .subscribe({
         next: (data) => {
-          this.celdas.set(data.celdas);
-          this.operadores.set(data.operadores);
+          this.celdas.set(data);
           this.catalogLoading.set(false);
         },
         error: () => {
           this.catalogLoading.set(false);
           this.celdas.set([]);
-          this.operadores.set([]);
           this.catalogError.set(
-            'No se pudieron cargar todas las opciones. Reintenta actualizar catálogos.',
+            'No se pudieron cargar todas las celdas. Reintenta actualizar catálogos.',
           );
         },
       });
@@ -88,11 +90,7 @@ export class ControlAcceso {
     this.entrada.markAllAsTouched();
     if (this.entrada.invalid) return;
     const raw = this.entrada.getRawValue();
-    const data = {
-      placa: placa(raw.placa),
-      celda_id: raw.celda_id!,
-      operador_id: raw.operador_id!,
-    };
+    const data = { placa: placa(raw.placa), celda_id: raw.celda_id! };
     const codigo =
       this.celdas().find((c) => c.id === data.celda_id)?.codigo ?? String(data.celda_id);
     this.entrada.controls.placa.setValue(data.placa);
@@ -147,23 +145,16 @@ export class ControlAcceso {
   }
 
   registrarSalida(): void {
-    if (this.busy() || this.catalogLoading() || this.catalogError()) return;
-    this.consulta.markAllAsTouched();
+    if (this.busy()) return;
     const state = this.estado();
     const value = placa(this.consulta.controls.placa.value);
-    if (
-      this.consulta.invalid ||
-      !state?.estancia ||
-      !state.esta_dentro ||
-      state.vehiculo.placa !== value
-    )
-      return;
+    if (!state?.estancia || !state.esta_dentro || state.vehiculo.placa !== value) return;
     const version = this.version;
     this.saving.set(true);
     this.errorConsulta.set('');
     this.exitoSalida.set('');
     this.api
-      .salida({ placa: value, operador_id: this.consulta.controls.operador_id.value! })
+      .salida({ placa: value })
       .pipe(takeUntilDestroyed(this.destroy))
       .subscribe({
         next: (result) => {
@@ -186,6 +177,35 @@ export class ControlAcceso {
       });
   }
 
+  // RF-11: corrige la celda de un vehículo que quedó en una celda equivocada.
+  cambiarCelda(): void {
+    if (this.busy() || this.catalogLoading() || this.catalogError()) return;
+    this.cambioCelda.markAllAsTouched();
+    if (this.cambioCelda.invalid) return;
+    const raw = this.cambioCelda.getRawValue();
+    const data = { placa: placa(raw.placa), celda_id: raw.celda_id! };
+    const codigo =
+      this.celdas().find((c) => c.id === data.celda_id)?.codigo ?? String(data.celda_id);
+    this.cambioCelda.controls.placa.setValue(data.placa);
+    this.movingCell.set(true);
+    this.errorCambioCelda.set('');
+    this.exitoCambioCelda.set('');
+    this.api
+      .cambiarCelda(data)
+      .pipe(takeUntilDestroyed(this.destroy))
+      .subscribe({
+        next: () => {
+          this.movingCell.set(false);
+          this.exitoCambioCelda.set(`Vehículo ${data.placa} movido a la celda ${codigo}.`);
+          if (placa(this.consulta.controls.placa.value) === data.placa) this.buscar();
+        },
+        error: (error) => {
+          this.movingCell.set(false);
+          this.errorCambioCelda.set(this.mensaje(error));
+        },
+      });
+  }
+
   fecha(value: string): string {
     return (
       new Intl.DateTimeFormat('es-CO', {
@@ -197,10 +217,11 @@ export class ControlAcceso {
   }
 
   private mensaje(error: HttpErrorResponse): string {
-    if ([404, 409].includes(error.status) && typeof error.error?.detail === 'string')
+    if (error.status === 401) return 'Tu sesión expiró o no es válida. Inicia sesión de nuevo.';
+    if ([402, 404, 409].includes(error.status) && typeof error.error?.detail === 'string')
       return error.error.detail;
     if (error.status === 422)
-      return 'Datos inválidos. Revisa la placa y selecciona una celda y un operador válidos según la operación.';
+      return 'Datos inválidos. Revisa la placa y selecciona una celda válida.';
     return 'No se pudo conectar con el servicio. Consulta el vehículo antes de reintentar: la operación podría haberse completado.';
   }
 }

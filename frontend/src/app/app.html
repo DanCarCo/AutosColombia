@@ -23,7 +23,20 @@
       <a routerLink="/gestion/vehiculos" routerLinkActive="active" ariaCurrentWhenActive="page"
         >Vehículos</a
       >
+      <a routerLink="/gestion/clientes" routerLinkActive="active" ariaCurrentWhenActive="page"
+        >Clientes</a
+      >
     </nav>
+    <div class="session-nav">
+      @if (auth.operador(); as operador) {
+        <span>{{ operador.nombre }}</span>
+        <button type="button" (click)="auth.logout()">Cerrar sesión</button>
+      } @else {
+        <a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >Iniciar sesión</a
+        >
+      }
+    </div>
   </header>
   <main><router-outlet /></main>
   <footer><span>Autos Colombia</span><span>Control vehicular con claridad.</span></footer>

@@ -12,6 +12,13 @@
 .heading {
   margin-bottom: 30px;
 }
+.session {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
 .eyebrow {
   font-size: 11px;
   letter-spacing: 2px;

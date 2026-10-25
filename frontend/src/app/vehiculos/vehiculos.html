@@ -71,6 +71,28 @@
               </select>
               <span class="field-error" id="tipo-error">{{ fieldError('tipo') }}</span>
             </div>
+            <div class="field">
+              <label for="cliente_id">Cliente</label>
+              <select
+                id="cliente_id"
+                formControlName="cliente_id"
+                [attr.aria-invalid]="!!fieldError('cliente_id')"
+                aria-describedby="cliente_id-error"
+                required
+              >
+                <option [ngValue]="null">Selecciona un cliente</option>
+                @for (client of clientes(); track client.id) {
+                  <option [ngValue]="client.id">{{ client.nombre }} · {{ client.documento }}</option>
+                }
+              </select>
+              <span class="field-error" id="cliente_id-error">{{ fieldError('cliente_id') }}</span>
+              @if (clientesError()) {
+                <span class="field-error">
+                  {{ clientesError() }}
+                  <button type="button" (click)="cargarClientes()">Reintentar</button>
+                </span>
+              }
+            </div>
           </div>
           <div class="actions">
             <button class="primary" type="submit">
@@ -140,6 +162,7 @@
               <th scope="col">Año</th>
               <th scope="col">Color</th>
               <th scope="col">Tipo</th>
+              <th scope="col">Cliente</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
@@ -153,6 +176,7 @@
                 <td>
                   <span class="type-tag">{{ vehicle.tipo }}</span>
                 </td>
+                <td>{{ nombreCliente(vehicle.cliente_id) }}</td>
                 <td class="row-actions">
                   <button
                     type="button"

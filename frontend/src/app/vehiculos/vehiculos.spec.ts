@@ -23,11 +23,13 @@ describe('Gestión de vehículos', () => {
     const select = root.querySelector<HTMLSelectElement>('#tipo')!;
     select.value = 'MOTO';
     select.dispatchEvent(new Event('change', { bubbles: true }));
+    component.form.controls.cliente_id.setValue(2);
     root
       .querySelector('form')!
       .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     const request = http.expectOne({ method: 'POST', url: '/vehiculos' });
     expect(request.request.body.modelo).toBe(2025);
+    expect(request.request.body.cliente_id).toBe(2);
     request.flush({ ...vehicle, placa: 'DOM123' });
     flushList([{ ...vehicle, placa: 'DOM123' }]);
   });
@@ -41,7 +43,9 @@ describe('Gestión de vehículos', () => {
     color: 'Azul',
     modelo: 2025,
     tipo: 'MOTO',
+    cliente_id: 2,
   };
+  const client = { id: 2, nombre: 'Cliente Prueba', documento: 'DOC-1', telefono: '001' };
   const flushList = (items: Vehiculo[] = [], total = items.length, offset = 0) => {
     http
       .expectOne(`/vehiculos?offset=${offset}&limit=10`)
@@ -58,6 +62,9 @@ describe('Gestión de vehículos', () => {
     fixture = TestBed.createComponent(Vehiculos);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    http
+      .expectOne('/clientes?offset=0&limit=100')
+      .flush({ items: [client], total: 1, offset: 0, limit: 100 });
   });
   afterEach(() => http.verify());
 
@@ -81,6 +88,15 @@ describe('Gestión de vehículos', () => {
     component.save();
     expect(component.fieldError('placa')).toContain('obligatorio');
     expect(component.fieldError('modelo')).toContain('entero');
+    http.expectNone((request) => request.method === 'POST');
+  });
+
+  it('exige seleccionar un cliente', () => {
+    flushList();
+    component.newVehicle();
+    component.form.patchValue({ ...vehicle, cliente_id: null });
+    component.save();
+    expect(component.fieldError('cliente_id')).toContain('obligatorio');
     http.expectNone((request) => request.method === 'POST');
   });
 
@@ -129,6 +145,17 @@ describe('Gestión de vehículos', () => {
     expect(component.form.controls.placa.valid).toBe(true);
   });
 
+  it('informa cuando el cliente ya no existe', () => {
+    flushList();
+    component.newVehicle();
+    component.form.patchValue(vehicle);
+    component.save();
+    http
+      .expectOne('/vehiculos')
+      .flush({ detail: 'Cliente no encontrado.' }, { status: 404, statusText: 'Not Found' });
+    expect(component.actionError()).toContain('cliente seleccionado');
+  });
+
   it('consulta el vehículo y envía PATCH sin id', () => {
     flushList([vehicle]);
     component.edit(vehicle);
@@ -140,6 +167,11 @@ describe('Gestión de vehículos', () => {
     request.flush({ ...vehicle, color: 'Rojo' });
     flushList([{ ...vehicle, color: 'Rojo' }]);
     expect(component.success()).toContain('actualizado');
+  });
+
+  it('muestra el nombre del cliente en el listado', () => {
+    flushList([vehicle]);
+    expect(fixture.nativeElement.textContent).toContain(client.nombre);
   });
 
   it('confirma con placa, permite cancelar y elimina una sola vez', () => {

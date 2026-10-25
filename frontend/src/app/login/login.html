@@ -1,0 +1,49 @@
+<section class="management login-shell" aria-labelledby="login-title">
+  <section class="panel login-panel" aria-labelledby="login-title">
+    <span class="eyebrow">AUTOS COLOMBIA</span>
+    <h1 id="login-title">Inicio de sesión</h1>
+    <p>Ingresa con tu usuario y contraseña de operador para registrar entradas y salidas.</p>
+    <form [formGroup]="form" (ngSubmit)="entrar()" novalidate>
+      <fieldset [disabled]="saving()">
+        <legend class="sr-only">Credenciales</legend>
+        <div class="field">
+          <label for="usuario">Usuario</label>
+          <input
+            id="usuario"
+            type="text"
+            formControlName="usuario"
+            autocomplete="username"
+            [attr.aria-invalid]="form.controls.usuario.touched && form.controls.usuario.invalid"
+          />
+          <span class="field-error">
+            @if (form.controls.usuario.touched && form.controls.usuario.invalid) {
+              El usuario es obligatorio.
+            }
+          </span>
+        </div>
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            autocomplete="current-password"
+            [attr.aria-invalid]="form.controls.password.touched && form.controls.password.invalid"
+          />
+          <span class="field-error">
+            @if (form.controls.password.touched && form.controls.password.invalid) {
+              La contraseña es obligatoria.
+            }
+          </span>
+        </div>
+        <button class="primary" type="submit">
+          {{ saving() ? 'Entrando…' : 'Entrar' }}
+        </button>
+      </fieldset>
+    </form>
+    @if (error()) {
+      <p class="notice error" role="alert">{{ error() }}</p>
+    }
+    <p class="hint"><a routerLink="/">Volver a Inicio</a></p>
+  </section>
+</section>

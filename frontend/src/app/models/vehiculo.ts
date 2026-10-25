@@ -6,6 +6,7 @@ export interface VehiculoCrear {
   modelo: number;
   marca: string;
   tipo: TipoVehiculo;
+  cliente_id: number;
 }
 export type VehiculoActualizar = Partial<VehiculoCrear>;
 export interface Vehiculo extends VehiculoCrear {

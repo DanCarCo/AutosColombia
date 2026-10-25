@@ -6,7 +6,13 @@ import { Operadores } from './operadores';
 describe('Gestión de operadores', () => {
   let fixture: ComponentFixture<Operadores>;
   let http: HttpTestingController;
-  const operator = { id: 1, nombre: 'Prueba Ana', telefono: '+57 00123' };
+  const operator = {
+    id: 1,
+    nombre: 'Prueba Ana',
+    telefono: '+57 00123',
+    usuario: 'ana.prueba',
+    turno: 'DIA' as const,
+  };
   const page = { items: [operator], total: 1, offset: 0, limit: 10 };
 
   beforeEach(async () => {
@@ -28,14 +34,19 @@ describe('Gestión de operadores', () => {
     fixture.detectChanges();
     const root = fixture.nativeElement as HTMLElement;
     expect(root.querySelector<HTMLInputElement>('#telefono')!.type).toBe('tel');
+    expect(root.querySelector<HTMLInputElement>('#password')!.type).toBe('password');
     for (const [key, value] of Object.entries({
       nombre: ' Prueba Ana ',
       telefono: ' +57 00123 ',
+      usuario: ' ana.prueba ',
+      password: 'clave-secreta',
     })) {
       const input = root.querySelector<HTMLInputElement>(`#${key}`)!;
       input.value = value;
       input.dispatchEvent(new Event('input', { bubbles: true }));
     }
+    root.querySelector<HTMLSelectElement>('#turno')!.value = 'DIA';
+    root.querySelector('#turno')!.dispatchEvent(new Event('change', { bubbles: true }));
     root
       .querySelector('form')!
       .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
@@ -43,7 +54,13 @@ describe('Gestión de operadores', () => {
     fixture.detectChanges();
     expect(root.querySelector('fieldset')!.disabled).toBe(true);
     const request = http.expectOne({ method: 'POST', url: '/operadores' });
-    expect(request.request.body).toEqual({ nombre: 'Prueba Ana', telefono: '+57 00123' });
+    expect(request.request.body).toEqual({
+      nombre: 'Prueba Ana',
+      telefono: '+57 00123',
+      usuario: 'ana.prueba',
+      password: 'clave-secreta',
+      turno: 'DIA',
+    });
     request.flush(operator);
     http.expectOne('/operadores?offset=0&limit=10').flush(page);
     expect(c.success()).toContain('registrado');
@@ -52,12 +69,18 @@ describe('Gestión de operadores', () => {
   it('rechaza espacios y permite corregir errores 422 de un campo', () => {
     const c = fixture.componentInstance;
     c.newOperator();
-    c.form.setValue({ nombre: ' \t', telefono: ' ' });
+    c.form.setValue({ nombre: ' \t', telefono: ' ', usuario: 'ana', password: 'clave', turno: 'DIA' });
     c.save();
     expect(c.fieldError('nombre')).toContain('obligatorio');
     expect(c.fieldError('telefono')).toContain('obligatorio');
     http.expectNone('/operadores');
-    c.form.setValue({ nombre: 'Prueba Ana', telefono: '00123' });
+    c.form.setValue({
+      nombre: 'Prueba Ana',
+      telefono: '00123',
+      usuario: 'ana',
+      password: 'clave',
+      turno: 'DIA',
+    });
     c.save();
     http
       .expectOne('/operadores')
@@ -70,17 +93,36 @@ describe('Gestión de operadores', () => {
     expect(c.form.valid).toBe(true);
   });
 
-  it('consulta antes de editar, guarda con PATCH sin id y conserva ceros', () => {
+  it('consulta antes de editar, deja la contraseña vacía y opcional, y guarda con PATCH sin id', () => {
     const c = fixture.componentInstance;
     c.edit(operator);
     http.expectOne('/operadores/1').flush(operator);
+    expect(c.form.controls.password.value).toBe('');
+    expect(c.form.controls.password.valid).toBe(true);
     c.form.controls.telefono.setValue(' 00045 ');
     c.save();
     const request = http.expectOne({ method: 'PATCH', url: '/operadores/1' });
-    expect(request.request.body).toEqual({ nombre: operator.nombre, telefono: '00045' });
+    expect(request.request.body).toEqual({
+      nombre: operator.nombre,
+      telefono: '00045',
+      usuario: operator.usuario,
+      turno: operator.turno,
+    });
     request.flush({ ...operator, telefono: '00045' });
     http.expectOne('/operadores?offset=0&limit=10').flush(page);
     expect(c.success()).toContain('actualizado');
+  });
+
+  it('envía la contraseña al editarla', () => {
+    const c = fixture.componentInstance;
+    c.edit(operator);
+    http.expectOne('/operadores/1').flush(operator);
+    c.form.controls.password.setValue('nueva-clave');
+    c.save();
+    const request = http.expectOne({ method: 'PATCH', url: '/operadores/1' });
+    expect(request.request.body['password']).toBe('nueva-clave');
+    request.flush(operator);
+    http.expectOne('/operadores?offset=0&limit=10').flush(page);
   });
 
   it('identifica al operador, permite cancelar y elimina una sola vez', () => {
@@ -136,7 +178,13 @@ describe('Gestión de operadores', () => {
     c.load();
     http.expectOne('/operadores?offset=0&limit=10').flush(page);
     c.newOperator();
-    c.form.setValue({ nombre: 'Prueba', telefono: '001' });
+    c.form.setValue({
+      nombre: 'Prueba',
+      telefono: '001',
+      usuario: 'prueba',
+      password: 'clave',
+      turno: 'NOCHE',
+    });
     c.save();
     http.expectOne('/operadores').error(new ProgressEvent('error'));
     expect(c.actionError()).toContain('No se pudo conectar');

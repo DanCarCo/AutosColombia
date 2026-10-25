@@ -1,14 +1,15 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { OperadoresService } from '../services/operadores.service';
-import { Operador, OperadorCrear } from '../models/operador';
+import { Operador, OperadorActualizar, OperadorCrear, TURNOS, Turno } from '../models/operador';
 import { ErrorApi } from '../models/vehiculo';
 
 const nonBlank: ValidatorFn = (control) =>
   typeof control.value === 'string' && control.value.trim() ? null : { required: true };
-type Field = keyof OperadorCrear;
+type TextField = 'nombre' | 'telefono' | 'usuario' | 'password';
+type Field = TextField | 'turno';
 
 @Component({
   selector: 'app-operadores',
@@ -20,13 +21,22 @@ export class Operadores {
   private readonly api = inject(OperadoresService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
-  readonly fields = [
-    { key: 'nombre' as const, label: 'Nombre' },
-    { key: 'telefono' as const, label: 'Teléfono' },
+  readonly turnos = TURNOS;
+  readonly fields: { key: TextField; label: string }[] = [
+    { key: 'nombre', label: 'Nombre' },
+    { key: 'telefono', label: 'Teléfono' },
+    { key: 'usuario', label: 'Usuario' },
+    { key: 'password', label: 'Contraseña' },
   ];
   readonly form = this.fb.group({
     nombre: this.fb.nonNullable.control('', nonBlank),
     telefono: this.fb.nonNullable.control('', nonBlank),
+    usuario: this.fb.nonNullable.control('', nonBlank),
+    password: this.fb.nonNullable.control('', nonBlank),
+    turno: this.fb.nonNullable.control<Turno | ''>('', [
+      Validators.required,
+      (control) => (this.turnos.includes(control.value as Turno) ? null : { turno: true }),
+    ]),
   });
   readonly items = signal<Operador[]>([]);
   readonly total = signal(0);
@@ -76,6 +86,8 @@ export class Operadores {
   newOperator(): void {
     if (this.busy()) return;
     this.form.reset();
+    this.form.controls.password.setValidators(nonBlank);
+    this.form.controls.password.updateValueAndValidity();
     this.editing.set(null);
     this.showForm.set(true);
     this.pendingDelete.set(null);
@@ -96,7 +108,10 @@ export class Operadores {
         next: (data) => {
           this.loading.set(false);
           this.editing.set(data.id);
-          this.form.reset(data);
+          // La contraseña nunca viaja del servidor; se deja vacía y es opcional al editar.
+          this.form.reset({ ...data, password: '' });
+          this.form.controls.password.clearValidators();
+          this.form.controls.password.updateValueAndValidity();
           this.showForm.set(true);
         },
         error: (error) => {
@@ -118,6 +133,7 @@ export class Operadores {
     if (!control.touched || !control.errors) return '';
     if (control.errors['server']) return String(control.errors['server']);
     if (control.errors['required']) return 'Este campo es obligatorio y no puede estar vacío.';
+    if (field === 'turno') return 'Selecciona un turno válido.';
     return 'Revisa este campo.';
   }
 
@@ -129,28 +145,34 @@ export class Operadores {
       return;
     }
     const value = this.form.getRawValue();
-    const payload: OperadorCrear = {
+    const editingId = this.editing();
+    const payload: OperadorCrear | OperadorActualizar = {
       nombre: value.nombre.trim(),
       telefono: value.telefono.trim(),
+      usuario: value.usuario.trim(),
+      turno: value.turno as Turno,
+      ...(value.password ? { password: value.password } : {}),
     };
-    this.form.setValue(payload);
     this.saving.set(true);
     this.actionError.set('');
     this.success.set('');
-    const id = this.editing();
-    const request = id === null ? this.api.create(payload) : this.api.update(id, payload);
+    const request =
+      editingId === null
+        ? this.api.create(payload as OperadorCrear)
+        : this.api.update(editingId, payload);
     request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (operator) => {
         this.saving.set(false);
         this.showForm.set(false);
         this.success.set(
-          `Operador ${operator.nombre} ${id === null ? 'registrado' : 'actualizado'} correctamente.`,
+          `Operador ${operator.nombre} ${editingId === null ? 'registrado' : 'actualizado'} correctamente.`,
         );
         this.load();
       },
       error: (error: HttpErrorResponse) => {
         this.saving.set(false);
         this.actionError.set(this.errorMessage(error));
+        if (error.status === 409) this.setFieldError('usuario', 'Ya existe un operador con ese usuario.');
         const body = error.error as ErrorApi | null;
         if (error.status === 422 && Array.isArray(body?.detail)) {
           for (const issue of body.detail) {
@@ -211,7 +233,7 @@ export class Operadores {
     if (error.status === 409)
       return deleting
         ? 'No se puede eliminar: el operador tiene registros relacionados o un conflicto con otros datos.'
-        : 'La operación entra en conflicto con los datos existentes.';
+        : 'Ya existe un operador con ese usuario.';
     if (error.status === 422)
       return 'Revisa los datos: hay campos que no cumplen las validaciones.';
     return 'No se pudo conectar con el servicio. Comprueba la conexión y actualiza el listado antes de reintentar.';

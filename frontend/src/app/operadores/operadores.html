@@ -20,6 +20,7 @@
       <h2 id="form-title">{{ editing() === null ? 'Registrar operador' : 'Editar operador' }}</h2>
       <p class="hint">
         Todos los campos son obligatorios. El teléfono conserva prefijos y ceros iniciales.
+        Al editar, deja la contraseña vacía para conservar la actual.
       </p>
       <form [formGroup]="form" (ngSubmit)="save()" novalidate>
         <fieldset [disabled]="busy()">
@@ -29,10 +30,13 @@
               <div class="field">
                 <label [for]="field.key">{{ field.label }}</label
                 ><input
-                  [type]="field.key === 'telefono' ? 'tel' : 'text'"
+                  [type]="
+                    field.key === 'telefono' ? 'tel' : field.key === 'password' ? 'password' : 'text'
+                  "
                   [id]="field.key"
                   [formControlName]="field.key"
-                  required
+                  [required]="field.key !== 'password' || editing() === null"
+                  [autocomplete]="field.key === 'password' ? 'new-password' : 'off'"
                   [attr.aria-invalid]="!!fieldError(field.key)"
                   [attr.aria-describedby]="field.key + '-error'"
                 /><span class="field-error" [id]="field.key + '-error'">{{
@@ -40,6 +44,22 @@
                 }}</span>
               </div>
             }
+            <div class="field">
+              <label for="turno">Turno</label
+              ><select
+                id="turno"
+                formControlName="turno"
+                required
+                [attr.aria-invalid]="!!fieldError('turno')"
+                aria-describedby="turno-error"
+              >
+                <option value="">Selecciona un turno</option>
+                @for (turno of turnos; track turno) {
+                  <option [value]="turno">{{ turno === 'DIA' ? 'Día' : 'Noche' }}</option>
+                }
+              </select>
+              <span class="field-error" id="turno-error">{{ fieldError('turno') }}</span>
+            </div>
           </div>
           <div class="actions">
             <button type="submit" class="primary">
@@ -97,6 +117,8 @@
             <tr>
               <th scope="col">Nombre</th>
               <th scope="col">Teléfono</th>
+              <th scope="col">Usuario</th>
+              <th scope="col">Turno</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
@@ -105,6 +127,10 @@
               <tr>
                 <th scope="row">{{ operator.nombre }}</th>
                 <td>{{ operator.telefono }}</td>
+                <td>{{ operator.usuario }}</td>
+                <td>
+                  <span class="type-tag">{{ operator.turno === 'DIA' ? 'Día' : 'Noche' }}</span>
+                </td>
                 <td class="row-actions">
                   <button
                     type="button"

@@ -67,6 +67,31 @@ nav a.active {
   font-weight: 600;
   box-shadow: 0 3px 10px rgb(15 118 110 / 30%);
 }
+.session-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.session-nav button {
+  font: inherit;
+  padding: 7px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--primary-strong);
+  cursor: pointer;
+}
+.session-nav button:hover {
+  background: var(--tint);
+}
+.session-nav a {
+  text-decoration: none;
+  color: var(--primary-strong);
+  font-weight: 600;
+}
 main {
   min-height: calc(100vh - 190px);
 }
