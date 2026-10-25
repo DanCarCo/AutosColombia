@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_engine, get_session
 from app.main import app
+from app.models import Cliente
 
 pytestmark = pytest.mark.skipif(
     os.getenv("RUN_POSTGRES_TESTS") != "1",
@@ -23,13 +24,20 @@ def client():
         transaction = connection.begin()
         try:
             assert connection.scalar(text("SELECT current_database()")) == "autos_colombia"
-            assert connection.scalar(text("SELECT version_num FROM alembic_version")) in {"0001", "0002"}
+            assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0003"
             with Session(bind=connection, join_transaction_mode="create_savepoint") as session:
+                # RF-12: todo vehículo requiere un cliente; se crea uno de respaldo para estas pruebas.
+                cliente = Cliente(nombre="TEST-VEHICULOS", documento="TEST-VEH-" + uuid4().hex, telefono="001")
+                session.add(cliente)
+                session.flush()
+                cliente_id = cliente.id
+
                 def override_session():
                     yield session
                 app.dependency_overrides[get_session] = override_session
                 try:
                     with TestClient(app) as api:
+                        api.cliente_id = cliente_id  # type: ignore[attr-defined]
                         yield api
                 finally:
                     app.dependency_overrides.pop(get_session, None)
@@ -40,13 +48,14 @@ def client():
 def test_crud_and_errors_in_postgres(client):
     suffix = uuid4().hex[:12].upper()
     payload = {"placa": f" test-{suffix} ", "color": "Azul", "modelo": 2025,
-               "marca": "Prueba", "tipo": "AUTOMOVIL"}
+               "marca": "Prueba", "tipo": "AUTOMOVIL", "cliente_id": client.cliente_id}
     created = client.post("/vehiculos", json=payload)
     assert created.status_code == 201
     vehicle = created.json()
     first_id = vehicle["id"]
     assert vehicle["placa"] == payload["placa"].strip().upper()
     assert vehicle["modelo"] == 2025
+    assert vehicle["cliente_id"] == client.cliente_id
     assert client.get(f"/vehiculos/{first_id}").json() == vehicle
     assert client.post("/vehiculos", json=payload).status_code == 409
     # La sesión debe seguir siendo utilizable después del conflicto real de PostgreSQL.
@@ -68,11 +77,17 @@ def test_crud_and_errors_in_postgres(client):
     assert patched.json()["color"] == "Rojo"
     assert patched.json()["placa"] == f"CHANGED-{suffix}"
     assert patched.json()["marca"] == "Prueba"
+    # RF-13: cambio de vehículo de un cliente (reasignar a uno inexistente debe fallar).
+    assert client.patch(f"/vehiculos/{first_id}", json={"cliente_id": 9223372036854775807}).status_code == 404
+    assert client.get(f"/vehiculos/{first_id}").json()["cliente_id"] == client.cliente_id
     for invalid in ({"color": None}, {"id": first_id}, {"placa": " "}, {"tipo": "BUS"},
-                    {"modelo": 0}, {"modelo": 1899}, {"modelo": 2201}, {"modelo": True}, {"modelo": "2025"}, {"marca": "\t"}):
+                    {"modelo": 0}, {"modelo": 1899}, {"modelo": 2201}, {"modelo": True}, {"modelo": "2025"},
+                    {"marca": "\t"}, {"cliente_id": 0}, {"cliente_id": None}):
         assert client.patch(f"/vehiculos/{first_id}", json=invalid).status_code == 422
     assert client.post("/vehiculos", json={}).status_code == 422
     assert client.post("/vehiculos", json={**payload, "color": None}).status_code == 422
+    assert client.post("/vehiculos", json={**payload, "placa": f"SINCLIENTE-{suffix}",
+                                           "cliente_id": 9223372036854775807}).status_code == 404
     for query in ("limit=0", "limit=101", "offset=-1"):
         assert client.get(f"/vehiculos?{query}").status_code == 422
     assert client.get("/vehiculos/0").status_code == 422

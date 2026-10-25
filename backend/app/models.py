@@ -1,8 +1,9 @@
 """Modelos iniciales. Importar este módulo no crea tablas ni abre conexiones."""
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
+from decimal import Decimal
 
-from sqlalchemy import BigInteger, CheckConstraint, DateTime, ForeignKey, Identity, Index, Integer, Text, UniqueConstraint, func, text
+from sqlalchemy import BigInteger, CheckConstraint, Date, DateTime, ForeignKey, Identity, Index, Integer, Numeric, Text, UniqueConstraint, func, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, validates
 
 
@@ -14,6 +15,25 @@ def required_text(value: str, attribute: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{attribute} debe ser texto no vacío.")
     return value.strip()
+
+
+class Cliente(Base):
+    __tablename__ = "cliente"
+    __table_args__ = (
+        UniqueConstraint("documento", name="uq_cliente_documento"),
+        CheckConstraint("nombre ~ '[^[:space:]]'", name="ck_cliente_nombre_no_vacio"),
+        CheckConstraint("documento ~ '[^[:space:]]'", name="ck_cliente_documento_no_vacio"),
+        CheckConstraint("telefono ~ '[^[:space:]]'", name="ck_cliente_telefono_no_vacio"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    nombre: Mapped[str] = mapped_column(Text, nullable=False)
+    documento: Mapped[str] = mapped_column(Text, nullable=False)
+    telefono: Mapped[str] = mapped_column(Text, nullable=False)
+
+    @validates("nombre", "documento", "telefono")
+    def validate_text(self, key: str, value: str) -> str:
+        return required_text(value, key)
 
 
 class Vehiculo(Base):
@@ -34,6 +54,11 @@ class Vehiculo(Base):
     modelo: Mapped[int] = mapped_column(Integer, nullable=False)
     marca: Mapped[str] = mapped_column(Text, nullable=False)
     tipo: Mapped[str] = mapped_column(Text, nullable=False)
+    cliente_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("cliente.id", name="fk_vehiculo_cliente", ondelete="RESTRICT"), nullable=False
+    )
+
+    cliente: Mapped[Cliente] = relationship()
 
     @validates("placa", "color", "marca", "tipo")
     def validate_text(self, key: str, value: str) -> str:
@@ -73,17 +98,35 @@ class Celda(Base):
 class Operador(Base):
     __tablename__ = "operador"
     __table_args__ = (
+        UniqueConstraint("usuario", name="uq_operador_usuario"),
         CheckConstraint("nombre ~ '[^[:space:]]'", name="ck_operador_nombre_no_vacio"),
         CheckConstraint("telefono ~ '[^[:space:]]'", name="ck_operador_telefono_no_vacio"),
+        CheckConstraint("usuario ~ '[^[:space:]]'", name="ck_operador_usuario_no_vacio"),
+        CheckConstraint("password_hash ~ '[^[:space:]]'", name="ck_operador_password_hash_no_vacio"),
+        CheckConstraint("turno IN ('DIA', 'NOCHE')", name="ck_operador_turno"),
     )
 
     id: Mapped[int] = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     nombre: Mapped[str] = mapped_column(Text, nullable=False)
     telefono: Mapped[str] = mapped_column(Text, nullable=False)
+    usuario: Mapped[str] = mapped_column(Text, nullable=False)
+    password_hash: Mapped[str] = mapped_column(Text, nullable=False)
+    turno: Mapped[str] = mapped_column(Text, nullable=False)
 
-    @validates("nombre", "telefono")
+    @validates("nombre", "telefono", "usuario")
     def validate_text(self, key: str, value: str) -> str:
         return required_text(value, key)
+
+    @validates("password_hash")
+    def validate_password_hash(self, key: str, value: str) -> str:
+        return required_text(value, key)
+
+    @validates("turno")
+    def validate_turno(self, key: str, value: str) -> str:
+        value = required_text(value, key)
+        if value not in {"DIA", "NOCHE"}:
+            raise ValueError("turno debe ser DIA o NOCHE.")
+        return value
 
 
 class Estancia(Base):
@@ -140,3 +183,35 @@ class Estancia(Base):
         self.salida = fecha_salida
         self.operador_salida = operador
         self.operador_salida_id = operador.id
+
+
+class Pago(Base):
+    """Mensualidad (RF-14): cubre un vehículo entre periodo_inicio y periodo_fin, ambos incluidos."""
+
+    __tablename__ = "pago"
+    __table_args__ = (
+        CheckConstraint("monto > 0", name="ck_pago_monto_positivo"),
+        CheckConstraint("periodo_fin >= periodo_inicio", name="ck_pago_periodo_orden"),
+        Index("ix_pago_vehiculo_periodo", "vehiculo_id", "periodo_fin"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    vehiculo_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("vehiculo.id", name="fk_pago_vehiculo", ondelete="RESTRICT"), nullable=False
+    )
+    operador_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("operador.id", name="fk_pago_operador", ondelete="RESTRICT"), nullable=False
+    )
+    monto: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    periodo_inicio: Mapped[date] = mapped_column(Date, nullable=False)
+    periodo_fin: Mapped[date] = mapped_column(Date, nullable=False)
+    fecha_pago: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    vehiculo: Mapped[Vehiculo] = relationship()
+    operador: Mapped[Operador] = relationship()
+
+    @validates("periodo_inicio", "periodo_fin")
+    def validate_periodo(self, key: str, value: date) -> date:
+        if not isinstance(value, date) or isinstance(value, datetime):
+            raise ValueError(f"{key} debe ser una fecha (sin hora).")
+        return value

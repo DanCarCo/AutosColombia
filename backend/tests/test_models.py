@@ -57,15 +57,47 @@ def test_required_columns_and_identity():
         assert table.c.id.identity.always is True
 
 
+def _load_migration(name):
+    path = Path(__file__).resolve().parents[1] / "migrations/versions" / f"{name}.py"
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def test_migration_matches_models_without_connecting(monkeypatch):
-    path = Path(__file__).resolve().parents[1] / "migrations/versions/0001_modelos_iniciales.py"
-    spec = importlib.util.spec_from_file_location("initial_migration", path)
-    migration = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(migration)
+    """Aplica 0001 y 0003 (las que crean o alteran vehiculo/celda/operador/cliente/pago)
+    sobre un MetaData propio, sin conectar a PostgreSQL, y compara contra los modelos."""
     metadata = sa.MetaData()
-    monkeypatch.setattr(migration.op, "create_table", lambda name, *args: sa.Table(name, metadata, *args))
-    migration.upgrade()
-    assert set(metadata.tables) == {"vehiculo", "celda", "operador"}
+
+    def create_table(name, *args):
+        return sa.Table(name, metadata, *args)
+
+    def add_column(table_name, column):
+        metadata.tables[table_name].append_column(column)
+
+    def create_foreign_key(name, source, referent, local_cols, remote_cols, ondelete=None):
+        metadata.tables[source].append_constraint(sa.ForeignKeyConstraint(
+            local_cols, [f"{referent}.{c}" for c in remote_cols], name=name, ondelete=ondelete
+        ))
+
+    def create_unique_constraint(name, table_name, columns):
+        metadata.tables[table_name].append_constraint(sa.UniqueConstraint(*columns, name=name))
+
+    def create_check_constraint(name, table_name, condition):
+        metadata.tables[table_name].append_constraint(sa.CheckConstraint(condition, name=name))
+
+    for migration_name in ("0001_modelos_iniciales", "0003_cliente_pago_login"):
+        migration = _load_migration(migration_name)
+        monkeypatch.setattr(migration.op, "create_table", create_table)
+        monkeypatch.setattr(migration.op, "add_column", add_column)
+        monkeypatch.setattr(migration.op, "create_foreign_key", create_foreign_key)
+        monkeypatch.setattr(migration.op, "create_unique_constraint", create_unique_constraint)
+        monkeypatch.setattr(migration.op, "create_check_constraint", create_check_constraint)
+        monkeypatch.setattr(migration.op, "create_index", lambda *a, **k: None)
+        migration.upgrade()
+
+    assert set(metadata.tables) == {"vehiculo", "celda", "operador", "cliente", "pago"}
     for name, table in metadata.tables.items():
         model_table = Base.metadata.tables[name]
         assert [(c.name, str(c.type), c.nullable) for c in table.columns] == [

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.models import Operador
 from app.schemas.operador import OperadorActualizar, OperadorCrear
+from app.security import hash_password
 
 
 class OperadorError(Exception):
@@ -23,6 +24,9 @@ def database_operation(operation):
         except IntegrityError as error:
             session.rollback()
             code = getattr(error.orig, "sqlstate", None)
+            constraint = getattr(getattr(error.orig, "diag", None), "constraint_name", None)
+            if code == "23505" and constraint == "uq_operador_usuario":
+                raise OperadorError(409, "Ya existe un operador con ese usuario.") from None
             if code == "23503":
                 raise OperadorError(409, "El operador tiene registros relacionados y no se puede eliminar.") from None
             if code in {"23502", "23514"}:
@@ -41,9 +45,17 @@ def find_operator(session: Session, operator_id: int) -> Operador:
     return operator
 
 
+def _to_model_fields(payload: dict) -> dict:
+    """La contraseña en claro nunca llega al modelo: se reemplaza por su hash."""
+    payload = dict(payload)
+    if "password" in payload:
+        payload["password_hash"] = hash_password(payload.pop("password"))
+    return payload
+
+
 @database_operation
 def create_operator(session: Session, data: OperadorCrear) -> Operador:
-    operator = Operador(**data.model_dump())
+    operator = Operador(**_to_model_fields(data.model_dump()))
     session.add(operator)
     session.commit()
     session.refresh(operator)
@@ -65,7 +77,7 @@ def get_operator(session: Session, operator_id: int) -> Operador:
 @database_operation
 def update_operator(session: Session, operator_id: int, data: OperadorActualizar) -> Operador:
     operator = find_operator(session, operator_id)
-    for key, value in data.model_dump(exclude_unset=True).items():
+    for key, value in _to_model_fields(data.model_dump(exclude_unset=True)).items():
         setattr(operator, key, value)
     session.commit()
     session.refresh(operator)

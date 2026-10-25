@@ -27,6 +27,8 @@ def database_operation(operation):
             if code == "23505" and constraint == "uq_vehiculo_placa":
                 raise VehiculoError(409, "Ya existe un vehículo con esa placa.") from None
             if code == "23503":
+                if constraint == "fk_vehiculo_cliente":
+                    raise VehiculoError(404, "Cliente no encontrado.") from None
                 raise VehiculoError(409, "El vehículo tiene registros relacionados y no se puede eliminar.") from None
             if code in {"23502", "23514"}:
                 raise VehiculoError(422, "Los datos incumplen las restricciones del vehículo.") from None

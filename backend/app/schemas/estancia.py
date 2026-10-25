@@ -10,16 +10,26 @@ Identificador = Annotated[int, Field(strict=True, ge=1, le=9223372036854775807)]
 
 
 class EntradaCrear(BaseModel):
+    """El operador que registra la entrada se toma del token de sesión (RF-16), no del cuerpo."""
+
     model_config = ConfigDict(extra="forbid")
     placa: Placa
     celda_id: Identificador
-    operador_id: Identificador
 
 
 class SalidaCrear(BaseModel):
+    """El operador que registra la salida se toma del token de sesión (RF-16), no del cuerpo."""
+
     model_config = ConfigDict(extra="forbid")
     placa: Placa
-    operador_id: Identificador
+
+
+class CambiarCeldaCrear(BaseModel):
+    """RF-11: mueve la estancia abierta de un vehículo a otra celda."""
+
+    model_config = ConfigDict(extra="forbid")
+    placa: Placa
+    celda_id: Identificador
 
 
 class EstanciaRespuesta(BaseModel):

@@ -12,6 +12,7 @@ TipoVehiculo = Annotated[
     Literal["MOTO", "AUTOMOVIL", "CAMIONETA"],
     BeforeValidator(lambda value: required_text(value, "tipo")),
 ]
+Identificador = Annotated[int, Field(strict=True, ge=1, le=9223372036854775807)]
 
 
 class VehiculoCrear(BaseModel):
@@ -22,6 +23,8 @@ class VehiculoCrear(BaseModel):
     modelo: Anio
     marca: Texto
     tipo: TipoVehiculo
+    # RF-12: todo vehículo pertenece a un cliente (obligatorio, sin excepción: RF-14).
+    cliente_id: Identificador
 
 
 class VehiculoActualizar(BaseModel):
@@ -32,6 +35,8 @@ class VehiculoActualizar(BaseModel):
     modelo: Anio | None = None
     marca: Texto | None = None
     tipo: TipoVehiculo | None = None
+    # RF-13: reasigna el vehículo a otro cliente.
+    cliente_id: Identificador | None = None
 
     @field_validator("*", mode="before")
     @classmethod

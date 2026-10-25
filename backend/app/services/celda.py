@@ -1,10 +1,10 @@
 from functools import wraps
 
-from sqlalchemy import func, select
+from sqlalchemy import exists, func, select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.models import Celda
+from app.models import Celda, Estancia
 from app.schemas.celda import CeldaActualizar, CeldaCrear
 
 
@@ -63,6 +63,20 @@ def list_cells(session: Session, offset: int, limit: int) -> dict:
 @database_operation
 def get_cell(session: Session, cell_id: int) -> Celda:
     return find_cell(session, cell_id)
+
+
+def _ocupada() -> object:
+    """Subconsulta: existe una estancia abierta (salida IS NULL) en esta celda."""
+    return exists().where(Estancia.celda_id == Celda.id, Estancia.salida.is_(None))
+
+
+@database_operation
+def list_available_cells(session: Session, offset: int, limit: int) -> dict:
+    """RF-10: celdas sin una estancia abierta en este momento."""
+    query = select(Celda).where(~_ocupada())
+    total = session.scalar(select(func.count()).select_from(query.subquery()))
+    items = list(session.scalars(query.order_by(Celda.id).offset(offset).limit(limit)))
+    return {"items": items, "total": total, "offset": offset, "limit": limit}
 
 
 @database_operation

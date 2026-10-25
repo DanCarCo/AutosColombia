@@ -308,3 +308,91 @@ crean tablas ni se modifica el esquema; las secuencias de ids pueden avanzar
 porque PostgreSQL no revierte sus valores. No se borran registros existentes.
 La prueba de conflicto por relación es simulada, ya que el esquema actual no
 tiene claves foráneas hacia vehículos; no se añaden relaciones para probarla.
+
+## Clientes, mensualidades, disponibilidad, reasignación de celda y login (RF-10 a RF-16)
+
+Backend únicamente; el frontend de estas pantallas queda pendiente. Resumen de
+lo añadido (ver el documento de requerimientos para el detalle completo):
+
+- **`POST/GET/PATCH/DELETE /clientes`**: catálogo de clientes (RF-12).
+- **`vehiculo.cliente_id`** (obligatorio): todo vehículo pertenece a un
+  cliente. `PATCH /vehiculos/{id}` con `cliente_id` reasigna el vehículo a
+  otro cliente (RF-13).
+- **`GET /celdas/disponibles`**: celdas sin una estancia abierta en este
+  momento, paginado igual que `GET /celdas` (RF-10).
+- **`PATCH /estancias/celda`** (`{"placa", "celda_id"}`, requiere sesión
+  iniciada): mueve la estancia abierta de un vehículo a otra celda, para
+  corregir una celda equivocada (RF-11).
+- **`POST /pagos`** (`{"vehiculo_id", "periodo_inicio"?}`, requiere sesión
+  iniciada): registra el pago de la mensualidad; el monto lo calcula el
+  servidor según el tipo de vehículo ($100.000 moto, $250.000
+  automóvil/camioneta) y **nunca** lo acepta del cliente. El periodo cubre
+  un mes calendario completo desde `periodo_inicio` (hoy, si se omite).
+- **`GET /pagos?vehiculo_id=`** y **`GET /vehiculos/{id}/mensualidad`**:
+  historial de pagos y si la mensualidad está vigente hoy.
+- **`POST /estancias/entrada`** ahora rechaza con **402** si el vehículo no
+  tiene mensualidad vigente, sin excepción (RF-14).
+- **`GET /reportes/resumen`**: celdas totales/disponibles y clientes
+  registrados, en cualquier momento (RF-15).
+- **Inicio de sesión de operador (RF-16)**: `operador` gana `usuario`
+  (único), `password` (se guarda como `password_hash` con PBKDF2-SHA256,
+  nunca en claro) y `turno` (`DIA` o `NOCHE`, sin límite de cuántos
+  operadores hay por turno). `POST /auth/login` devuelve un token (JWT,
+  firmado con `JWT_SECRET` de `backend/.env`) que debe enviarse como
+  `Authorization: Bearer <token>` en `/estancias/entrada`, `/estancias/salida`,
+  `/estancias/celda` y `POST /pagos`: el operador que actúa se toma del
+  token, **ya no viaja en el cuerpo de la solicitud** (antes `operador_id` era
+  parte de `EntradaCrear`/`SalidaCrear`; eliminarlo fue un cambio incompatible
+  a propósito, para que el token sea la única fuente de verdad sobre
+  quién actúa).
+
+### Migración `0003` y datos iniciales
+
+`migrations/versions/0003_cliente_pago_login.py` crea `cliente` y `pago`, y
+agrega las columnas nuevas de `vehiculo` y `operador`, todas `NOT NULL` y sin
+valor por defecto. Si la base ya tiene vehículos u operadores, esta
+migración **falla** hasta que cada fila reciba un valor válido (un
+cliente de respaldo y `cliente_id` en cada vehículo; `usuario`,
+`password_hash` y `turno` en cada operador) antes de aplicarla; no incluye un
+backfill automático porque no hay un valor "por defecto" razonable para
+datos reales. Revisar primero sin aplicar, con el intérprete de `.venv`:
+
+```powershell
+.\.venv\Scripts\python.exe -m alembic -c alembic.ini upgrade 0002:0003 --sql
+```
+
+`seed_data.py` carga las 80 celdas iniciales de RF-10 (10 `MOTO-01`..`MOTO-10`
+y 70 `CARRO-001`..`CARRO-070`) de forma idempotente; no crea operadores
+(usuario y contraseña se registran desde `POST /operadores`, nunca con
+valores de ejemplo en un script):
+
+```powershell
+.\.venv\Scripts\python.exe seed_data.py
+```
+
+### Variable nueva en `backend/.env`
+
+```
+JWT_SECRET=<genera un valor propio y secreto>
+JWT_EXPIRATION_MINUTES=480
+```
+
+Generar un valor, por ejemplo:
+
+```powershell
+.\.venv\Scripts\python.exe -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+### Pendiente
+
+- Frontend: pantallas de clientes, mensualidades/pagos, inicio de sesión de
+  operador (con el token guardado para las llamadas protegidas) y el aviso de
+  celdas disponibles/reasignación en Control de acceso.
+- Verificar `tests/test_estancias_postgres.py`,
+  `tests/test_operadores_postgres.py` y `tests/test_vehiculos_postgres.py`
+  actualizados con `RUN_POSTGRES_TESTS=1` contra la base real (se escribieron
+  y revisaron con cuidado, pero no hay PostgreSQL disponible en el entorno
+  donde se implementaron para ejecutarlos).
+- Decidir si se requiere imponer el límite de 10 celdas MOTO / 70 no-MOTO y
+  de 2 operadores de día / 1 de noche (hoy son solo datos iniciales, sin
+  límite impuesto por el sistema, por decisión explícita).

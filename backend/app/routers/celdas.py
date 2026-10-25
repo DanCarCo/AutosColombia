@@ -26,6 +26,16 @@ def list_all(
     return service.list_cells(session, offset, limit)
 
 
+@router.get("/disponibles", response_model=CeldasPagina)
+def list_available(
+    session: DatabaseSession,
+    offset: Annotated[int, Query(ge=0, le=9223372036854775807)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+):
+    """RF-10: celdas sin una estancia abierta en este momento."""
+    return service.list_available_cells(session, offset, limit)
+
+
 @router.get("/{id}", response_model=CeldaRespuesta)
 def get_one(id: CellId, session: DatabaseSession):
     return service.get_cell(session, id)

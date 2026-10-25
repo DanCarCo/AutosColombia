@@ -20,18 +20,21 @@ def test_operadores_structure_and_crud():
         transaction = connection.begin()
         try:
             assert connection.scalar(text("SELECT current_database()")) == "autos_colombia"
-            assert connection.scalar(text("SELECT version_num FROM alembic_version")) in {"0001", "0002"}
+            assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0003"
             inspector = inspect(connection)
             columns = {c["name"]: c for c in inspector.get_columns("operador")}
-            assert set(columns) == {"id", "nombre", "telefono"}
+            assert set(columns) == {"id", "nombre", "telefono", "usuario", "password_hash", "turno"}
             assert str(columns["id"]["type"]) == "BIGINT"
             assert columns["id"]["identity"]["always"] is True
             assert all(not c["nullable"] for c in columns.values())
             assert str(columns["nombre"]["type"]) == str(columns["telefono"]["type"]) == "TEXT"
             assert inspector.get_pk_constraint("operador")["constrained_columns"] == ["id"]
-            assert not inspector.get_unique_constraints("operador")
+            assert {tuple(c["column_names"]) for c in inspector.get_unique_constraints("operador")} == {
+                ("usuario",)
+            }
             assert {c["name"] for c in inspector.get_check_constraints("operador")} == {
-                "ck_operador_nombre_no_vacio", "ck_operador_telefono_no_vacio"
+                "ck_operador_nombre_no_vacio", "ck_operador_telefono_no_vacio",
+                "ck_operador_usuario_no_vacio", "ck_operador_password_hash_no_vacio", "ck_operador_turno",
             }
             with Session(bind=connection, join_transaction_mode="create_savepoint") as session:
                 def override():
@@ -42,16 +45,21 @@ def test_operadores_structure_and_crud():
                     initial = client.get("/operadores").json()
                     assert initial["offset"] == 0 and initial["limit"] == 20
                     name = "TEST-OPERADOR-" + uuid4().hex
-                    payload = {"nombre": f" {name} ", "telefono": " +57 00123 "}
+                    payload = {"nombre": f" {name} ", "telefono": " +57 00123 ", "usuario": name,
+                               "password": "clave-de-prueba", "turno": "DIA"}
                     created = client.post("/operadores", json=payload)
                     assert created.status_code == 201
                     item = created.json()
-                    assert item == {"id": item["id"], "nombre": name, "telefono": "+57 00123"}
+                    assert item == {"id": item["id"], "nombre": name, "telefono": "+57 00123",
+                                    "usuario": name, "turno": "DIA"}
+                    assert "password" not in item and "password_hash" not in item
                     assert type(item["id"]) is int and item["id"] > 0
                     path = f"/operadores/{item['id']}"
                     assert client.get(path).json() == item
-                    # Nombre y teléfono repetidos están permitidos.
-                    duplicate = client.post("/operadores", json=payload)
+                    # El usuario es único: repetirlo debe fallar.
+                    assert client.post("/operadores", json=payload).status_code == 409
+                    duplicate_payload = {**payload, "usuario": name + "-2"}
+                    duplicate = client.post("/operadores", json=duplicate_payload)
                     assert duplicate.status_code == 201
                     duplicate_id = duplicate.json()["id"]
                     assert duplicate_id != item["id"]
@@ -64,8 +72,9 @@ def test_operadores_structure_and_crud():
                         assert client.get("/operadores?" + query).status_code == 422
                     for invalid_id in ("0", "-1", "9223372036854775808", "abc"):
                         assert client.get("/operadores/" + invalid_id).status_code == 422
-                    for invalid in ({"nombre": None}, {"telefono": None},
-                                    {"nombre": " \t"}, {"telefono": ""}, {"id": 2}):
+                    for invalid in ({"nombre": None}, {"telefono": None}, {"usuario": None},
+                                    {"password": None}, {"turno": None}, {"turno": "MADRUGADA"},
+                                    {"nombre": " \t"}, {"telefono": ""}, {"id": 2}, {"password_hash": "x"}):
                         assert client.patch(path, json=invalid).status_code == 422
                     assert client.post("/operadores", json={}).status_code == 422
                     assert client.patch(path, json={}).json() == item
@@ -77,7 +86,10 @@ def test_operadores_structure_and_crud():
                     assert changed.status_code == 200
                     item["nombre"] = name + " editado"
                     assert changed.json() == item
-                    assert client.get(path).json() == item
+                    # Cambiar la contraseña no cambia la respuesta pública, pero sí el login (ver test_auth_postgres).
+                    assert client.patch(path, json={"password": "otra-clave"}).status_code == 200
+                    assert client.patch(path, json={"turno": "NOCHE"}).json()["turno"] == "NOCHE"
+                    assert client.get(path).json()["turno"] == "NOCHE"
                     for new_id in (item["id"], duplicate_id):
                         deleted = client.delete(f"/operadores/{new_id}")
                         assert deleted.status_code == 204 and deleted.content == b""

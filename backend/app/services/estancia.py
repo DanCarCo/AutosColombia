@@ -8,10 +8,11 @@ from sqlalchemy.orm import Session
 from app.models import Celda, Estancia, Operador, Vehiculo, required_text
 from app.schemas.celda import CeldaRespuesta
 from app.schemas.estancia import (
-    EntradaCrear, SalidaCrear, EstanciaRespuesta, EstanciaAbiertaRespuesta,
+    CambiarCeldaCrear, EntradaCrear, SalidaCrear, EstanciaRespuesta, EstanciaAbiertaRespuesta,
     EstadoVehiculoRespuesta,
 )
 from app.schemas.vehiculo import VehiculoRespuesta
+from app.services.pago import vigente_para_vehiculo
 
 
 class EstanciaError(Exception):
@@ -57,19 +58,15 @@ class ServicioEstancia:
             raise EstanciaError(404, "Vehículo no encontrado.")
         return vehiculo
 
-    def _operador(self, operador_id: int) -> Operador:
-        operador = self.session.get(Operador, operador_id)
-        if operador is None:
-            raise EstanciaError(404, "Operador no encontrado.")
-        return operador
-
     @transaccion
-    def entrada(self, data: EntradaCrear) -> EstanciaRespuesta:
+    def entrada(self, data: EntradaCrear, operador: Operador) -> EstanciaRespuesta:
         vehiculo = self._vehiculo(data.placa)
         celda = self.session.get(Celda, data.celda_id)
         if celda is None:
             raise EstanciaError(404, "Celda no encontrada.")
-        operador = self._operador(data.operador_id)
+        # RF-14: ningún vehículo entra sin mensualidad vigente, sin excepción.
+        if vigente_para_vehiculo(self.session, vehiculo.id) is None:
+            raise EstanciaError(402, "El vehículo no tiene mensualidad vigente.")
         if self.session.scalar(select(Estancia.id).where(
             Estancia.vehiculo_id == vehiculo.id, Estancia.salida.is_(None)
         )) is not None:
@@ -86,9 +83,8 @@ class ServicioEstancia:
         return EstanciaRespuesta.model_validate(estancia)
 
     @transaccion
-    def salida(self, data: SalidaCrear) -> EstanciaRespuesta:
+    def salida(self, data: SalidaCrear, operador: Operador) -> EstanciaRespuesta:
         vehiculo = self._vehiculo(data.placa)
-        operador = self._operador(data.operador_id)
         # PostgreSQL vuelve a evaluar salida IS NULL tras esperar el bloqueo.
         estancia = self.session.scalar(select(Estancia).where(
             Estancia.vehiculo_id == vehiculo.id, Estancia.salida.is_(None)
@@ -99,6 +95,26 @@ class ServicioEstancia:
             estancia.cerrar(datetime.now(timezone.utc), operador)
         except ValueError:
             raise EstanciaError(409, "No se puede cerrar la estancia con su estado o fecha actuales.") from None
+        self.session.flush()
+        return EstanciaRespuesta.model_validate(estancia)
+
+    @transaccion
+    def cambiar_celda(self, data: CambiarCeldaCrear) -> EstanciaRespuesta:
+        """RF-11: reasigna la celda de la estancia abierta de un vehículo."""
+        vehiculo = self._vehiculo(data.placa)
+        estancia = self.session.scalar(select(Estancia).where(
+            Estancia.vehiculo_id == vehiculo.id, Estancia.salida.is_(None)
+        ).with_for_update())
+        if estancia is None:
+            raise EstanciaError(409, "El vehículo no tiene una estancia abierta.")
+        celda = self.session.get(Celda, data.celda_id)
+        if celda is None:
+            raise EstanciaError(404, "Celda no encontrada.")
+        if celda.id != estancia.celda_id and self.session.scalar(select(Estancia.id).where(
+            Estancia.celda_id == celda.id, Estancia.salida.is_(None)
+        )) is not None:
+            raise EstanciaError(409, "La celda está ocupada.")
+        estancia.celda_id = celda.id
         self.session.flush()
         return EstanciaRespuesta.model_validate(estancia)
 

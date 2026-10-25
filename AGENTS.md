@@ -11,23 +11,62 @@ instalar y ejecutar los proyectos en Windows está en `README.md`.
 - `backend/app/config.py`: carga `backend/.env` por ruta absoluta; el entorno tiene prioridad.
 - `backend/app/database.py`: motor SQLAlchemy y sesiones bajo demanda con psycopg.
 - `backend/check_db.py`: comprobación explícita mediante `SELECT 1`, sin DDL.
-- `backend/app/models.py`: Base, Vehiculo, Celda y Operador; tablas en singular y minúsculas.
-- `backend/app/schemas/vehiculo.py`: validación Pydantic y contratos de respuesta.
+- `backend/app/models.py`: Base, Cliente, Vehiculo, Celda, Operador, Estancia y Pago;
+  tablas en singular y minúsculas.
+- `backend/app/schemas/vehiculo.py`: validación Pydantic y contratos de respuesta;
+  `cliente_id` obligatorio (todo vehículo pertenece a un cliente).
 - `backend/app/routers/vehiculos.py`: rutas CRUD con APIRouter.
 - `backend/app/services/vehiculo.py`: lógica de vehículos, transacciones y errores públicos.
 - `backend/app/schemas/celda.py`, `app/routers/celdas.py` y `app/services/celda.py`:
-  CRUD de celdas con código normalizado y tipo libre obligatorio.
-- `backend/migrations/`: revisiones Alembic; `backend/alembic.ini` reutiliza la configuración privada.
+  CRUD de celdas con código normalizado y tipo libre obligatorio, más
+  `GET /celdas/disponibles` (celdas sin estancia abierta).
+- `backend/app/schemas/operador.py`, `app/routers/operadores.py` y
+  `app/services/operador.py`: CRUD de operadores; incluye `usuario`, `password`
+  (se guarda como `password_hash`, nunca en claro) y `turno` (DIA/NOCHE).
+- `backend/app/schemas/estancia.py`, `app/routers/estancias.py` y
+  `app/services/estancia.py`: entrada, salida y reasignación de celda
+  (`PATCH /estancias/celda`) de una estancia; el operador que actúa se toma
+  del token de sesión, no del cuerpo de la solicitud.
+- `backend/app/schemas/cliente.py`, `app/routers/clientes.py` y
+  `app/services/cliente.py`: CRUD de clientes (dueños de los vehículos).
+- `backend/app/schemas/pago.py`, `app/routers/pagos.py` y `app/services/pago.py`:
+  mensualidades; el monto lo calcula el servidor según el tipo de vehículo,
+  nunca lo acepta del cliente. `ServicioEstancia.entrada` exige mensualidad
+  vigente antes de registrar la entrada.
+- `backend/app/routers/reportes.py` y `app/services/reporte.py`: resumen de
+  celdas disponibles/totales y clientes registrados.
+- `backend/app/auth.py`, `app/schemas/auth.py`, `app/routers/auth.py` y
+  `app/security.py`: inicio de sesión de operadores (`POST /auth/login`),
+  tokens JWT firmados con `JWT_SECRET` (`backend/.env`) y hash de contraseñas
+  con PBKDF2-SHA256 (sin dependencias nuevas de hashing).
+- `backend/seed_data.py`: carga opcional e idempotente de las 80 celdas
+  iniciales (10 MOTO + 70 CARRO); no crea operadores ni clientes de ejemplo.
+- `backend/migrations/`: revisiones Alembic; `backend/alembic.ini` reutiliza la
+  configuración privada. `0003` añade cliente, pago y las columnas nuevas de
+  vehiculo/operador, todas NOT NULL sin backfill automático.
 - `backend/.env.example`: plantilla pública; conservar cualquier `.env` existente y privado.
 - `backend/requirements.txt`: dependencias de ejecución y pruebas con versiones
   exactas, incluidas las transitivas.
 - `backend/.venv/`: entorno virtual local, excluido de Git.
 - `frontend/src/app/`: componentes standalone, configuración y rutas Angular.
 - `frontend/src/app/home/`: bienvenida y estado de salud de la API.
-- `frontend/src/app/vehiculos/`: formulario reactivo y listado paginado de vehículos.
+- `frontend/src/app/control-acceso/`: entrada, salida, consulta y corrección de celda (RF-11);
+  exige sesión iniciada (`authGuard`) y toma el operador del token, no de un selector.
+- `frontend/src/app/vehiculos/`: formulario reactivo y listado paginado de vehículos;
+  incluye el selector de cliente (`cliente_id` obligatorio).
 - `frontend/src/app/celdas/`: gestión de celdas; `CeldasService` reutiliza la base de API.
+- `frontend/src/app/operadores/`: gestión de operadores, incluidos usuario, contraseña
+  (opcional al editar) y turno.
+- `frontend/src/app/clientes/`: gestión de clientes (RF-12), dueños de los vehículos.
+- `frontend/src/app/login/`: inicio de sesión de operador (RF-16).
+- `frontend/src/app/services/auth.service.ts`: sesión (token + operador) en memoria y
+  `localStorage`; `interceptors/auth.interceptor.ts` agrega `Authorization: Bearer` a cada
+  solicitud; `guards/auth.guard.ts` protege `control-acceso`.
+- `frontend/src/app/services/clientes.service.ts`: CRUD de clientes y catálogo completo (`todos()`).
 - `frontend/src/app/services/api.service.ts`: llamadas HTTP y base de API centralizadas.
 - `frontend/src/app/models/vehiculo.ts`: contratos de solicitudes, respuestas y tipos.
+- Pendiente en el frontend: pantallas de mensualidades/pagos y de reportes (backend ya
+  expone `POST /pagos`, `GET /vehiculos/{id}/mensualidad` y `GET /reportes/resumen`).
 - `frontend/src/styles.css`: estilos globales; estilos de componentes en CSS.
 - `frontend/public/`: recursos estáticos que sí se versionan.
 - `frontend/package.json` y `frontend/package-lock.json`: scripts, dependencias
