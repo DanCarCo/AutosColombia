@@ -1,0 +1,1240 @@
+{
+  "_type": "Project",
+  "_id": "prj-9965b77972a6",
+  "name": "AutosColombia",
+  "ownedElements": [
+    {
+      "_type": "UMLModel",
+      "_id": "model-886d66e6bf1a",
+      "_parent": {
+        "$ref": "prj-9965b77972a6"
+      },
+      "name": "AutosColombia",
+      "ownedElements": [
+        {
+          "_type": "UMLPackage",
+          "_id": "pkg-976d07428186",
+          "_parent": {
+            "$ref": "model-886d66e6bf1a"
+          },
+          "name": "Dominio",
+          "ownedElements": [
+            {
+              "_type": "UMLEnumeration",
+              "_id": "enum-c344e0f739a5",
+              "_parent": {
+                "$ref": "pkg-976d07428186"
+              },
+              "name": "TipoVehiculo",
+              "documentation": "Valores permitidos por la restricción CHECK ck_vehiculo_tipo.",
+              "ownedElements": [
+                {
+                  "_type": "UMLEnumerationLiteral",
+                  "_id": "lit-8547dc252e77",
+                  "_parent": {
+                    "$ref": "enum-c344e0f739a5"
+                  },
+                  "name": "MOTO"
+                },
+                {
+                  "_type": "UMLEnumerationLiteral",
+                  "_id": "lit-b401dec774ed",
+                  "_parent": {
+                    "$ref": "enum-c344e0f739a5"
+                  },
+                  "name": "AUTOMOVIL"
+                },
+                {
+                  "_type": "UMLEnumerationLiteral",
+                  "_id": "lit-fe91d156583a",
+                  "_parent": {
+                    "$ref": "enum-c344e0f739a5"
+                  },
+                  "name": "CAMIONETA"
+                }
+              ]
+            },
+            {
+              "_type": "UMLClass",
+              "_id": "cls-d67b1b1065c0",
+              "_parent": {
+                "$ref": "pkg-976d07428186"
+              },
+              "name": "Vehiculo",
+              "documentation": "Tabla vehiculo. Placa normalizada en mayúsculas y única.",
+              "ownedElements": [
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-58b292cc430e",
+                  "_parent": {
+                    "$ref": "cls-d67b1b1065c0"
+                  },
+                  "name": "id",
+                  "visibility": "public",
+                  "type": "Long",
+                  "isReadOnly": true,
+                  "documentation": "Clave primaria (BIGINT identity)."
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-e1a8e1bd40c1",
+                  "_parent": {
+                    "$ref": "cls-d67b1b1065c0"
+                  },
+                  "name": "placa",
+                  "visibility": "public",
+                  "type": "String",
+                  "documentation": "Única; sin espacios; se guarda en mayúsculas."
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-22cff7b9c151",
+                  "_parent": {
+                    "$ref": "cls-d67b1b1065c0"
+                  },
+                  "name": "color",
+                  "visibility": "public",
+                  "type": "String"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-96cc67b75d77",
+                  "_parent": {
+                    "$ref": "cls-d67b1b1065c0"
+                  },
+                  "name": "modelo",
+                  "visibility": "public",
+                  "type": "Integer",
+                  "documentation": "Año del vehículo, 1900-2200 (API) / 1-9999 (BD)."
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-cf7540d7a082",
+                  "_parent": {
+                    "$ref": "cls-d67b1b1065c0"
+                  },
+                  "name": "marca",
+                  "visibility": "public",
+                  "type": "String"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-bb80094c65a1",
+                  "_parent": {
+                    "$ref": "cls-d67b1b1065c0"
+                  },
+                  "name": "tipo",
+                  "visibility": "public",
+                  "type": {
+                    "$ref": "enum-c344e0f739a5"
+                  }
+                }
+              ]
+            },
+            {
+              "_type": "UMLClass",
+              "_id": "cls-ca6957e10173",
+              "_parent": {
+                "$ref": "pkg-976d07428186"
+              },
+              "name": "Celda",
+              "documentation": "Tabla celda. Código normalizado en mayúsculas y único.",
+              "ownedElements": [
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-618bddd45f73",
+                  "_parent": {
+                    "$ref": "cls-ca6957e10173"
+                  },
+                  "name": "id",
+                  "visibility": "public",
+                  "type": "Long",
+                  "isReadOnly": true
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-33945d56cafb",
+                  "_parent": {
+                    "$ref": "cls-ca6957e10173"
+                  },
+                  "name": "codigo",
+                  "visibility": "public",
+                  "type": "String"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-85013d95e6cb",
+                  "_parent": {
+                    "$ref": "cls-ca6957e10173"
+                  },
+                  "name": "tipo",
+                  "visibility": "public",
+                  "type": "String",
+                  "documentation": "Texto libre obligatorio."
+                }
+              ]
+            },
+            {
+              "_type": "UMLClass",
+              "_id": "cls-76bdaf5fd6f9",
+              "_parent": {
+                "$ref": "pkg-976d07428186"
+              },
+              "name": "Operador",
+              "documentation": "Tabla operador.",
+              "ownedElements": [
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-035f89b30142",
+                  "_parent": {
+                    "$ref": "cls-76bdaf5fd6f9"
+                  },
+                  "name": "id",
+                  "visibility": "public",
+                  "type": "Long",
+                  "isReadOnly": true
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-90c7f45f64ae",
+                  "_parent": {
+                    "$ref": "cls-76bdaf5fd6f9"
+                  },
+                  "name": "nombre",
+                  "visibility": "public",
+                  "type": "String"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-7a95fabcc44e",
+                  "_parent": {
+                    "$ref": "cls-76bdaf5fd6f9"
+                  },
+                  "name": "telefono",
+                  "visibility": "public",
+                  "type": "String"
+                }
+              ]
+            },
+            {
+              "_type": "UMLClass",
+              "_id": "cls-2dcd140c1c29",
+              "_parent": {
+                "$ref": "pkg-976d07428186"
+              },
+              "name": "Estancia",
+              "documentation": "Tabla estancia. Como máximo una estancia abierta (salida IS NULL) por vehículo y por celda (índices únicos parciales uq_estancia_vehiculo_abierta y uq_estancia_celda_abierta).",
+              "ownedElements": [
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-b549283a847e",
+                  "_parent": {
+                    "$ref": "cls-2dcd140c1c29"
+                  },
+                  "name": "id",
+                  "visibility": "public",
+                  "type": "Long",
+                  "isReadOnly": true
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-582cf18460e2",
+                  "_parent": {
+                    "$ref": "cls-2dcd140c1c29"
+                  },
+                  "name": "entrada",
+                  "visibility": "public",
+                  "type": "DateTime"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "attr-fc4bd6fdf56d",
+                  "_parent": {
+                    "$ref": "cls-2dcd140c1c29"
+                  },
+                  "name": "salida",
+                  "visibility": "public",
+                  "type": "DateTime",
+                  "multiplicity": "0..1",
+                  "documentation": "Nula mientras la estancia está abierta."
+                },
+                {
+                  "_type": "UMLOperation",
+                  "_id": "op-a77af8ef6713",
+                  "_parent": {
+                    "$ref": "cls-2dcd140c1c29"
+                  },
+                  "name": "estaAbierta",
+                  "visibility": "public",
+                  "documentation": "Devuelve true si salida es nula."
+                },
+                {
+                  "_type": "UMLOperation",
+                  "_id": "op-7a028902b15c",
+                  "_parent": {
+                    "$ref": "cls-2dcd140c1c29"
+                  },
+                  "name": "cerrar",
+                  "visibility": "public",
+                  "documentation": "Valida fechas y asigna el cierre; lanza error si ya está cerrada.",
+                  "ownedElements": [
+                    {
+                      "_type": "UMLParameter",
+                      "_id": "par-f06ffa2111c6",
+                      "_parent": {
+                        "$ref": "op-7a028902b15c"
+                      },
+                      "name": "fechaSalida",
+                      "type": "DateTime",
+                      "direction": "in"
+                    },
+                    {
+                      "_type": "UMLParameter",
+                      "_id": "par-b10b39359421",
+                      "_parent": {
+                        "$ref": "op-7a028902b15c"
+                      },
+                      "name": "operador",
+                      "type": {
+                        "$ref": "cls-76bdaf5fd6f9"
+                      },
+                      "direction": "in"
+                    },
+                    {
+                      "_type": "UMLParameter",
+                      "_id": "par-f36f6f152cd2",
+                      "_parent": {
+                        "$ref": "op-7a028902b15c"
+                      },
+                      "name": "return",
+                      "direction": "return",
+                      "type": "void"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-dd7487fd597a",
+              "_parent": {
+                "$ref": "pkg-976d07428186"
+              },
+              "name": "",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-e31a7a68b3aa",
+                  "_parent": {
+                    "$ref": "assoc-dd7487fd597a"
+                  },
+                  "name": "vehiculo",
+                  "reference": {
+                    "$ref": "cls-d67b1b1065c0"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-bd4e7883e7ae",
+                  "_parent": {
+                    "$ref": "assoc-dd7487fd597a"
+                  },
+                  "name": "estancias",
+                  "reference": {
+                    "$ref": "cls-2dcd140c1c29"
+                  },
+                  "multiplicity": "0..*",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-f19e8914c0da",
+              "_parent": {
+                "$ref": "pkg-976d07428186"
+              },
+              "name": "",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-322da828b70e",
+                  "_parent": {
+                    "$ref": "assoc-f19e8914c0da"
+                  },
+                  "name": "celda",
+                  "reference": {
+                    "$ref": "cls-ca6957e10173"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-6e0e31970bfa",
+                  "_parent": {
+                    "$ref": "assoc-f19e8914c0da"
+                  },
+                  "name": "estancias",
+                  "reference": {
+                    "$ref": "cls-2dcd140c1c29"
+                  },
+                  "multiplicity": "0..*",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-62de5649024b",
+              "_parent": {
+                "$ref": "pkg-976d07428186"
+              },
+              "name": "registra entrada",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-a5306bf18abf",
+                  "_parent": {
+                    "$ref": "assoc-62de5649024b"
+                  },
+                  "name": "operadorEntrada",
+                  "reference": {
+                    "$ref": "cls-76bdaf5fd6f9"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-a49f76f52c4a",
+                  "_parent": {
+                    "$ref": "assoc-62de5649024b"
+                  },
+                  "name": "estanciasEntrada",
+                  "reference": {
+                    "$ref": "cls-2dcd140c1c29"
+                  },
+                  "multiplicity": "0..*",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-7b414dd023f9",
+              "_parent": {
+                "$ref": "pkg-976d07428186"
+              },
+              "name": "registra salida",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-0a15ee90ac90",
+                  "_parent": {
+                    "$ref": "assoc-7b414dd023f9"
+                  },
+                  "name": "operadorSalida",
+                  "reference": {
+                    "$ref": "cls-76bdaf5fd6f9"
+                  },
+                  "multiplicity": "0..1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-c5ebe8d22aa3",
+                  "_parent": {
+                    "$ref": "assoc-7b414dd023f9"
+                  },
+                  "name": "estanciasSalida",
+                  "reference": {
+                    "$ref": "cls-2dcd140c1c29"
+                  },
+                  "multiplicity": "0..*",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLClassDiagram",
+              "_id": "diag-fb9c13f287bd",
+              "_parent": {
+                "$ref": "pkg-976d07428186"
+              },
+              "name": "Diagrama de clases",
+              "model": {
+                "$ref": "pkg-976d07428186"
+              },
+              "defaultDiagram": true
+            }
+          ]
+        },
+        {
+          "_type": "UMLPackage",
+          "_id": "pkg-b906619b2e33",
+          "_parent": {
+            "$ref": "model-886d66e6bf1a"
+          },
+          "name": "CasosDeUso",
+          "ownedElements": [
+            {
+              "_type": "UMLActor",
+              "_id": "actor-1a1ee948570a",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "Operador de parqueadero"
+            },
+            {
+              "_type": "UMLActor",
+              "_id": "actor-b259ccf88f74",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "Administrador de catálogos"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "uc-bc60c2dd1692",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "Registrar entrada de vehículo"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "uc-30666db0cb98",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "Registrar salida de vehículo"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "uc-359e02bc13e5",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "Consultar estado de vehículo"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "uc-e7bb3ce39f24",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "Gestionar vehículos"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "uc-1829617c9bfa",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "Gestionar celdas"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "uc-0981a482b1aa",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "Gestionar operadores"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "uc-2a2f73093bae",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "Verificar estado de la API"
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-c872de754368",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-1263c51b863e",
+                  "_parent": {
+                    "$ref": "assoc-c872de754368"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "actor-1a1ee948570a"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-1c720d2a6866",
+                  "_parent": {
+                    "$ref": "assoc-c872de754368"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "uc-bc60c2dd1692"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-1e51afccd7ab",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-3516e605b878",
+                  "_parent": {
+                    "$ref": "assoc-1e51afccd7ab"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "actor-1a1ee948570a"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-dc5d0d03f960",
+                  "_parent": {
+                    "$ref": "assoc-1e51afccd7ab"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "uc-30666db0cb98"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-a4323858f6b0",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-0e9b9d026812",
+                  "_parent": {
+                    "$ref": "assoc-a4323858f6b0"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "actor-1a1ee948570a"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-35fa9246a3a2",
+                  "_parent": {
+                    "$ref": "assoc-a4323858f6b0"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "uc-359e02bc13e5"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-34dd3e369fe9",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-d5f5b2e93d93",
+                  "_parent": {
+                    "$ref": "assoc-34dd3e369fe9"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "actor-1a1ee948570a"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-9b3131f00f32",
+                  "_parent": {
+                    "$ref": "assoc-34dd3e369fe9"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "uc-2a2f73093bae"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-df362465b063",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-c51f4f8d9c1a",
+                  "_parent": {
+                    "$ref": "assoc-df362465b063"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "actor-b259ccf88f74"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-a4b6b8f1e2a3",
+                  "_parent": {
+                    "$ref": "assoc-df362465b063"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "uc-e7bb3ce39f24"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-9159b6b4306a",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-3f7f5f0a8dae",
+                  "_parent": {
+                    "$ref": "assoc-9159b6b4306a"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "actor-b259ccf88f74"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-198414a2970d",
+                  "_parent": {
+                    "$ref": "assoc-9159b6b4306a"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "uc-1829617c9bfa"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-e35bbb7894b8",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-8f16cbaa8ebf",
+                  "_parent": {
+                    "$ref": "assoc-e35bbb7894b8"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "actor-b259ccf88f74"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-244038e82e13",
+                  "_parent": {
+                    "$ref": "assoc-e35bbb7894b8"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "uc-0981a482b1aa"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "assoc-c70d27d95cd9",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "",
+              "ownedElements": [
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-15d01003a0dc",
+                  "_parent": {
+                    "$ref": "assoc-c70d27d95cd9"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "actor-b259ccf88f74"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                },
+                {
+                  "_type": "UMLAssociationEnd",
+                  "_id": "end-92651000c6f1",
+                  "_parent": {
+                    "$ref": "assoc-c70d27d95cd9"
+                  },
+                  "name": "",
+                  "reference": {
+                    "$ref": "uc-2a2f73093bae"
+                  },
+                  "multiplicity": "1",
+                  "navigable": true
+                }
+              ]
+            },
+            {
+              "_type": "UMLUseCaseDiagram",
+              "_id": "diag-453ff81b86d8",
+              "_parent": {
+                "$ref": "pkg-b906619b2e33"
+              },
+              "name": "Casos de uso",
+              "model": {
+                "$ref": "pkg-b906619b2e33"
+              }
+            }
+          ]
+        },
+        {
+          "_type": "UMLPackage",
+          "_id": "pkg-4d6f10c41fe1",
+          "_parent": {
+            "$ref": "model-886d66e6bf1a"
+          },
+          "name": "Arquitectura",
+          "ownedElements": [
+            {
+              "_type": "UMLComponent",
+              "_id": "comp-60d0e6741696",
+              "_parent": {
+                "$ref": "pkg-4d6f10c41fe1"
+              },
+              "name": "Frontend (Angular 22)",
+              "documentation": "Pantallas standalone; ApiService centraliza las llamadas HTTP."
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "comp-3c33d52b0a38",
+              "_parent": {
+                "$ref": "pkg-4d6f10c41fe1"
+              },
+              "name": "API (FastAPI)",
+              "documentation": "Routers de Vehículos, Celdas, Operadores y Estancias; /health."
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "comp-75053b59e1bf",
+              "_parent": {
+                "$ref": "pkg-4d6f10c41fe1"
+              },
+              "name": "Base de datos (PostgreSQL)",
+              "documentation": "Tablas vehiculo, celda, operador, estancia; migraciones Alembic."
+            },
+            {
+              "_type": "UMLInterface",
+              "_id": "iface-656ca5b7b23a",
+              "_parent": {
+                "$ref": "pkg-4d6f10c41fe1"
+              },
+              "name": "API REST (JSON)"
+            },
+            {
+              "_type": "UMLInterfaceRealization",
+              "_id": "real-4896cd87a441",
+              "_parent": {
+                "$ref": "pkg-4d6f10c41fe1"
+              },
+              "source": {
+                "$ref": "comp-3c33d52b0a38"
+              },
+              "target": {
+                "$ref": "iface-656ca5b7b23a"
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-ea4e31464810",
+              "_parent": {
+                "$ref": "pkg-4d6f10c41fe1"
+              },
+              "source": {
+                "$ref": "comp-60d0e6741696"
+              },
+              "target": {
+                "$ref": "iface-656ca5b7b23a"
+              },
+              "name": "HTTP/JSON vía proxy de desarrollo"
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-e7770fbbef10",
+              "_parent": {
+                "$ref": "pkg-4d6f10c41fe1"
+              },
+              "source": {
+                "$ref": "comp-3c33d52b0a38"
+              },
+              "target": {
+                "$ref": "comp-75053b59e1bf"
+              },
+              "name": "SQL vía SQLAlchemy/psycopg"
+            },
+            {
+              "_type": "UMLComponentDiagram",
+              "_id": "diag-05c38ce7aead",
+              "_parent": {
+                "$ref": "pkg-4d6f10c41fe1"
+              },
+              "name": "Arquitectura del sistema",
+              "model": {
+                "$ref": "pkg-4d6f10c41fe1"
+              }
+            }
+          ]
+        },
+        {
+          "_type": "UMLPackage",
+          "_id": "pkg-3fb88b6aa5ea",
+          "_parent": {
+            "$ref": "model-886d66e6bf1a"
+          },
+          "name": "Backend (backend/app)",
+          "ownedElements": [
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-a2a32c080df5",
+              "_parent": {
+                "$ref": "pkg-3fb88b6aa5ea"
+              },
+              "name": "routers"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-110f7a58be44",
+              "_parent": {
+                "$ref": "pkg-3fb88b6aa5ea"
+              },
+              "name": "services"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-b5bba4727dc9",
+              "_parent": {
+                "$ref": "pkg-3fb88b6aa5ea"
+              },
+              "name": "schemas"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-ad09f9726066",
+              "_parent": {
+                "$ref": "pkg-3fb88b6aa5ea"
+              },
+              "name": "models"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-aaf2fe36eff5",
+              "_parent": {
+                "$ref": "pkg-3fb88b6aa5ea"
+              },
+              "name": "database / config"
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-aeb3bd5de821",
+              "_parent": {
+                "$ref": "pkg-3fb88b6aa5ea"
+              },
+              "source": {
+                "$ref": "pkg-a2a32c080df5"
+              },
+              "target": {
+                "$ref": "pkg-110f7a58be44"
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-2340f29d18cb",
+              "_parent": {
+                "$ref": "pkg-3fb88b6aa5ea"
+              },
+              "source": {
+                "$ref": "pkg-a2a32c080df5"
+              },
+              "target": {
+                "$ref": "pkg-b5bba4727dc9"
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-d8f92c38395e",
+              "_parent": {
+                "$ref": "pkg-3fb88b6aa5ea"
+              },
+              "source": {
+                "$ref": "pkg-110f7a58be44"
+              },
+              "target": {
+                "$ref": "pkg-b5bba4727dc9"
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-7ed6e57fa76c",
+              "_parent": {
+                "$ref": "pkg-3fb88b6aa5ea"
+              },
+              "source": {
+                "$ref": "pkg-110f7a58be44"
+              },
+              "target": {
+                "$ref": "pkg-ad09f9726066"
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-8cd15dc28208",
+              "_parent": {
+                "$ref": "pkg-3fb88b6aa5ea"
+              },
+              "source": {
+                "$ref": "pkg-110f7a58be44"
+              },
+              "target": {
+                "$ref": "pkg-aaf2fe36eff5"
+              }
+            }
+          ]
+        },
+        {
+          "_type": "UMLPackage",
+          "_id": "pkg-048d8944c0a9",
+          "_parent": {
+            "$ref": "model-886d66e6bf1a"
+          },
+          "name": "Frontend (frontend/src/app)",
+          "ownedElements": [
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-73f0ded21231",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "name": "home"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-36b22cac8283",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "name": "control-acceso"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-a9aeeaa6c155",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "name": "vehiculos"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-3ead9981b5f4",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "name": "celdas"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-425212615779",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "name": "operadores"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-5f57fde84232",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "name": "services"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "pkg-9166bf8ddb59",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "name": "models"
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-2a15106211e4",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "source": {
+                "$ref": "pkg-73f0ded21231"
+              },
+              "target": {
+                "$ref": "pkg-5f57fde84232"
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-81a763bdc007",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "source": {
+                "$ref": "pkg-36b22cac8283"
+              },
+              "target": {
+                "$ref": "pkg-5f57fde84232"
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-b0dea81a2394",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "source": {
+                "$ref": "pkg-a9aeeaa6c155"
+              },
+              "target": {
+                "$ref": "pkg-5f57fde84232"
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-161efa3f39d7",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "source": {
+                "$ref": "pkg-3ead9981b5f4"
+              },
+              "target": {
+                "$ref": "pkg-5f57fde84232"
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-1652a771f536",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "source": {
+                "$ref": "pkg-425212615779"
+              },
+              "target": {
+                "$ref": "pkg-5f57fde84232"
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "dep-5abc6d6a6d3d",
+              "_parent": {
+                "$ref": "pkg-048d8944c0a9"
+              },
+              "source": {
+                "$ref": "pkg-5f57fde84232"
+              },
+              "target": {
+                "$ref": "pkg-9166bf8ddb59"
+              }
+            }
+          ]
+        },
+        {
+          "_type": "UMLDependency",
+          "_id": "dep-9e309d6aa09e",
+          "_parent": {
+            "$ref": "model-886d66e6bf1a"
+          },
+          "source": {
+            "$ref": "pkg-5f57fde84232"
+          },
+          "target": {
+            "$ref": "pkg-3fb88b6aa5ea"
+          },
+          "name": "HTTP/JSON (proxy.conf.json)"
+        },
+        {
+          "_type": "UMLPackageDiagram",
+          "_id": "diag-5aa10e8080a7",
+          "_parent": {
+            "$ref": "model-886d66e6bf1a"
+          },
+          "name": "Paquetes",
+          "model": {
+            "$ref": "model-886d66e6bf1a"
+          }
+        }
+      ]
+    }
+  ]
+}
