@@ -22,12 +22,20 @@ class EstanciaError(Exception):
 
 
 def transaccion(operation):
-    """Una transacción por solicitud; materializa la respuesta antes del commit."""
+    """Una transacción por solicitud; materializa la respuesta antes del commit.
+
+    Dependencias de FastAPI como ``operador_actual`` ya consultan la sesión
+    antes de llegar aquí, lo que la deja en "autobegin" (una transacción ya
+    abierta implícitamente). Pedir una transacción nueva con ``begin()`` en
+    ese caso falla con InvalidRequestError, así que no la pedimos: dejamos
+    que autobegin la abra si hace falta y confirmamos explícitamente al final.
+    """
     @wraps(operation)
     def wrapped(self, *args, **kwargs):
         try:
-            with self.session.begin():
-                return operation(self, *args, **kwargs)
+            result = operation(self, *args, **kwargs)
+            self.session.commit()
+            return result
         except IntegrityError as error:
             self.session.rollback()
             code = getattr(error.orig, "sqlstate", None)

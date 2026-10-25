@@ -41,6 +41,10 @@ instalar y ejecutar los proyectos en Windows está en `README.md`.
   con PBKDF2-SHA256 (sin dependencias nuevas de hashing).
 - `backend/seed_data.py`: carga opcional e idempotente de las 80 celdas
   iniciales (10 MOTO + 70 CARRO); no crea operadores ni clientes de ejemplo.
+- `backend/seed_demo.py`: SOLO para demostración manual, no para producción;
+  siembra celdas, dos operadores, clientes y vehículos con mensualidad
+  vigente, con credenciales de ejemplo bien conocidas, para probar
+  entrada/salida, corrección de celda y reportes de punta a punta.
 - `backend/migrations/`: revisiones Alembic; `backend/alembic.ini` reutiliza la
   configuración privada. `0003` añade cliente, pago y las columnas nuevas de
   vehiculo/operador, todas NOT NULL sin backfill automático.
