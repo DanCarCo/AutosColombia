@@ -370,6 +370,19 @@ valores de ejemplo en un script):
 .\.venv\Scripts\python.exe seed_data.py
 ```
 
+### Migración `0004`: rango de año de `vehiculo.modelo`
+
+`migrations/versions/0004_vehiculo_modelo_1900_2200.py` cambia el `CHECK` de
+`vehiculo.modelo` de `1-9999` a `1900-2200`, para que el modelo físico
+coincida con el rango que ya exigía el esquema Pydantic de la API
+(`app/schemas/vehiculo.py`) y con el documento del proyecto. Si ya existen
+vehículos con `modelo` fuera de 1900-2200, esta migración **falla** hasta
+corregir esas filas manualmente. Revisar primero sin aplicar:
+
+```powershell
+.\.venv\Scripts\python.exe -m alembic -c alembic.ini upgrade 0003:0004 --sql
+```
+
 ### Variable nueva en `backend/.env`
 
 ```

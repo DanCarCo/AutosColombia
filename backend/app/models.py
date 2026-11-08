@@ -44,7 +44,7 @@ class Vehiculo(Base):
         CheckConstraint("placa = upper(regexp_replace(placa, '^[[:space:]]+|[[:space:]]+$', '', 'g'))", name="ck_vehiculo_placa_normalizada"),
         CheckConstraint("color ~ '[^[:space:]]'", name="ck_vehiculo_color_no_vacio"),
         CheckConstraint("marca ~ '[^[:space:]]'", name="ck_vehiculo_marca_no_vacia"),
-        CheckConstraint("modelo BETWEEN 1 AND 9999", name="ck_vehiculo_modelo_anio"),
+        CheckConstraint("modelo BETWEEN 1900 AND 2200", name="ck_vehiculo_modelo_anio"),
         CheckConstraint("tipo IN ('MOTO', 'AUTOMOVIL', 'CAMIONETA')", name="ck_vehiculo_tipo"),
     )
 
@@ -71,8 +71,8 @@ class Vehiculo(Base):
 
     @validates("modelo")
     def validate_modelo(self, key: str, value: int) -> int:
-        if type(value) is not int or not 1 <= value <= 9999:
-            raise ValueError("modelo debe ser un año entero entre 1 y 9999.")
+        if type(value) is not int or not 1900 <= value <= 2200:
+            raise ValueError("modelo debe ser un año entero entre 1900 y 2200.")
         return value
 
 

@@ -31,10 +31,15 @@ def test_rejects_empty_text(model, attribute, value):
         model(**{attribute: value})
 
 
-@pytest.mark.parametrize("value", [0, 10000, True, "2025", 2025.5, None])
+@pytest.mark.parametrize("value", [0, 1899, 2201, 9999, 10000, True, "2025", 2025.5, None])
 def test_rejects_invalid_year(value):
     with pytest.raises(ValueError):
         Vehiculo(modelo=value)
+
+
+@pytest.mark.parametrize("value", [1900, 2025, 2200])
+def test_accepts_year_in_1900_2200(value):
+    assert Vehiculo(modelo=value).modelo == value
 
 
 @pytest.mark.parametrize("value", ["MOTO", "AUTOMOVIL", "CAMIONETA"])
@@ -66,7 +71,7 @@ def _load_migration(name):
 
 
 def test_migration_matches_models_without_connecting(monkeypatch):
-    """Aplica 0001 y 0003 (las que crean o alteran vehiculo/celda/operador/cliente/pago)
+    """Aplica 0001, 0003 y 0004 (las que crean o alteran vehiculo/celda/operador/cliente/pago)
     sobre un MetaData propio, sin conectar a PostgreSQL, y compara contra los modelos."""
     metadata = sa.MetaData()
 
@@ -87,7 +92,12 @@ def test_migration_matches_models_without_connecting(monkeypatch):
     def create_check_constraint(name, table_name, condition):
         metadata.tables[table_name].append_constraint(sa.CheckConstraint(condition, name=name))
 
-    for migration_name in ("0001_modelos_iniciales", "0003_cliente_pago_login"):
+    def drop_constraint(name, table_name, type_=None):
+        table = metadata.tables[table_name]
+        constraint = next(c for c in table.constraints if getattr(c, "name", None) == name)
+        table.constraints.discard(constraint)
+
+    for migration_name in ("0001_modelos_iniciales", "0003_cliente_pago_login", "0004_vehiculo_modelo_1900_2200"):
         migration = _load_migration(migration_name)
         monkeypatch.setattr(migration.op, "create_table", create_table)
         monkeypatch.setattr(migration.op, "add_column", add_column)
@@ -95,6 +105,7 @@ def test_migration_matches_models_without_connecting(monkeypatch):
         monkeypatch.setattr(migration.op, "create_unique_constraint", create_unique_constraint)
         monkeypatch.setattr(migration.op, "create_check_constraint", create_check_constraint)
         monkeypatch.setattr(migration.op, "create_index", lambda *a, **k: None)
+        monkeypatch.setattr(migration.op, "drop_constraint", drop_constraint)
         migration.upgrade()
 
     assert set(metadata.tables) == {"vehiculo", "celda", "operador", "cliente", "pago"}

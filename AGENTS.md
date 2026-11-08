@@ -47,7 +47,9 @@ instalar y ejecutar los proyectos en Windows está en `README.md`.
   entrada/salida, corrección de celda y reportes de punta a punta.
 - `backend/migrations/`: revisiones Alembic; `backend/alembic.ini` reutiliza la
   configuración privada. `0003` añade cliente, pago y las columnas nuevas de
-  vehiculo/operador, todas NOT NULL sin backfill automático.
+  vehiculo/operador, todas NOT NULL sin backfill automático. `0004` ajusta el
+  CHECK de `vehiculo.modelo` a 1900-2200 (antes 1-9999), para que coincida
+  con el esquema Pydantic de la API y con el documento del proyecto.
 - `backend/.env.example`: plantilla pública; conservar cualquier `.env` existente y privado.
 - `backend/requirements.txt`: dependencias de ejecución y pruebas con versiones
   exactas, incluidas las transitivas.
@@ -162,7 +164,7 @@ La prueba actual comprueba `/health` sin iniciar un servidor externo. Starlette
 puede emitir un aviso de deprecación sobre `httpx`; distinguirlo de un fallo.
 
 Las pruebas de integración de vehículos se habilitan con `RUN_POSTGRES_TESTS=1`
-y requieren `autos_colombia` con la revisión `0001`. Usan rollback exterior y
+y requieren `autos_colombia` con la revisión `0004` (cabeza actual). Usan rollback exterior y
 savepoints: no crear tablas ni alterar migraciones para probar. Los valores de
 las secuencias pueden avanzar. Ver `backend/README.md` para comandos completos.
 
