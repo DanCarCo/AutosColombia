@@ -9,14 +9,19 @@ from conftest import sesion_como
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.auth import operador_actual
 from app.database import get_engine, get_session
 from app.main import app
-from app.models import Cliente
+from app.models import Cliente, Operador
 
 pytestmark = pytest.mark.skipif(
     os.getenv("RUN_POSTGRES_TESTS") != "1",
     reason="Activa RUN_POSTGRES_TESTS=1 para probar PostgreSQL local.",
 )
+
+
+def _operador_falso() -> Operador:
+    return Operador(id=99, nombre="Sesión", telefono="001", usuario="sesion", password_hash="x", turno="DIA")
 
 
 @pytest.fixture
@@ -36,12 +41,14 @@ def client():
                 def override_session():
                     yield session
                 app.dependency_overrides[get_session] = override_session
+                app.dependency_overrides[operador_actual] = _operador_falso
                 try:
                     with sesion_como("ADMINISTRADOR"), TestClient(app) as api:
                         api.cliente_id = cliente_id  # type: ignore[attr-defined]
                         yield api
                 finally:
                     app.dependency_overrides.pop(get_session, None)
+                    app.dependency_overrides.pop(operador_actual, None)
         finally:
             transaction.rollback()
 

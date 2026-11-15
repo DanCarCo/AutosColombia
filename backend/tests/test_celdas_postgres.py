@@ -9,10 +9,16 @@ from sqlalchemy import inspect, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.auth import operador_actual
 from app.database import get_engine, get_session
 from app.main import app
+from app.models import Operador
 
 pytestmark = pytest.mark.skipif(os.getenv("RUN_POSTGRES_TESTS") != "1", reason="Requiere PostgreSQL local.")
+
+
+def _operador_falso() -> Operador:
+    return Operador(id=99, nombre="Sesión", telefono="001", usuario="sesion", password_hash="x", turno="DIA")
 
 
 @pytest.fixture
@@ -51,6 +57,7 @@ def test_crud_celdas(connection):
         def override():
             yield session
         app.dependency_overrides[get_session] = override
+        app.dependency_overrides[operador_actual] = _operador_falso
         try:
             with sesion_como('ADMINISTRADOR'), TestClient(app) as client:
                 code = 'CELL-' + uuid4().hex.upper()
@@ -78,3 +85,4 @@ def test_crud_celdas(connection):
                 assert client.get('/health').json() == {'status':'ok'}
         finally:
             app.dependency_overrides.pop(get_session, None)
+            app.dependency_overrides.pop(operador_actual, None)

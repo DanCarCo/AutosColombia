@@ -5,12 +5,17 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
+from app.auth import operador_actual
 from app.database import get_session
 from app.main import app
 from app.models import Operador
 from conftest import sesion_como
 
 VALIDO = {"nombre": "Prueba", "telefono": "001", "usuario": "prueba", "password": "secreta123", "turno": "DIA", "rol": "OPERADOR"}
+
+
+def _operador_falso() -> Operador:
+    return Operador(id=99, nombre="Sesión", telefono="001", usuario="sesion", password_hash="x", turno="DIA")
 
 
 @pytest.fixture
@@ -24,11 +29,13 @@ def api():
         yield session
 
     app.dependency_overrides[get_session] = override
+    app.dependency_overrides[operador_actual] = _operador_falso
     try:
         with sesion_como("ADMINISTRADOR"), TestClient(app) as client:
             yield client, session
     finally:
         app.dependency_overrides.pop(get_session, None)
+        app.dependency_overrides.pop(operador_actual, None)
 
 
 @pytest.mark.parametrize("field", ["nombre", "telefono", "usuario", "password"])
