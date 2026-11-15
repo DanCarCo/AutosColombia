@@ -4,7 +4,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { Celda } from '../models/celda';
 import { EstadoVehiculo } from '../models/estancia';
-import { AuthService } from '../services/auth.service';
 import { EstanciasService } from '../services/estancias.service';
 
 const nonBlank: ValidatorFn = (c) =>
@@ -21,7 +20,6 @@ export class ControlAcceso {
   private readonly api = inject(EstanciasService);
   private readonly fb = inject(FormBuilder);
   private readonly destroy = inject(DestroyRef);
-  readonly auth = inject(AuthService);
   private version = 0;
   readonly entrada = this.fb.group({
     placa: this.fb.nonNullable.control('', nonBlank),

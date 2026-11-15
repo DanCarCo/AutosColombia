@@ -1,6 +1,13 @@
 .management {
   padding: 44px 0 60px;
 }
+.breadcrumb {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
 .heading,
 .list-heading,
 .pagination {
@@ -12,23 +19,11 @@
 .heading {
   margin-bottom: 30px;
 }
-.session {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 13px;
-  color: var(--muted);
-}
-.eyebrow {
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: var(--muted);
-  font-weight: 700;
-}
 h1 {
-  margin: 12px 0;
-  font-size: 36px;
-  letter-spacing: -1px;
+  margin: 0 0 6px;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 h2 {
   font-size: 19px;
@@ -72,6 +67,15 @@ button.primary {
 }
 button.primary:hover:not(:disabled) {
   background: var(--primary-hover);
+}
+.management button.primary {
+  background: var(--figma-green);
+  border-color: var(--figma-green);
+}
+.management button.primary:hover:not(:disabled) {
+  background: var(--figma-green-hover);
+  filter: none;
+  transform: none;
 }
 button.danger {
   background: #a03930;

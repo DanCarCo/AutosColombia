@@ -1,12 +1,15 @@
 <section class="management" aria-labelledby="operators-title">
+  <nav class="breadcrumb" aria-label="Ruta de navegación">
+    <span>AutosColombia</span><span aria-hidden="true">/</span><span>Operadores</span
+    ><span aria-hidden="true">/</span><span>Listado de operadores</span>
+  </nav>
   <header class="heading">
     <div>
-      <span class="eyebrow">GESTIÓN DE OPERADORES</span>
-      <h1 id="operators-title">Operadores</h1>
-      <p>Administra los operadores de Autos Colombia.</p>
+      <h1 id="operators-title">Listado de operadores</h1>
+      <p>Administra los operadores y sus turnos.</p>
     </div>
     <button class="primary" type="button" (click)="newOperator()" [disabled]="busy()">
-      Nuevo operador
+      + Nuevo operador
     </button>
   </header>
   @if (success()) {
@@ -156,14 +159,16 @@
                 <td class="row-actions">
                   <button
                     type="button"
+                    class="link-action"
                     (click)="edit(operator)"
                     [disabled]="busy()"
                     [attr.aria-label]="'Editar ' + operator.nombre"
                   >
                     Editar</button
+                  ><span aria-hidden="true">·</span
                   ><button
                     type="button"
-                    class="delete-link"
+                    class="link-action delete-link"
                     (click)="confirmDelete(operator)"
                     [disabled]="busy()"
                     [attr.aria-label]="'Eliminar ' + operator.nombre"
@@ -178,7 +183,7 @@
       </div>
     }
     <nav class="pagination" aria-label="Paginación de operadores">
-      <span>Página {{ page() }} de {{ pages() }} · {{ limit }} por página</span>
+      <span>Mostrando {{ items().length }} de {{ total() }} registros</span>
       <div class="actions">
         <button
           type="button"
@@ -186,7 +191,19 @@
           [disabled]="busy() || offset() === 0"
         >
           Anterior</button
-        ><button
+        >@for (numero of pageNumbers(); track numero) {
+          <button
+            type="button"
+            class="page-number"
+            [class.current]="numero === page()"
+            [attr.aria-current]="numero === page() ? 'page' : null"
+            (click)="irAPagina(numero)"
+            [disabled]="busy()"
+          >
+            {{ numero }}
+          </button>
+        }
+        <button
           type="button"
           (click)="load(offset() + limit)"
           [disabled]="busy() || offset() + limit >= total()"

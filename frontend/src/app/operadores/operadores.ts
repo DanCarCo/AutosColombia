@@ -58,9 +58,14 @@ export class Operadores {
   readonly success = signal('');
   readonly page = computed(() => Math.floor(this.offset() / this.limit) + 1);
   readonly pages = computed(() => Math.max(1, Math.ceil(this.total() / this.limit)));
+  readonly pageNumbers = computed(() => Array.from({ length: this.pages() }, (_, i) => i + 1));
 
   constructor() {
     this.load();
+  }
+
+  irAPagina(numero: number): void {
+    this.load((numero - 1) * this.limit);
   }
 
   load(offset = this.offset()): void {

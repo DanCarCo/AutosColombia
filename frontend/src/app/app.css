@@ -1,55 +1,47 @@
-.page-shell {
-  max-width: 1200px;
-  margin: auto;
-  padding: 0 40px;
-}
-.site-header {
-  position: sticky;
-  top: 12px;
-  z-index: 10;
-  min-height: 72px;
-  margin-top: 12px;
-  padding: 0 16px 0 20px;
+.shell {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  background: rgb(255 255 255 / 78%);
-  backdrop-filter: blur(14px);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  box-shadow: var(--shadow-sm);
+  min-height: 100vh;
+  align-items: stretch;
+}
+.sidebar {
+  flex: 0 0 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 22px 16px;
+  background: var(--figma-sidebar);
+  color: var(--figma-sidebar-text);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-weight: 650;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 0 10px;
+  font-weight: 700;
   letter-spacing: -0.2px;
   text-decoration: none;
-  color: var(--ink);
+  color: #fff;
 }
 .brand-mark {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  background: var(--gradient-brand);
-  color: white;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  box-shadow: 0 4px 12px rgb(15 118 110 / 35%);
+  width: 18px;
+  height: 18px;
+  border: 2px solid #fff;
+  border-radius: 4px;
 }
 nav {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  flex-direction: column;
+  gap: 2px;
 }
 nav a {
   text-decoration: none;
-  color: var(--muted);
-  padding: 9px 15px;
+  color: var(--figma-sidebar-text);
+  padding: 10px 14px;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
@@ -58,14 +50,61 @@ nav a {
     color 0.15s ease;
 }
 nav a:hover {
-  background: var(--tint);
-  color: var(--primary-strong);
+  background: var(--figma-sidebar-active);
+  color: #fff;
 }
 nav a.active {
-  background: var(--gradient-brand);
+  background: var(--figma-sidebar-active);
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 3px 10px rgb(15 118 110 / 30%);
+}
+.sidebar-footer {
+  margin-top: auto;
+  padding: 14px 14px 4px;
+  border-top: 1px solid var(--figma-sidebar-border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--figma-sidebar-text-muted);
+}
+.status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+.content-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 28px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+.topbar-brand {
+  font-weight: 700;
+  color: var(--figma-sidebar);
+}
+.topbar-date {
+  color: var(--muted);
+  font-size: 13px;
+  white-space: nowrap;
 }
 .session-nav {
   display: flex;
@@ -74,6 +113,17 @@ nav a.active {
   font-size: 13px;
   color: var(--muted);
   white-space: nowrap;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--tint-strong);
+  color: var(--primary-strong);
+  font-size: 12px;
+  font-weight: 700;
 }
 .session-nav button {
   font: inherit;
@@ -93,30 +143,51 @@ nav a.active {
   font-weight: 600;
 }
 main {
-  min-height: calc(100vh - 190px);
+  flex: 1;
+  padding: 0 28px;
 }
 footer {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  padding: 26px 0;
+  padding: 18px 28px;
   border-top: 1px solid var(--border);
   font-size: 12px;
   color: var(--muted);
 }
 @media (max-width: 900px) {
-  .site-header {
+  .shell {
+    flex-direction: column;
+  }
+  .sidebar {
+    position: static;
+    height: auto;
+    flex: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .sidebar-footer {
+    margin-top: 0;
+    border-top: none;
+    flex-direction: row;
+    gap: 14px;
+  }
+  .topbar {
     flex-wrap: wrap;
     padding: 12px 16px;
   }
+  main,
+  footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
 @media (max-width: 600px) {
-  .page-shell {
-    padding: 0 16px;
-  }
-  .site-header {
-    position: static;
-  }
   footer {
     flex-wrap: wrap;
   }
