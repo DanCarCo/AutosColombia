@@ -1,15 +1,13 @@
 CASO PE-01 - Solicitudes sin autenticación
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "sin_sesion", "password": "<redactado>", "turno": "DIA"} -> HTTP 201 {"id": 7, "nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "sin_sesion", "turno": "DIA"}   # crear usuario sin token
-POST /celdas cuerpo={"codigo": "T-SINSESION", "tipo": "CARRO"} -> HTTP 201 {"codigo": "T-SINSESION", "tipo": "CARRO", "id": 6}   # crear celda sin token
-BD: operadores 3->4; celdas 5->6
-DELETE /operadores/7 -> HTTP 204 ""   # restaurar
-DELETE /celdas/6 -> HTTP 204 ""   # restaurar
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "sin_sesion", "password": "<redactado>", "turno": "DIA", "rol": "OPERADOR"} [sin sesión] -> HTTP 401 {"detail": "Se requiere iniciar sesión."}   # crear usuario sin token
+POST /celdas cuerpo={"codigo": "T-SINSESION", "tipo": "CARRO"} [sin sesión] -> HTTP 401 {"detail": "Se requiere iniciar sesión."}   # crear celda sin token
+BD: operadores 4->4; celdas 5->5
 
-ESTADO: Fallido
-RESULTADO: Se esperaba 401 en ambas; la API respondió 201 y 201 y creó el usuario y la celda sin sesión (se eliminaron después para restaurar el conjunto).
-INCIDENCIA: INC-02: los endpoints de operadores y celdas no exigen sesión (solo estancias y pagos la exigen).
+ESTADO: Aprobado
+RESULTADO: API 401 en ambas operaciones («Se requiere iniciar sesión.»); no se crearon usuarios ni celdas.

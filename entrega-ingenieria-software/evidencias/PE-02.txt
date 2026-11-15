@@ -1,13 +1,13 @@
 CASO PE-02 - Operador intenta crear usuarios
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-INTERFAZ (ruta): {"scenario": "ruta", "url": "http://127.0.0.1:4200/gestion/operadores", "texto": "GESTIÓN DE OPERADORES Operadores Administra los operadores de Autos Colombia. Nuevo operador Operadores registrados 3 Actualizar listado Operadores registrados Nombre Teléfono Usuario Turno Acciones Admin Prueba 3000000000 admin_prueba Noche EditarEliminar Operador Prueba 3000000000 operador_prueba ", "botonNuevo": true}
-POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "creado_por_operador", "password": "<redactado>", "turno": "DIA"} -> HTTP 201 {"id": 8, "nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "creado_por_operador", "turno": "DIA"}   # sesión de operador_prueba
-DELETE /operadores/8 -> HTTP 204 ""   # restaurar
+INTERFAZ (ruta): {"scenario": "ruta", "url": "http://127.0.0.1:4200/", "texto": "ORDEN EN CADA MOVIMIENTO Autos Colombia Control de entradas y salidas de vehículos Un espacio para organizar el movimiento de vehículos y mantener la información a mano. Bienvenido a tu espacio de gestión. Servicio disponible AUTOS COLOMBIA Cada entrada. Cada salida. Una gestión más organizada Lo es", "botonNuevo": false}
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "creado_por_operador", "password": "<redactado>", "turno": "DIA", "rol": "OPERADOR"} [sesión: operador] -> HTTP 403 {"detail": "No tienes permisos para esta operación."}   # sesión de operador_prueba
+BD: operadores 4->4
 
-ESTADO: Fallido
-RESULTADO: La interfaz muestra la pantalla de operadores con el botón «Nuevo operador» (URL http://127.0.0.1:4200/gestion/operadores) y la API crea la cuenta (respondió 201, se esperaba 403). Se eliminó después para restaurar.
-INCIDENCIA: INC-01: sin roles, un operador puede administrar usuarios.
+ESTADO: Aprobado
+RESULTADO: La interfaz no muestra la pantalla de operadores: al abrir /gestion/operadores redirige a Inicio (http://127.0.0.1:4200/) y no hay botón «Nuevo operador»; la API responde 403 «No tienes permisos para esta operación.» y no se crea la cuenta.

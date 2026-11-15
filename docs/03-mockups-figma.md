@@ -53,7 +53,7 @@ como diseño de siguientes iteraciones y no como funcionalidad hecha:
 
 | Marco | Contenido |
 | --- | --- |
-| 13 | Roles y permisos |
+| 13 | Roles y permisos (editor de permisos; los dos roles fijos ya existen, el editor no) |
 | 19–20 | Mapa de celdas |
 | 25–26 | Pagos: movimientos y registrar pago (cobro con medios de pago) |
 | 31–32 | Reportes de ocupación e ingresos |

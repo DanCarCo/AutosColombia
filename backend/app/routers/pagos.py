@@ -22,7 +22,7 @@ def registrar(data: PagoCrear, session: DatabaseSession, operador: OperadorAuten
     return service.register_payment(session, data, operador)
 
 
-@router.get("/pagos", response_model=PagosPagina)
+@router.get("/pagos", response_model=PagosPagina, dependencies=[Depends(operador_actual)])
 def list_all(
     session: DatabaseSession,
     offset: Annotated[int, Query(ge=0, le=9223372036854775807)] = 0,
@@ -32,7 +32,7 @@ def list_all(
     return service.list_payments(session, offset, limit, vehiculo_id)
 
 
-@router.get("/vehiculos/{id}/mensualidad", response_model=MensualidadEstadoRespuesta)
+@router.get("/vehiculos/{id}/mensualidad", response_model=MensualidadEstadoRespuesta, dependencies=[Depends(operador_actual)])
 def estado(id: VehicleId, session: DatabaseSession) -> dict:
     """RF-14: indica si el vehículo tiene mensualidad vigente hoy."""
     return service.estado_mensualidad(session, id)

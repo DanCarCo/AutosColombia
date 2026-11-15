@@ -4,6 +4,7 @@ from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
+from conftest import sesion_como
 from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
@@ -20,10 +21,10 @@ def test_operadores_structure_and_crud():
         transaction = connection.begin()
         try:
             assert connection.scalar(text("SELECT current_database()")) == "autos_colombia"
-            assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0004"
+            assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0005"
             inspector = inspect(connection)
             columns = {c["name"]: c for c in inspector.get_columns("operador")}
-            assert set(columns) == {"id", "nombre", "telefono", "usuario", "password_hash", "turno"}
+            assert set(columns) == {"id", "nombre", "telefono", "usuario", "password_hash", "turno", "rol"}
             assert str(columns["id"]["type"]) == "BIGINT"
             assert columns["id"]["identity"]["always"] is True
             assert all(not c["nullable"] for c in columns.values())
@@ -34,24 +35,24 @@ def test_operadores_structure_and_crud():
             }
             assert {c["name"] for c in inspector.get_check_constraints("operador")} == {
                 "ck_operador_nombre_no_vacio", "ck_operador_telefono_no_vacio",
-                "ck_operador_usuario_no_vacio", "ck_operador_password_hash_no_vacio", "ck_operador_turno",
+                "ck_operador_usuario_no_vacio", "ck_operador_password_hash_no_vacio", "ck_operador_turno", "ck_operador_rol",
             }
             with Session(bind=connection, join_transaction_mode="create_savepoint") as session:
                 def override():
                     yield session
 
                 app.dependency_overrides[get_session] = override
-                with TestClient(app) as client:
+                with sesion_como("ADMINISTRADOR"), TestClient(app) as client:
                     initial = client.get("/operadores").json()
                     assert initial["offset"] == 0 and initial["limit"] == 20
                     name = "TEST-OPERADOR-" + uuid4().hex
                     payload = {"nombre": f" {name} ", "telefono": " +57 00123 ", "usuario": name,
-                               "password": "clave-de-prueba", "turno": "DIA"}
+                               "password": "clave-de-prueba", "turno": "DIA", "rol": "OPERADOR"}
                     created = client.post("/operadores", json=payload)
                     assert created.status_code == 201
                     item = created.json()
                     assert item == {"id": item["id"], "nombre": name, "telefono": "+57 00123",
-                                    "usuario": name, "turno": "DIA"}
+                                    "usuario": name, "turno": "DIA", "rol": "OPERADOR"}
                     assert "password" not in item and "password_hash" not in item
                     assert type(item["id"]) is int and item["id"] > 0
                     path = f"/operadores/{item['id']}"

@@ -3,12 +3,13 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Path, Query, Response
 from sqlalchemy.orm import Session
 
+from app.auth import solo_administrador
 from app.database import get_session
 from app.models import Operador
 from app.schemas.operador import OperadorActualizar, OperadorCrear, OperadorRespuesta, OperadoresPagina
 from app.services import operador as service
 
-router = APIRouter(prefix="/operadores", tags=["Operadores"])
+router = APIRouter(prefix="/operadores", tags=["Operadores"], dependencies=[Depends(solo_administrador)])
 DatabaseSession = Annotated[Session, Depends(get_session)]
 OperatorId = Annotated[int, Path(ge=1, le=9223372036854775807)]
 

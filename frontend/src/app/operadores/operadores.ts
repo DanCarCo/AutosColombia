@@ -3,13 +3,13 @@ import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { OperadoresService } from '../services/operadores.service';
-import { Operador, OperadorActualizar, OperadorCrear, TURNOS, Turno } from '../models/operador';
+import { Operador, OperadorActualizar, OperadorCrear, ROLES, Rol, TURNOS, Turno } from '../models/operador';
 import { ErrorApi } from '../models/vehiculo';
 
 const nonBlank: ValidatorFn = (control) =>
   typeof control.value === 'string' && control.value.trim() ? null : { required: true };
 type TextField = 'nombre' | 'telefono' | 'usuario' | 'password';
-type Field = TextField | 'turno';
+type Field = TextField | 'turno' | 'rol';
 
 @Component({
   selector: 'app-operadores',
@@ -22,6 +22,7 @@ export class Operadores {
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   readonly turnos = TURNOS;
+  readonly roles = ROLES;
   readonly fields: { key: TextField; label: string }[] = [
     { key: 'nombre', label: 'Nombre' },
     { key: 'telefono', label: 'Teléfono' },
@@ -36,6 +37,10 @@ export class Operadores {
     turno: this.fb.nonNullable.control<Turno | ''>('', [
       Validators.required,
       (control) => (this.turnos.includes(control.value as Turno) ? null : { turno: true }),
+    ]),
+    rol: this.fb.nonNullable.control<Rol | ''>('', [
+      Validators.required,
+      (control) => (this.roles.includes(control.value as Rol) ? null : { rol: true }),
     ]),
   });
   readonly items = signal<Operador[]>([]);
@@ -134,6 +139,7 @@ export class Operadores {
     if (control.errors['server']) return String(control.errors['server']);
     if (control.errors['required']) return 'Este campo es obligatorio y no puede estar vacío.';
     if (field === 'turno') return 'Selecciona un turno válido.';
+    if (field === 'rol') return 'Selecciona un rol válido.';
     return 'Revisa este campo.';
   }
 
@@ -151,6 +157,7 @@ export class Operadores {
       telefono: value.telefono.trim(),
       usuario: value.usuario.trim(),
       turno: value.turno as Turno,
+      rol: value.rol as Rol,
       ...(value.password ? { password: value.password } : {}),
     };
     this.saving.set(true);

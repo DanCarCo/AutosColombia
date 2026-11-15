@@ -25,7 +25,7 @@ entradas y salidas de vehículos, usuarios (operadores y clientes), celdas y pag
 | RF-04 | 1 | Registrar la **salida** de un vehículo y liberar su celda. | `POST /estancias/salida` · `/control-acceso` |
 | RF-05 | 1 | Consultar el estado de un vehículo por placa: *dentro* (con celda y fecha de entrada), *fuera* o *no registrado*. | `GET /estancias/vehiculo/{placa}` · `/control-acceso` |
 | RF-06 | 2 | Gestionar **celdas** (crear, listar paginado, consultar, editar, eliminar). El código es único y se normaliza a mayúsculas; el tipo es obligatorio. | `/celdas` · `/gestion/celdas` |
-| RF-07 | 2 | Gestionar **operadores**: nombre, teléfono, usuario único, contraseña (se guarda como hash, nunca en claro) y turno DIA o NOCHE. | `/operadores` · `/gestion/operadores` |
+| RF-07 | 2 | Gestionar **operadores**: nombre, teléfono, usuario único, contraseña (se guarda como hash, nunca en claro), turno DIA o NOCHE y **rol** ADMINISTRADOR u OPERADOR. Solo el administrador gestiona cuentas. | `/operadores` · `/gestion/operadores` |
 | RF-08 | 1–2 | Validar los datos de entrada: textos no vacíos, año en rango, tipos permitidos, sin campos desconocidos. Respuestas 422 con mensaje. | Esquemas Pydantic y restricciones CHECK |
 | RF-09 | 1–2 | Mantener la integridad referencial: no se borran celdas, vehículos, clientes u operadores con registros relacionados (409). | Claves foráneas `RESTRICT` |
 | RF-10 | 2 | Cargar las **80 celdas iniciales** (10 MOTO + 70 CARRO) y consultar las **celdas disponibles** (sin estancia abierta). | `seed_data.py` · `GET /celdas/disponibles` |
@@ -34,9 +34,10 @@ entradas y salidas de vehículos, usuarios (operadores y clientes), celdas y pag
 | RF-13 | 2 | **Reasignar** un vehículo a otro cliente. | `PATCH /vehiculos/{id}` con `cliente_id` · `/gestion/vehiculos` |
 | RF-14 | 2 | Registrar **mensualidades**: el monto lo calcula el servidor según el tipo de vehículo (MOTO $100.000; AUTOMOVIL y CAMIONETA $250.000); el periodo cubre un mes calendario. Consultar la vigencia. La entrada exige mensualidad vigente. | `POST /pagos`, `GET /pagos`, `GET /vehiculos/{id}/mensualidad` · `/gestion/mensualidades` |
 | RF-15 | 2 | **Reporte resumen**: celdas disponibles, celdas totales y clientes registrados. | `GET /reportes/resumen` · `/reportes` |
-| RF-16 | 2 | **Inicio de sesión** de operadores con usuario y contraseña; token JWT. Entrada, salida, corrección de celda y registro de pagos exigen sesión, y el operador que actúa se toma del token. | `POST /auth/login` · `/login` |
+| RF-16 | 2 | **Inicio y cierre de sesión** de operadores con usuario y contraseña; token JWT con el rol. Todas las operaciones (salvo el login y `/health`) exigen sesión, y el operador que actúa se toma del token. **Cerrar sesión revoca el token** en el servidor. | `POST /auth/login`, `POST /auth/logout` · `/login` |
+| RF-17 | 2 | **Roles y permisos.** ADMINISTRADOR: crea y gestiona operadores, celdas, clientes y vehículos; **no** registra accesos. OPERADOR: registra entradas, salidas y correcciones de celda, y consulta celdas disponibles; **no** administra usuarios ni celdas. Ambos registran mensualidades y ven el resumen. Un rol sin permiso recibe 403 y la interfaz oculta lo que no le corresponde. | `requiere_roles` en el backend · `rolGuard` y menú por rol en el frontend |
 
-> La numeración RF-10 a RF-16 es la que ya usan el código y los comentarios del
+> La numeración RF-10 a RF-17 es la que ya usan el código y los comentarios del
 > repositorio. RF-01 a RF-09 agrupan lo de la iteración 1 y las reglas
 > transversales. Si tu documento de la Actividad 1 numera distinto, conserva la
 > numeración de ese documento y usa la columna *Evidencia* para enlazar.
@@ -46,7 +47,7 @@ entradas y salidas de vehículos, usuarios (operadores y clientes), celdas y pag
 | Id | Categoría | Requerimiento | Cómo se cumple |
 | --- | --- | --- | --- |
 | RNF-01 | Seguridad | Las contraseñas no se almacenan en claro ni se devuelven en ninguna respuesta. | Hash PBKDF2-SHA256 (`app/security.py`); `OperadorRespuesta` no incluye contraseña. |
-| RNF-02 | Seguridad | Las operaciones críticas exigen sesión y los secretos no se versionan. | JWT firmado con `JWT_SECRET` (`backend/.env`, excluido de Git); `backend/.env.example` solo con valores ficticios. |
+| RNF-02 | Seguridad | Toda operación de negocio exige sesión y respeta el rol (401 sin sesión, 403 sin permiso); el cierre de sesión revoca el token; los secretos no se versionan. | JWT firmado con `JWT_SECRET` (`backend/.env`, excluido de Git); `backend/.env.example` solo con valores ficticios. |
 | RNF-03 | Integridad | La base de datos garantiza las reglas aunque falle la aplicación. | Restricciones únicas, CHECK, FK `RESTRICT` e índices únicos parciales (una estancia abierta por vehículo y por celda). |
 | RNF-04 | Confiabilidad | Cada operación es atómica y no deja datos a medias. | Transacciones con commit/rollback en la capa de servicios; errores públicos sin detalles del controlador. |
 | RNF-05 | Disponibilidad | Comprobar que la API vive sin depender de la base de datos. | `GET /health` responde `{"status":"ok"}` sin abrir conexión. |
@@ -62,7 +63,6 @@ Declarado de forma explícita para no presentar como hecho lo que no lo está:
 
 - No hay recibo imprimible ni cobro por pasarela de pago: la mensualidad se
   registra, no se procesa un pago real.
-- No hay roles diferenciados (administrador / operador): todo usuario con
-  sesión puede usar las pantallas. Las pantallas de gestión no exigen sesión;
-  entrada, salida, corrección de celda y pagos sí.
+- No hay un editor de permisos: los dos roles (ADMINISTRADOR y OPERADOR) y sus
+  permisos están fijos en el código; no hay más roles ni permisos configurables.
 - Falta una revisión visual en móvil y una auditoría de accesibilidad completa.

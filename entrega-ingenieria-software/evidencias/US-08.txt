@@ -1,13 +1,15 @@
 CASO US-08 - Crear una cuenta de administrador
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "admin_nuevo", "password": "<redactado>", "turno": "DIA", "rol": "ADMINISTRADOR"} -> HTTP 422 {"detail": [{"type": "extra_forbidden", "loc": ["body", "rol"], "msg": "Extra inputs are not permitted", "input": "ADMINISTRADOR"}]}   # con rol ADMINISTRADOR
-POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "admin_nuevo", "password": "<redactado>", "turno": "ADMINISTRADOR"} -> HTTP 422 {"detail": [{"type": "literal_error", "loc": ["body", "turno"], "msg": "Input should be 'DIA' or 'NOCHE'", "input": "ADMINISTRADOR", "ctx": {"expected": "'DIA' or 'NOCHE'"}}]}   # rol enviado como turno
-BD: cuentas admin_nuevo = 0
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "admin_nuevo", "password": "<redactado>", "turno": "DIA", "rol": "ADMINISTRADOR"} [sesión: administrador] -> HTTP 201 {"id": 6, "nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "admin_nuevo", "turno": "DIA", "rol": "ADMINISTRADOR"}
+Login con la nueva cuenta: 200 con token
+GET /celdas?limit=1 [sesión: admin_nuevo] -> HTTP 200 {"items": [{"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}], "total": 5, "offset": 0, "limit": 1}   # administrar celdas
+GET /operadores?limit=1 [sesión: admin_nuevo] -> HTTP 200 {"items": [{"id": 1, "nombre": "Admin Prueba", "telefono": "3000000000", "usuario": "admin_prueba", "turno": "NOCHE", "rol": "ADMINISTRADOR"}], "total": 4, "offset": 0, "limit": 1}   # crear/listar usuarios
+POST /estancias/entrada cuerpo={"placa": "PRB003", "celda_id": 5} [sesión: admin_nuevo] -> HTTP 403 {"detail": "No tienes permisos para esta operación."}   # permiso del operador: no se hereda
 
-ESTADO: Fallido
-RESULTADO: No se puede crear una cuenta con rol ADMINISTRADOR: la API responde 422 porque el contrato solo tiene usuario, contraseña y turno (DIA/NOCHE).
-INCIDENCIA: INC-01: el sistema no define roles; no existe el tipo de cuenta administrador.
+ESTADO: Aprobado
+RESULTADO: Se crea la cuenta con rol ADMINISTRADOR (API 201); al ingresar puede gestionar operadores y celdas (200) y no recibe permisos del operador: registrar una entrada responde 403.

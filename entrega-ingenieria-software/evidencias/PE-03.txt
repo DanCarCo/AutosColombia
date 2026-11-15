@@ -1,14 +1,16 @@
 CASO PE-03 - Operador intenta administrar celdas
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-GET /celdas?limit=5 -> HTTP 200 {"items": [{"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}, {"codigo": "T-HIST-01", "tipo": "CARRO", "id": 2}, {"codigo": "T-OCUP-01", "tipo": "CARRO", "id": 3}, {"codigo": "T-ELIM-01", "tipo": "CARRO", "id": 4}, {"codigo": "T-   # listar
-POST /celdas cuerpo={"codigo": "T-PE03", "tipo": "CARRO"} -> HTTP 201 {"codigo": "T-PE03", "tipo": "CARRO", "id": 7}   # crear
-PATCH /celdas/7 cuerpo={"tipo": "MOTO"} -> HTTP 200 {"codigo": "T-PE03", "tipo": "MOTO", "id": 7}   # editar
-DELETE /celdas/7 -> HTTP 204 ""   # eliminar (restaura el conjunto)
+GET /celdas?limit=5 [sesión: operador] -> HTTP 403 {"detail": "No tienes permisos para esta operación."}   # listar
+POST /celdas cuerpo={"codigo": "T-PE03", "tipo": "CARRO"} [sesión: operador] -> HTTP 403 {"detail": "No tienes permisos para esta operación."}   # crear
+PATCH /celdas/1 cuerpo={"tipo": "MOTO"} [sesión: operador] -> HTTP 403 {"detail": "No tienes permisos para esta operación."}   # editar
+DELETE /celdas/1 [sesión: operador] -> HTTP 403 {"detail": "No tienes permisos para esta operación."}   # eliminar
+GET /celdas/1 [sesión: administrador] -> HTTP 200 {"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}   # revisión con el administrador
+BD: celdas 5->5; T-LIBRE-01 tipo=CARRO
 
-ESTADO: Fallido
-RESULTADO: Se esperaban 403; la API permitió listar (200), crear (201), editar (200) y eliminar (204) con la sesión de operador. La celda de sonda se eliminó.
-INCIDENCIA: INC-01: sin roles, un operador administra celdas.
+ESTADO: Aprobado
+RESULTADO: Listar, crear, editar y eliminar celdas con la sesión de operador responden 403; el catálogo y la celda T-LIBRE-01 no cambiaron. La consulta auxiliar de disponibilidad se prueba en PE-05.

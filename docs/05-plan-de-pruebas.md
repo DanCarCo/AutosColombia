@@ -5,21 +5,25 @@ incluye las pruebas de las funciones que la hacen posible (sesión, mensualidad,
 entrada). Cada caso indica si tiene prueba **automática** (archivo de `pytest`
 o de Angular) y el paso **manual** para el video.
 
-- **Entorno:** Windows, Python 3.13, Node.js 24, PostgreSQL local con migración `0004`.
+- **Entorno:** Windows, Python 3.13, Node.js 24, PostgreSQL con migración `0005` (roles).
 - **Datos de demostración:** `backend/seed_demo.py` (solo demostración; ver `backend/README.md`).
 - **Cómo ejecutar todo:** `entrega-ingenieria-software/verificar-entrega.ps1` (ver también `AGENTS.md`).
 
-## Resultado de la última ejecución (14/11/2026)
+## Resultado de la última ejecución (15/11/2026, con roles)
 
 | Suite | Comando | Resultado |
 | --- | --- | --- |
-| Backend | `.\.venv\Scripts\python.exe -m pytest -q` | **209 aprobadas**, 9 omitidas (necesitan `RUN_POSTGRES_TESTS=1`) |
+| Backend | `.\.venv\Scripts\python.exe -m pytest -q` | **243 aprobadas**, 9 omitidas (necesitan `RUN_POSTGRES_TESTS=1`) |
+| Backend con PostgreSQL real | `$env:RUN_POSTGRES_TESTS='1'; .\.venv\Scripts\python.exe -m pytest -q` | **252 aprobadas** (base en la revisión `0005`) |
 | Frontend (compilación) | `npm.cmd run build` | Compilación correcta |
-| Frontend (pruebas) | `npm.cmd test -- --watch=false` | **71 aprobadas** en 13 archivos |
+| Frontend (pruebas) | `npm.cmd test -- --watch=false` | **75 aprobadas** en 14 archivos |
+| Plan formal PP-02 | `entrega-ingenieria-software/Plan_Pruebas_Usuarios_Celdas_Autos_Colombia.xlsx` | **30 de 30 casos aprobados** (evidencia en `entrega-ingenieria-software/evidencias/`) |
 
-Las 9 pruebas omitidas son de integración con PostgreSQL real; se activan con
-`RUN_POSTGRES_TESTS=1` y requieren la base `autos_colombia` en la revisión `0004`
-(ver `backend/README.md`). No se afirma su resultado aquí si no se ejecutaron.
+Las pruebas de la matriz de permisos por rol están en `backend/tests/test_roles.py`. La primera ejecución del plan PP-02
+(commit `0cfb344`, sin roles) tuvo 19 aprobados y 11 fallidos; las cuatro incidencias se corrigieron y están cerradas
+(ver `entrega-ingenieria-software/evidencias/INCIDENCIAS.md`).
+
+> Los casos CP-xx de abajo son el resumen propio de la entrega; el formato oficial con resultados por caso es el Excel PP-02.
 
 ## Casos de prueba
 

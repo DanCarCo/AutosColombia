@@ -1,13 +1,14 @@
 CASO US-05 - Sesión vencida o revocada
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-POST /estancias/entrada cuerpo={"placa": "PRB003", "celda_id": 5} -> HTTP 401 {"detail": "La sesión expiró; inicia sesión de nuevo."}   # sesión vencida (exp en el pasado)
-Revocación: la API no ofrece cierre de sesión ni lista de revocación; el cierre solo borra el token del navegador. Se reutiliza el token como «sesión revocada».
-PATCH /estancias/celda cuerpo={"placa": "NOEXISTE", "celda_id": 5} -> HTTP 404 {"detail": "Vehículo no encontrado."}   # operación protegida sin efectos; 401 = rechazado, otro código = sesión aceptada
+POST /estancias/entrada cuerpo={"placa": "PRB003", "celda_id": 5} [sesión: vencida] -> HTTP 401 {"detail": "La sesión expiró; inicia sesión de nuevo."}   # sesión vencida (exp en el pasado)
+Revocación: se cierra la sesión con POST /auth/logout y luego se reutiliza el mismo token.
+POST /auth/logout [sesión: revocada] -> HTTP 204 ""   # cierre de sesión
+PATCH /estancias/celda cuerpo={"placa": "NOEXISTE", "celda_id": 5} [sesión: revocada] -> HTTP 401 {"detail": "La sesión fue cerrada; inicia sesión de nuevo."}   # operación protegida con la sesión revocada
 
-ESTADO: Fallido
-RESULTADO: Vencida: API 401 (sesión expiró). Revocada: la API NO responde 401 (respondió 404, o sea aceptó la sesión), porque el token no puede revocarse.
-INCIDENCIA: INC-03: el cierre de sesión no revoca el token (JWT sin lista de revocación); sigue válido hasta expirar (480 min).
+ESTADO: Aprobado
+RESULTADO: Vencida: API 401 «La sesión expiró; inicia sesión de nuevo.». Revocada: tras POST /auth/logout (204) el mismo token responde 401 «La sesión fue cerrada; inicia sesión de nuevo.»; no se consultó ni cambió información.

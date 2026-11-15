@@ -35,7 +35,7 @@ export class EstanciasService {
       .pipe(timeout(15000));
   }
   celdas(): Observable<Celda[]> {
-    return this.todas((offset) => this.cells.list(offset, 100));
+    return this.todas((offset) => this.cells.disponibles(offset, 100));
   }
 
   private todas<T>(load: (offset: number) => Observable<Pagina<T>>): Observable<T[]> {

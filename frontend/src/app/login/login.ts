@@ -38,10 +38,11 @@ export class Login {
       .login({ usuario: usuario.trim(), password })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
+        next: (respuesta) => {
           this.saving.set(false);
           const volver = this.route.snapshot.queryParamMap.get('volver');
-          this.router.navigateByUrl(volver || '/control-acceso');
+          const inicio = respuesta.operador.rol === 'ADMINISTRADOR' ? '/gestion/operadores' : '/control-acceso';
+          this.router.navigateByUrl(volver || inicio);
         },
         error: (error: HttpErrorResponse) => {
           this.saving.set(false);

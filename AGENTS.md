@@ -37,8 +37,16 @@ instalar y ejecutar los proyectos en Windows está en `README.md`.
   celdas disponibles/totales y clientes registrados.
 - `backend/app/auth.py`, `app/schemas/auth.py`, `app/routers/auth.py` y
   `app/security.py`: inicio de sesión de operadores (`POST /auth/login`),
-  tokens JWT firmados con `JWT_SECRET` (`backend/.env`) y hash de contraseñas
-  con PBKDF2-SHA256 (sin dependencias nuevas de hashing).
+  tokens JWT firmados con `JWT_SECRET` (`backend/.env`) con `rol` y `jti`, hash de
+  contraseñas con PBKDF2-SHA256 (sin dependencias nuevas de hashing) y cierre de sesión
+  real (`POST /auth/logout` guarda el `jti` en `token_revocado`).
+- Roles (RF-17): `operador.rol` es `ADMINISTRADOR` u `OPERADOR`. `app/auth.py` expone
+  `operador_actual` (401), `requiere_roles`, `solo_administrador` y `solo_operador` (403).
+  ADMINISTRADOR: `/operadores`, `/celdas` (CRUD) y escritura de `/clientes` y `/vehiculos`.
+  OPERADOR: `/estancias/entrada|salida|celda`. Cualquier sesión: lecturas de clientes y
+  vehículos, `/celdas/disponibles`, `/pagos`, mensualidad, `/estancias/vehiculo/{placa}` y
+  `/reportes/resumen`. En una base nueva el primer administrador se crea con
+  `backend/crear_administrador.py`.
 - `backend/seed_data.py`: carga opcional e idempotente de las 80 celdas
   iniciales (10 MOTO + 70 CARRO); no crea operadores ni clientes de ejemplo.
 - `backend/seed_demo.py`: SOLO para demostración manual, no para producción;
@@ -49,7 +57,9 @@ instalar y ejecutar los proyectos en Windows está en `README.md`.
   configuración privada. `0003` añade cliente, pago y las columnas nuevas de
   vehiculo/operador, todas NOT NULL sin backfill automático. `0004` ajusta el
   CHECK de `vehiculo.modelo` a 1900-2200 (antes 1-9999), para que coincida
-  con el esquema Pydantic de la API y con el documento del proyecto.
+  con el esquema Pydantic de la API y con el documento del proyecto. `0005` añade
+  `operador.rol` (NOT NULL con CHECK; las cuentas existentes pasan a OPERADOR y la de menor
+  id a ADMINISTRADOR) y la tabla `token_revocado`.
 - `backend/.env.example`: plantilla pública; conservar cualquier `.env` existente y privado.
 - `backend/requirements.txt`: dependencias de ejecución y pruebas con versiones
   exactas, incluidas las transitivas.
@@ -67,7 +77,8 @@ instalar y ejecutar los proyectos en Windows está en `README.md`.
 - `frontend/src/app/login/`: inicio de sesión de operador (RF-16).
 - `frontend/src/app/services/auth.service.ts`: sesión (token + operador) en memoria y
   `localStorage`; `interceptors/auth.interceptor.ts` agrega `Authorization: Bearer` a cada
-  solicitud; `guards/auth.guard.ts` protege `control-acceso`.
+  solicitud; `guards/auth.guard.ts` exige sesión y `guards/rol.guard.ts` (`rolGuard`) limita
+  cada pantalla a su rol. El menú de `app.html` cambia según el rol; `logout()` revoca el token.
 - `frontend/src/app/services/clientes.service.ts`: CRUD de clientes y catálogo completo (`todos()`).
 - `frontend/src/app/services/api.service.ts`: llamadas HTTP y base de API centralizadas.
 - `frontend/src/app/models/vehiculo.ts`: contratos de solicitudes, respuestas y tipos.
@@ -172,7 +183,7 @@ La prueba actual comprueba `/health` sin iniciar un servidor externo. Starlette
 puede emitir un aviso de deprecación sobre `httpx`; distinguirlo de un fallo.
 
 Las pruebas de integración de vehículos se habilitan con `RUN_POSTGRES_TESTS=1`
-y requieren `autos_colombia` con la revisión `0004` (cabeza actual). Usan rollback exterior y
+y requieren `autos_colombia` con la revisión `0005` (cabeza actual). Usan rollback exterior y
 savepoints: no crear tablas ni alterar migraciones para probar. Los valores de
 las secuencias pueden avanzar. Ver `backend/README.md` para comandos completos.
 

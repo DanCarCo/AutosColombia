@@ -1,11 +1,12 @@
 CASO CE-11 - Eliminar celda libre con historial
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-DELETE /celdas/2 -> HTTP 409 {"detail": "La celda tiene registros relacionados y no se puede eliminar."}   # celda libre con estancia cerrada
-GET /celdas/2 -> HTTP 200 {"codigo": "T-HIST-01", "tipo": "CARRO", "id": 2}
+DELETE /celdas/2 [sesión: administrador] -> HTTP 409 {"detail": "La celda tiene registros relacionados y no se puede eliminar."}   # celda libre con estancia cerrada
+GET /celdas/2 [sesión: administrador] -> HTTP 200 {"codigo": "T-HIST-01", "tipo": "CARRO", "id": 2}
 BD: estancias de T-HIST-01 antes=1, después=1; abiertas=0
 
 ESTADO: Aprobado

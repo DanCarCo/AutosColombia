@@ -25,3 +25,26 @@ if not ENV_FILE.exists():
         "DB_CONNECT_TIMEOUT": "1",
     }.items():
         os.environ.setdefault(clave, valor)
+
+
+from contextlib import contextmanager
+
+from app.auth import operador_actual
+from app.main import app
+from app.models import Operador
+
+
+def operador_falso(rol: str = "ADMINISTRADOR") -> Operador:
+    """Operador en memoria con el rol indicado, para pruebas que no usan PostgreSQL."""
+    return Operador(id=1, nombre="Prueba", telefono="001", usuario="prueba", password_hash="x", turno="DIA", rol=rol)
+
+
+@contextmanager
+def sesion_como(rol: str | None):
+    """Simula la sesión de un operador con `rol` (None = sin sesión). Restaura al salir."""
+    if rol is not None:
+        app.dependency_overrides[operador_actual] = lambda: operador_falso(rol)
+    try:
+        yield
+    finally:
+        app.dependency_overrides.pop(operador_actual, None)

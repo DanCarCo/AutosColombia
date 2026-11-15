@@ -1,14 +1,14 @@
 CASO PE-05 - Operador consulta disponibilidad
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-GET /celdas/disponibles?limit=100 -> HTTP 200 {"items": [{"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}, {"codigo": "T-HIST-01", "tipo": "CARRO", "id": 2}, {"codigo": "T-ELIM-01", "tipo": "CARRO", "id": 4}, {"codigo": "T-PE04", "tipo": "CARRO", "id": 5}], "total": 4, "off   # API de disponibilidad
-API: T-LIBRE-01 incluida; T-OCUP-01 no aparece (correcto)
-INTERFAZ (entrada_celdas): {"scenario": "entrada_celdas", "opciones": ["Selecciona una celda", "T-LIBRE-01 · CARRO", "T-HIST-01 · CARRO", "T-OCUP-01 · CARRO", "T-ELIM-01 · CARRO", "T-PE04 · CARRO"], "botonesAdmin": ["Cerrar sesión", "Actualizar catálogos", "Registrar entrada", "Consultar vehículo", "Mover vehículo de celda"], "menu": ["Inicio", "Control de acceso", "Operadores", "Celdas", "Vehículos", "Clientes", "Mensualidades", "Reportes"]}
-Formulario de entrada: T-OCUP-01 APARECE en el selector
+GET /celdas/disponibles?limit=100 [sesión: operador] -> HTTP 200 {"items": [{"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}, {"codigo": "T-HIST-01", "tipo": "CARRO", "id": 2}, {"codigo": "T-ELIM-01", "tipo": "CARRO", "id": 4}, {"codigo": "T-PE04", "tipo": "CARRO", "id": 5}], "total   # API de disponibilidad
+INTERFAZ (entrada_celdas): {"scenario": "entrada_celdas", "opciones": ["Selecciona una celda", "T-LIBRE-01 · CARRO", "T-HIST-01 · CARRO", "T-ELIM-01 · CARRO", "T-PE04 · CARRO"], "botonesAdmin": ["Cerrar sesión", "Actualizar catálogos", "Registrar entrada", "Consultar vehículo", "Mover vehículo de celda"], "menu": ["Inicio", "Control de acceso", "Mensualidades", "Reportes"]}
+GET /celdas/disponibles?limit=100 [sesión: operador] -> HTTP 200 {"items": [{"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}, {"codigo": "T-HIST-01", "tipo": "CARRO", "id": 2}, {"codigo": "T-ELIM-01", "tipo": "CARRO", "id": 4}, {"codigo": "T-PE04", "tipo": "CARRO", "id": 5}], "total   # segunda consulta: la consulta no reserva
+Formulario de entrada: T-LIBRE-01 aparece; T-OCUP-01 no aparece; acciones de administración visibles: ninguna
 
-ESTADO: Fallido
-RESULTADO: La API de disponibilidad es correcta (T-LIBRE-01 sí, T-OCUP-01 no), pero el selector del formulario de entrada lista TODAS las celdas, incluida la ocupada T-OCUP-01, y el menú del operador conserva Operadores y Celdas.
-INCIDENCIA: INC-04: el formulario de entrada usa /celdas (todas) en vez de /celdas/disponibles; la ocupación solo se rechaza al registrar. Además aplica INC-01.
+ESTADO: Aprobado
+RESULTADO: La API y el selector del formulario de entrada listan T-LIBRE-01 y no T-OCUP-01; el operador no ve botones de administración (sin Operadores ni Celdas en el menú); consultar dos veces devuelve el mismo total (no reserva la celda).

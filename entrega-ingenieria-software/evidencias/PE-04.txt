@@ -1,13 +1,13 @@
 CASO PE-04 - Administrador intenta registrar accesos
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-POST /estancias/entrada cuerpo={"placa": "PRB003", "celda_id": 5} -> HTTP 201 {"id": 3, "vehiculo_id": 3, "celda_id": 5, "entrada": "2026-11-15T17:06:50.803805Z", "salida": null, "operador_entrada_id": 1, "operador_salida_id": null}   # entrada con sesión de admin_prueba
-POST /estancias/salida cuerpo={"placa": "PRB003"} -> HTTP 200 {"id": 3, "vehiculo_id": 3, "celda_id": 5, "entrada": "2026-11-15T17:06:50.803805Z", "salida": "2026-11-15T17:06:50.839170Z", "operador_entrada_id": 1, "operador_salida_id": 1}   # salida con sesión de admin_prueba
-BD: estancias 2->3
+POST /estancias/entrada cuerpo={"placa": "PRB003", "celda_id": 5} [sesión: administrador] -> HTTP 403 {"detail": "No tienes permisos para esta operación."}   # entrada con sesión de admin_prueba
+POST /estancias/salida cuerpo={"placa": "PRB002"} [sesión: administrador] -> HTTP 403 {"detail": "No tienes permisos para esta operación."}   # salida con sesión de admin_prueba (PRB002 sí tiene estancia abierta)
+BD: estancias 2->2; estancias abiertas=1
 
-ESTADO: Fallido
-RESULTADO: Se esperaban 403; la entrada respondió 201 y la salida 200: la cuenta administradora registró y cerró una estancia (dato de prueba aislado: PRB003 / T-PE04).
-INCIDENCIA: INC-01: sin roles, cualquier cuenta registra accesos.
+ESTADO: Aprobado
+RESULTADO: Entrada y salida con la sesión de administrador responden 403; no se creó ni se cerró ninguna estancia (la de PRB002 sigue abierta).

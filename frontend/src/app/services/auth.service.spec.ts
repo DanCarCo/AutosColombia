@@ -62,5 +62,9 @@ describe('AuthService', () => {
     service.logout();
     expect(service.estaAutenticado()).toBe(false);
     expect(localStorage.getItem('autos-colombia.sesion')).toBeNull();
+    // El token se revoca en el servidor, no solo se borra del navegador.
+    const cierre = http.expectOne({ method: 'POST', url: '/auth/logout' });
+    expect(cierre.request.headers.get('Authorization')).toBe('Bearer token-de-prueba');
+    cierre.flush(null, { status: 204, statusText: 'No Content' });
   });
 });

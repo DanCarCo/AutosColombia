@@ -3,21 +3,24 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Path, Query, Response
 from sqlalchemy.orm import Session
 
+from app.auth import operador_actual, solo_administrador
 from app.database import get_session
 from app.schemas.celda import CeldaActualizar, CeldaCrear, CeldaRespuesta, CeldasPagina
 from app.services import celda as service
 
 router = APIRouter(prefix="/celdas", tags=["Celdas"])
 DatabaseSession = Annotated[Session, Depends(get_session)]
+ADMIN = [Depends(solo_administrador)]
+SESION = [Depends(operador_actual)]
 CellId = Annotated[int, Path(ge=1, le=9223372036854775807)]
 
 
-@router.post("", response_model=CeldaRespuesta, status_code=201)
+@router.post("", response_model=CeldaRespuesta, status_code=201, dependencies=ADMIN)
 def create(data: CeldaCrear, session: DatabaseSession):
     return service.create_cell(session, data)
 
 
-@router.get("", response_model=CeldasPagina)
+@router.get("", response_model=CeldasPagina, dependencies=ADMIN)
 def list_all(
     session: DatabaseSession,
     offset: Annotated[int, Query(ge=0, le=9223372036854775807)] = 0,
@@ -26,7 +29,7 @@ def list_all(
     return service.list_cells(session, offset, limit)
 
 
-@router.get("/disponibles", response_model=CeldasPagina)
+@router.get("/disponibles", response_model=CeldasPagina, dependencies=SESION)
 def list_available(
     session: DatabaseSession,
     offset: Annotated[int, Query(ge=0, le=9223372036854775807)] = 0,
@@ -36,17 +39,17 @@ def list_available(
     return service.list_available_cells(session, offset, limit)
 
 
-@router.get("/{id}", response_model=CeldaRespuesta)
+@router.get("/{id}", response_model=CeldaRespuesta, dependencies=ADMIN)
 def get_one(id: CellId, session: DatabaseSession):
     return service.get_cell(session, id)
 
 
-@router.patch("/{id}", response_model=CeldaRespuesta)
+@router.patch("/{id}", response_model=CeldaRespuesta, dependencies=ADMIN)
 def update(id: CellId, data: CeldaActualizar, session: DatabaseSession):
     return service.update_cell(session, id, data)
 
 
-@router.delete("/{id}", status_code=204)
+@router.delete("/{id}", status_code=204, dependencies=ADMIN)
 def delete(id: CellId, session: DatabaseSession) -> Response:
     service.delete_cell(session, id)
     return Response(status_code=204)

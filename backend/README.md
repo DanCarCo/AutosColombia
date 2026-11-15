@@ -384,6 +384,31 @@ corregir esas filas manualmente. Revisar primero sin aplicar:
 .\.venv\Scripts\python.exe -m alembic -c alembic.ini upgrade 0003:0004 --sql
 ```
 
+### Migración `0005`: roles y cierre de sesión real
+
+`migrations/versions/0005_rol_y_sesiones_revocadas.py` agrega `operador.rol`
+(`ADMINISTRADOR` u `OPERADOR`, NOT NULL con CHECK) y la tabla `token_revocado`.
+Las cuentas existentes pasan a `OPERADOR`, salvo la de menor id, que pasa a
+`ADMINISTRADOR` para que quede alguien capaz de crear usuarios. Revisar primero
+sin aplicar:
+
+```powershell
+.\.venv\Scripts\python.exe -m alembic -c alembic.ini upgrade 0004:0005 --sql
+```
+
+En una base nueva, `POST /operadores` exige un administrador, así que el primero
+se crea con el script (pide la contraseña por teclado; si el usuario ya existe,
+solo lo promueve):
+
+```powershell
+.\.venv\Scripts\python.exe crear_administrador.py USUARIO
+```
+
+Permisos por rol: ADMINISTRADOR gestiona operadores, celdas, clientes y vehículos
+(no registra accesos); OPERADOR registra entradas, salidas y correcciones de celda.
+Cualquier sesión consulta celdas disponibles, registra mensualidades y ve el
+resumen. Sin sesión: 401; sin permiso: 403. `POST /auth/logout` revoca el token.
+
 ### Variable nueva en `backend/.env`
 
 ```

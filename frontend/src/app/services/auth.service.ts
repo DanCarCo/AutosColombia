@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { tap, timeout } from 'rxjs';
 import { LoginCrear, TokenRespuesta } from '../models/auth';
-import { Operador } from '../models/operador';
+import { Operador, Rol } from '../models/operador';
 import { API_BASE_URL } from './api.service';
 
 const STORAGE_KEY = 'autos-colombia.sesion';
@@ -30,6 +30,7 @@ export class AuthService {
   readonly token = computed(() => this.sesion()?.access_token ?? null);
   readonly operador = computed<Operador | null>(() => this.sesion()?.operador ?? null);
   readonly estaAutenticado = computed(() => this.sesion() !== null);
+  readonly rol = computed<Rol | null>(() => this.sesion()?.operador.rol ?? null);
 
   login(data: LoginCrear) {
     return this.http.post<TokenRespuesta>(`${this.base}/login`, data).pipe(
@@ -45,12 +46,21 @@ export class AuthService {
     );
   }
 
+  // Cierra la sesión local y revoca el token en el servidor (POST /auth/logout):
+  // desde ese momento el token ya no autoriza solicitudes (401), aunque se conserve una copia.
   logout(): void {
+    const token = this.token();
     this.sesion.set(null);
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {
       // Nada que limpiar si el almacenamiento no está disponible.
+    }
+    if (token) {
+      this.http
+        .post<void>(`${this.base}/logout`, null, { headers: { Authorization: `Bearer ${token}` } })
+        .pipe(timeout(15000))
+        .subscribe({ error: () => undefined });
     }
   }
 }

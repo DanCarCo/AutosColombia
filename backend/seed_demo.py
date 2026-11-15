@@ -23,8 +23,8 @@ from app.security import hash_password
 from app.services.pago import MONTO_POR_TIPO, _fin_de_periodo
 
 OPERADORES = [
-    {"nombre": "Laura Gómez", "telefono": "3001112222", "usuario": "operador.dia", "password": "Operador123", "turno": "DIA"},
-    {"nombre": "Carlos Ruiz", "telefono": "3003334444", "usuario": "admin", "password": "Admin1234", "turno": "NOCHE"},
+    {"nombre": "Laura Gómez", "telefono": "3001112222", "usuario": "operador.dia", "password": "Operador123", "turno": "DIA", "rol": "OPERADOR"},
+    {"nombre": "Carlos Ruiz", "telefono": "3003334444", "usuario": "admin", "password": "Admin1234", "turno": "NOCHE", "rol": "ADMINISTRADOR"},
 ]
 
 CLIENTES = [
@@ -73,6 +73,7 @@ def main() -> int:
                         usuario=datos["usuario"],
                         password_hash=hash_password(datos["password"]),
                         turno=datos["turno"],
+                        rol=datos["rol"],
                     )
                     session.add(operador)
                     session.flush()
@@ -126,7 +127,7 @@ def main() -> int:
 
         print("Listo. Credenciales de prueba:")
         for datos in OPERADORES:
-            print(f"  usuario={datos['usuario']!r} password={datos['password']!r} turno={datos['turno']}")
+            print(f"  usuario={datos['usuario']!r} password={datos['password']!r} turno={datos['turno']} rol={datos['rol']}")
         print(f"Clientes: {len(CLIENTES)}. Vehículos: {len(VEHICULOS)} (todos con mensualidad vigente).")
         print(f"Celdas nuevas creadas: {len(nuevas_celdas)}.")
         return 0

@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 
 from app.database import get_session
 from app.main import app
+from conftest import sesion_como
 from app.services.celda import list_available_cells
 
 
@@ -27,7 +28,7 @@ def test_disponibles_route_is_registered_before_the_id_route():
 
     app.dependency_overrides[get_session] = override
     try:
-        with TestClient(app) as client:
+        with sesion_como("OPERADOR"), TestClient(app) as client:
             response = client.get("/celdas/disponibles")
     finally:
         app.dependency_overrides.pop(get_session, None)

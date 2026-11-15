@@ -4,6 +4,7 @@ from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
+from conftest import sesion_como
 from sqlalchemy import inspect, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -51,7 +52,7 @@ def test_crud_celdas(connection):
             yield session
         app.dependency_overrides[get_session] = override
         try:
-            with TestClient(app) as client:
+            with sesion_como('ADMINISTRADOR'), TestClient(app) as client:
                 code = 'CELL-' + uuid4().hex.upper()
                 payload = {'codigo': f' {code.lower()} ', 'tipo': ' Categoría libre '}
                 result = client.post('/celdas', json=payload)

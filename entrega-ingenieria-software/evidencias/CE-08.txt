@@ -1,12 +1,13 @@
 CASO CE-08 - Editar con código de otra celda
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-PATCH /celdas/8 cuerpo={"codigo": "T-LIBRE-01"} -> HTTP 409 {"detail": "Ya existe una celda con ese código."}
-GET /celdas/8 -> HTTP 200 {"codigo": "T-NUEVA-01", "tipo": "CARRO", "id": 8}
-GET /celdas/1 -> HTTP 200 {"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}
+PATCH /celdas/6 cuerpo={"codigo": "T-LIBRE-01"} [sesión: administrador] -> HTTP 409 {"detail": "Ya existe una celda con ese código."}
+GET /celdas/6 [sesión: administrador] -> HTTP 200 {"codigo": "T-NUEVA-01", "tipo": "CARRO", "id": 6}
+GET /celdas/1 [sesión: administrador] -> HTTP 200 {"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}
 
 ESTADO: Aprobado
 RESULTADO: API 409; ambas celdas conservan su código anterior (T-NUEVA-01 y T-LIBRE-01).

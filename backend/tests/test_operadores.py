@@ -8,15 +8,16 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from app.database import get_session
 from app.main import app
 from app.models import Operador
+from conftest import sesion_como
 
-VALIDO = {"nombre": "Prueba", "telefono": "001", "usuario": "prueba", "password": "secreta123", "turno": "DIA"}
+VALIDO = {"nombre": "Prueba", "telefono": "001", "usuario": "prueba", "password": "secreta123", "turno": "DIA", "rol": "OPERADOR"}
 
 
 @pytest.fixture
 def api():
     session = MagicMock()
     session.get.return_value = Operador(
-        id=1, nombre="Prueba", telefono="001", usuario="prueba", password_hash="x", turno="DIA"
+        id=1, nombre="Prueba", telefono="001", usuario="prueba", password_hash="x", turno="DIA", rol="ADMINISTRADOR"
     )
 
     def override():
@@ -24,7 +25,7 @@ def api():
 
     app.dependency_overrides[get_session] = override
     try:
-        with TestClient(app) as client:
+        with sesion_como("ADMINISTRADOR"), TestClient(app) as client:
             yield client, session
     finally:
         app.dependency_overrides.pop(get_session, None)
@@ -85,7 +86,7 @@ def test_creation_never_sends_plaintext_password_to_the_model():
 def test_response_never_includes_password_fields(api):
     client, _session = api
     body = client.get("/operadores/1").json()
-    assert set(body) == {"id", "nombre", "telefono", "usuario", "turno"}
+    assert set(body) == {"id", "nombre", "telefono", "usuario", "turno", "rol"}
 
 
 @pytest.mark.parametrize("sqlstate, status", [("23503", 409), ("23502", 422), ("23514", 422)])

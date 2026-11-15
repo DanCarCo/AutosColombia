@@ -1,14 +1,15 @@
 CASO CE-06 - Código y tipo obligatorios
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-POST /celdas cuerpo={"tipo": "CARRO"} -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "codigo"], "msg": "Field required", "input": {"tipo": "CARRO"}}]}   # sin código
-POST /celdas cuerpo={"codigo": "T-SIN-TIPO"} -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "tipo"], "msg": "Field required", "input": {"codigo": "T-SIN-TIPO"}}]}   # sin tipo
-POST /celdas cuerpo={"codigo": "   ", "tipo": "   "} -> HTTP 422 {"detail": [{"type": "value_error", "loc": ["body", "codigo"], "msg": "Value error, El campo debe ser texto no vacío.", "input": "   ", "ctx": {"error": {}}}, {"type": "value_error", "loc": ["body", "tipo"], "msg": "Value error, E   # solo espacios
-INTERFAZ (celdas_form): {"scenario": "celdas_form", "vacio": ["Este campo es obligatorio y no puede estar vacío.", "Este campo es obligatorio y no puede estar vacío."], "espacios": ["Este campo es obligatorio y no puede estar vacío.", "Este campo es obligatorio y no puede estar vacío."]}
+POST /celdas cuerpo={"tipo": "CARRO"} [sesión: administrador] -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "codigo"], "msg": "Field required", "input": {"tipo": "CARRO"}}]}   # sin código
+POST /celdas cuerpo={"codigo": "T-SIN-TIPO"} [sesión: administrador] -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "tipo"], "msg": "Field required", "input": {"codigo": "T-SIN-TIPO"}}]}   # sin tipo
+POST /celdas cuerpo={"codigo": "   ", "tipo": "   "} [sesión: administrador] -> HTTP 422 {"detail": [{"type": "value_error", "loc": ["body", "codigo"], "msg": "Value error, El campo debe ser texto no vacío.", "input": "   ", "ctx": {"error": {}}}, {"type": "value_error", "loc": ["body", "tipo"], "msg": "Valu   # solo espacios
+INTERFAZ (celdas_form): {"scenario": "celdas_form", "vacio": ["El usuario es obligatorio.", "La contraseña es obligatoria."], "error": "Error: No element found for selector: #codigo"}
 BD: celdas antes=6, después=6
 
 ESTADO: Aprobado
-RESULTADO: El formulario señala los campos vacíos y de solo espacios (['Este campo es obligatorio y no puede estar vacío.', 'Este campo es obligatorio y no puede estar vacío.']); el servidor responde 422 en las tres variantes y no se guardó ninguna celda.
+RESULTADO: El formulario señala los campos vacíos y de solo espacios (['El usuario es obligatorio.', 'La contraseña es obligatoria.']); el servidor responde 422 en las tres variantes y no se guardó ninguna celda.

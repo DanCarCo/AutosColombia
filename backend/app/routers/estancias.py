@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.auth import operador_actual
+from app.auth import operador_actual, solo_operador
 from app.database import get_session
 from app.models import Operador
 from app.schemas.estancia import (
@@ -14,7 +14,7 @@ from app.services.estancia import ServicioEstancia
 
 router = APIRouter(prefix="/estancias", tags=["Estancias"])
 DatabaseSession = Annotated[Session, Depends(get_session)]
-OperadorAutenticado = Annotated[Operador, Depends(operador_actual)]
+OperadorAutenticado = Annotated[Operador, Depends(solo_operador)]  # RF-16: solo el rol OPERADOR registra accesos
 
 
 @router.post("/entrada", response_model=EstanciaRespuesta, status_code=201)
@@ -35,6 +35,6 @@ def cambiar_celda(
     return ServicioEstancia(session).cambiar_celda(data)
 
 
-@router.get("/vehiculo/{placa}", response_model=EstadoVehiculoRespuesta)
+@router.get("/vehiculo/{placa}", response_model=EstadoVehiculoRespuesta, dependencies=[Depends(operador_actual)])
 def consultar(placa: Placa, session: DatabaseSession) -> EstadoVehiculoRespuesta:
     return ServicioEstancia(session).consultar(placa)

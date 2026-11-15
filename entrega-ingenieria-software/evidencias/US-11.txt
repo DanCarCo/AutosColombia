@@ -1,12 +1,13 @@
 CASO US-11 - Rol inválido enviado por API
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "rol_invalido", "password": "<redactado>", "turno": "DIA", "rol": "SUPERADMIN"} -> HTTP 422 {"detail": [{"type": "extra_forbidden", "loc": ["body", "rol"], "msg": "Extra inputs are not permitted", "input": "SUPERADMIN"}]}   # rol fuera de ADMINISTRADOR/OPERADOR
-POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "rol_valido", "password": "<redactado>", "turno": "DIA", "rol": "ADMINISTRADOR"} -> HTTP 422 {"detail": [{"type": "extra_forbidden", "loc": ["body", "rol"], "msg": "Extra inputs are not permitted", "input": "ADMINISTRADOR"}]}   # rol válido del plan
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "rol_invalido", "password": "<redactado>", "turno": "DIA", "rol": "SUPERADMIN"} [sesión: administrador] -> HTTP 422 {"detail": [{"type": "literal_error", "loc": ["body", "rol"], "msg": "Input should be 'ADMINISTRADOR' or 'OPERADOR'", "input": "SUPERADMIN", "ctx": {"expected": "'ADMINISTRADOR' or 'OPERADOR'"}}]}   # rol fuera de ADMINISTRADOR/OPERADOR
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "rol_vacio", "password": "<redactado>", "turno": "DIA", "rol": ""} [sesión: administrador] -> HTTP 422 {"detail": [{"type": "literal_error", "loc": ["body", "rol"], "msg": "Input should be 'ADMINISTRADOR' or 'OPERADOR'", "input": "", "ctx": {"expected": "'ADMINISTRADOR' or 'OPERADOR'"}}]}   # rol vacío
 BD: operadores antes=2, después=2
 
 ESTADO: Aprobado
-RESULTADO: API 422 y no se crea la cuenta. Observación: el rechazo se debe a que el contrato no tiene campo «rol» (extra=forbid); tampoco se acepta ADMINISTRADOR u OPERADOR, porque el sistema no implementa roles (ver INC-01).
+RESULTADO: La API rechaza con 422 el rol inválido (solo acepta ADMINISTRADOR u OPERADOR) y el rol vacío; no se crea ninguna cuenta con permisos arbitrarios.

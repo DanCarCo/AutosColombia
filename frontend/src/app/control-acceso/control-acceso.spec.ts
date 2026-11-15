@@ -37,10 +37,10 @@ describe('Control de acceso', () => {
     http = TestBed.inject(HttpTestingController);
     c = TestBed.createComponent(ControlAcceso).componentInstance;
     http
-      .expectOne('/celdas?offset=0&limit=100')
+      .expectOne('/celdas/disponibles?offset=0&limit=100')
       .flush({ items: [celda], total: 2, offset: 0, limit: 100 });
     http
-      .expectOne('/celdas?offset=1&limit=100')
+      .expectOne('/celdas/disponibles?offset=1&limit=100')
       .flush({ items: [{ ...celda, id: 5 }], total: 2, offset: 1, limit: 100 });
   });
   afterEach(() => http.verify());

@@ -83,6 +83,33 @@
               ]
             },
             {
+              "_type": "UMLEnumeration",
+              "_id": "AAAAAA0a2f1296e0837b=",
+              "_parent": {
+                "$ref": "AAAAAA56049b27615fe3="
+              },
+              "name": "Rol",
+              "documentation": "Valores permitidos por el CHECK ck_operador_rol (migración 0005).",
+              "ownedElements": [
+                {
+                  "_type": "UMLEnumerationLiteral",
+                  "_id": "AAAAAA639cc7511530c0=",
+                  "_parent": {
+                    "$ref": "AAAAAA0a2f1296e0837b="
+                  },
+                  "name": "ADMINISTRADOR"
+                },
+                {
+                  "_type": "UMLEnumerationLiteral",
+                  "_id": "AAAAAA025051e460bda5=",
+                  "_parent": {
+                    "$ref": "AAAAAA0a2f1296e0837b="
+                  },
+                  "name": "OPERADOR"
+                }
+              ]
+            },
+            {
               "_type": "UMLClass",
               "_id": "AAAAAA0156973b412dea=",
               "_parent": {
@@ -332,6 +359,17 @@
                   "name": "turno",
                   "visibility": "public",
                   "type": "Turno"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA32de2f2a738c58=",
+                  "_parent": {
+                    "$ref": "AAAAAA49d64fde9ca0aa="
+                  },
+                  "name": "rol",
+                  "visibility": "public",
+                  "type": "Rol",
+                  "documentation": "ADMINISTRADOR gestiona usuarios y celdas; OPERADOR registra accesos (RF-17)."
                 }
               ]
             },
@@ -788,6 +826,19 @@
               }
             },
             {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA5606a36ccc229a=",
+              "_parent": {
+                "$ref": "AAAAAA56049b27615fe3="
+              },
+              "source": {
+                "$ref": "AAAAAA49d64fde9ca0aa="
+              },
+              "target": {
+                "$ref": "AAAAAA0a2f1296e0837b="
+              }
+            },
+            {
               "_type": "UMLClassDiagram",
               "_id": "AAAAAAf909587b6b6f80=",
               "_parent": {
@@ -797,7 +848,7 @@
               "model": {
                 "$ref": "AAAAAA56049b27615fe3="
               },
-              "documentation": "Arrastra aquí las 6 clases y las 2 enumeraciones: Cliente, Vehiculo, Celda, Operador, Estancia, Pago.",
+              "documentation": "Arrastra aquí las 6 clases y las 3 enumeraciones: Cliente, Vehiculo, Celda, Operador, Estancia, Pago; TipoVehiculo, Turno, Rol.",
               "defaultDiagram": true
             }
           ]

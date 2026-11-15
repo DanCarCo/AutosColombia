@@ -98,6 +98,7 @@ def construir() -> dict:
     dom = paquete(modelo, "Dominio", "Modelo de dominio; coincide con backend/app/models.py (migraciones 0001 a 0004).")
     tipo_veh = enumeracion(dom, "TipoVehiculo", ["MOTO", "AUTOMOVIL", "CAMIONETA"], "Valores permitidos por el CHECK ck_vehiculo_tipo.")
     turno = enumeracion(dom, "Turno", ["DIA", "NOCHE"], "Valores permitidos por el CHECK ck_operador_turno.")
+    rol = enumeracion(dom, "Rol", ["ADMINISTRADOR", "OPERADOR"], "Valores permitidos por el CHECK ck_operador_rol (migración 0005).")
     cliente = clase(dom, "Cliente", [
         ("id", "Long", "Identidad generada."), ("nombre", "String"),
         ("documento", "String", "Único (uq_cliente_documento)."), ("telefono", "String")],
@@ -112,7 +113,8 @@ def construir() -> dict:
         "Tabla celda (RF-06, RF-10). El parqueadero inicia con 80: 10 MOTO y 70 CARRO.")
     operador = clase(dom, "Operador", [
         ("id", "Long"), ("nombre", "String"), ("telefono", "String"), ("usuario", "String", "Único."),
-        ("password_hash", "String", "PBKDF2-SHA256; nunca la contraseña en claro."), ("turno", "Turno")],
+        ("password_hash", "String", "PBKDF2-SHA256; nunca la contraseña en claro."), ("turno", "Turno"),
+        ("rol", "Rol", "ADMINISTRADOR gestiona usuarios y celdas; OPERADOR registra accesos (RF-17).")],
         "Tabla operador (RF-07, RF-16). Inicia sesión con usuario y contraseña.")
     estancia = clase(dom, "Estancia", [
         ("id", "Long"), ("entrada", "DateTime"), ("salida", "DateTime", "Nula mientras la estancia está abierta.", "0..1"),
@@ -132,10 +134,10 @@ def construir() -> dict:
     asociacion(dom, operador, "operadorSalida", "0..1", estancia, "estanciasCerradas", "0..*", "registra salida")
     asociacion(dom, vehiculo, "vehiculo", "1", pago, "pagos", "0..*", "cubre")
     asociacion(dom, operador, "operador", "1", pago, "pagosRegistrados", "0..*", "registra")
-    for origen, destino, nombre in [(vehiculo, tipo_veh, "tipo"), (operador, turno, "turno")]:
+    for origen, destino, nombre in [(vehiculo, tipo_veh, "tipo"), (operador, turno, "turno"), (operador, rol, "rol")]:
         agregar(dom, nodo("UMLDependency", dom, "", source=ref(origen), target=ref(destino), _k=nombre))
     diagrama(dom, "UMLClassDiagram", "Diagrama de clases",
-             "Arrastra aquí las 6 clases y las 2 enumeraciones: Cliente, Vehiculo, Celda, Operador, Estancia, Pago.", True)
+             "Arrastra aquí las 6 clases y las 3 enumeraciones: Cliente, Vehiculo, Celda, Operador, Estancia, Pago; TipoVehiculo, Turno, Rol.", True)
 
     # -------------------------------------------------------------- Casos de uso
     cu = paquete(modelo, "CasosDeUso", "Actores y casos de uso. CU-nn corresponde a docs/02-historias-de-usuario.md.")

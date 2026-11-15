@@ -6,6 +6,7 @@ from app.models import required_text
 
 Texto = Annotated[str, BeforeValidator(lambda value: required_text(value, "El campo"))]
 Turno = Literal["DIA", "NOCHE"]
+Rol = Literal["ADMINISTRADOR", "OPERADOR"]
 
 
 class OperadorCrear(BaseModel):
@@ -15,6 +16,7 @@ class OperadorCrear(BaseModel):
     usuario: Texto
     password: Texto
     turno: Turno
+    rol: Rol
 
 
 class OperadorActualizar(BaseModel):
@@ -24,6 +26,7 @@ class OperadorActualizar(BaseModel):
     usuario: Texto | None = None
     password: Texto | None = None
     turno: Turno | None = None
+    rol: Rol | None = None
 
     @field_validator("*", mode="before")
     @classmethod
@@ -42,6 +45,7 @@ class OperadorRespuesta(BaseModel):
     telefono: Texto
     usuario: Texto
     turno: Turno
+    rol: Rol
 
 
 class OperadoresPagina(BaseModel):

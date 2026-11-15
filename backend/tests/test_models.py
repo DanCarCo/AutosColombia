@@ -71,7 +71,7 @@ def _load_migration(name):
 
 
 def test_migration_matches_models_without_connecting(monkeypatch):
-    """Aplica 0001, 0003 y 0004 (las que crean o alteran vehiculo/celda/operador/cliente/pago)
+    """Aplica 0001, 0003, 0004 y 0005 (las que crean o alteran vehiculo/celda/operador/cliente/pago/token_revocado)
     sobre un MetaData propio, sin conectar a PostgreSQL, y compara contra los modelos."""
     metadata = sa.MetaData()
 
@@ -97,7 +97,12 @@ def test_migration_matches_models_without_connecting(monkeypatch):
         constraint = next(c for c in table.constraints if getattr(c, "name", None) == name)
         table.constraints.discard(constraint)
 
-    for migration_name in ("0001_modelos_iniciales", "0003_cliente_pago_login", "0004_vehiculo_modelo_1900_2200"):
+    def alter_column(table_name, column_name, nullable=None, **kwargs):
+        if nullable is not None:
+            metadata.tables[table_name].c[column_name].nullable = nullable
+
+    for migration_name in ("0001_modelos_iniciales", "0003_cliente_pago_login", "0004_vehiculo_modelo_1900_2200",
+                           "0005_rol_y_sesiones_revocadas"):
         migration = _load_migration(migration_name)
         monkeypatch.setattr(migration.op, "create_table", create_table)
         monkeypatch.setattr(migration.op, "add_column", add_column)
@@ -106,9 +111,11 @@ def test_migration_matches_models_without_connecting(monkeypatch):
         monkeypatch.setattr(migration.op, "create_check_constraint", create_check_constraint)
         monkeypatch.setattr(migration.op, "create_index", lambda *a, **k: None)
         monkeypatch.setattr(migration.op, "drop_constraint", drop_constraint)
+        monkeypatch.setattr(migration.op, "alter_column", alter_column)
+        monkeypatch.setattr(migration.op, "execute", lambda *a, **k: None)
         migration.upgrade()
 
-    assert set(metadata.tables) == {"vehiculo", "celda", "operador", "cliente", "pago"}
+    assert set(metadata.tables) == {"vehiculo", "celda", "operador", "cliente", "pago", "token_revocado"}
     for name, table in metadata.tables.items():
         model_table = Base.metadata.tables[name]
         assert [(c.name, str(c.type), c.nullable) for c in table.columns] == [
@@ -121,4 +128,5 @@ def test_migration_matches_models_without_connecting(monkeypatch):
             return {tuple(c.columns.keys()) for c in t.constraints if isinstance(c, sa.UniqueConstraint)}
         assert unique_columns(table) == unique_columns(model_table)
         ddl = str(CreateTable(table).compile(dialect=postgresql.dialect()))
-        assert "BIGINT GENERATED ALWAYS AS IDENTITY" in ddl
+        if "id" in table.c:
+            assert "BIGINT GENERATED ALWAYS AS IDENTITY" in ddl

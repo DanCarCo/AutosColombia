@@ -16,6 +16,12 @@ export class CeldasService {
       .get<CeldasPagina>(this.cells, { params: { offset, limit } })
       .pipe(timeout(15000));
   }
+  // RF-10: celdas sin estancia abierta (la usa el operador para elegir celda al registrar entradas).
+  disponibles(offset: number, limit: number) {
+    return this.http
+      .get<CeldasPagina>(`${this.cells}/disponibles`, { params: { offset, limit } })
+      .pipe(timeout(15000));
+  }
   get(id: number) {
     return this.http.get<Celda>(`${this.cells}/${id}`).pipe(timeout(15000));
   }

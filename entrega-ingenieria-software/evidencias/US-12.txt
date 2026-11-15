@@ -1,15 +1,16 @@
 CASO US-12 - Protección de la contraseña
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-POST /operadores cuerpo={"nombre": "Cuenta Ficticia", "telefono": "3000000001", "usuario": "cuenta_ficticia", "password": "<redactado>", "turno": "DIA"} -> HTTP 201 {"id": 3, "nombre": "Cuenta Ficticia", "telefono": "3000000001", "usuario": "cuenta_ficticia", "turno": "DIA"}   # respuesta de creación
-Campos de la respuesta: ['id', 'nombre', 'telefono', 'usuario', 'turno']
+POST /operadores cuerpo={"nombre": "Cuenta Ficticia", "telefono": "3000000001", "usuario": "cuenta_ficticia", "password": "<redactado>", "turno": "DIA", "rol": "OPERADOR"} [sesión: administrador] -> HTTP 201 {"id": 3, "nombre": "Cuenta Ficticia", "telefono": "3000000001", "usuario": "cuenta_ficticia", "turno": "DIA", "rol": "OPERADOR"}   # respuesta de creación
+Campos de la respuesta: ['id', 'nombre', 'telefono', 'usuario', 'turno', 'rol']
 Almacenamiento (solo prefijo y longitud; el hash no se reproduce): prefijo='pbkdf2_sha256$' iteraciones='390000' longitud=118
 ¿Contraseña en texto plano en la base? no
-POST /auth/login cuerpo={"usuario": "cuenta_ficticia", "password": "<redactado>"} -> HTTP 200 {"access_token": "<token>", "token_type": "bearer", "expira_minutos": 480, "operador": {"id": 3, "nombre": "Cuenta Ficticia", "telefono": "3000000001", "usuario": "cuenta_ficticia", "turno": "DIA"}}   # login con la cuenta
-DELETE /operadores/3 -> HTTP 204 ""   # restaurar conjunto de prueba
+POST /auth/login cuerpo={"usuario": "cuenta_ficticia", "password": "<redactado>"} [sin sesión] -> HTTP 200 {"access_token": "<token>", "token_type": "bearer", "expira_minutos": 480, "operador": {"id": 3, "nombre": "Cuenta Ficticia", "telefono": "3000000001", "usuario": "cuenta_ficticia", "turno": "DIA", "rol": "OPERADOR"}}   # login con la cuenta
+DELETE /operadores/3 [sesión: administrador] -> HTTP 204 ""   # restaurar conjunto de prueba
 
 ESTADO: Aprobado
 RESULTADO: La respuesta de creación no incluye contraseña ni hash; la base guarda un hash pbkdf2_sha256 (no texto plano); el login con la cuenta funciona (200). La evidencia no reproduce secretos.

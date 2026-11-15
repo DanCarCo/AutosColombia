@@ -1,10 +1,11 @@
 CASO CE-09 - Editar celda inexistente
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-PATCH /celdas/999999 cuerpo={"tipo": "MOTO"} -> HTTP 404 {"detail": "Celda no encontrada."}
+PATCH /celdas/999999 cuerpo={"tipo": "MOTO"} [sesión: administrador] -> HTTP 404 {"detail": "Celda no encontrada."}
 BD: celdas antes=6, después=6
 
 ESTADO: Aprobado

@@ -60,6 +60,22 @@
               </select>
               <span class="field-error" id="turno-error">{{ fieldError('turno') }}</span>
             </div>
+            <div class="field">
+              <label for="rol">Rol</label
+              ><select
+                id="rol"
+                formControlName="rol"
+                required
+                [attr.aria-invalid]="!!fieldError('rol')"
+                aria-describedby="rol-error"
+              >
+                <option value="">Selecciona un rol</option>
+                @for (rol of roles; track rol) {
+                  <option [value]="rol">{{ rol === 'ADMINISTRADOR' ? 'Administrador' : 'Operador' }}</option>
+                }
+              </select>
+              <span class="field-error" id="rol-error">{{ fieldError('rol') }}</span>
+            </div>
           </div>
           <div class="actions">
             <button type="submit" class="primary">
@@ -119,6 +135,7 @@
               <th scope="col">Teléfono</th>
               <th scope="col">Usuario</th>
               <th scope="col">Turno</th>
+              <th scope="col">Rol</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
@@ -130,6 +147,11 @@
                 <td>{{ operator.usuario }}</td>
                 <td>
                   <span class="type-tag">{{ operator.turno === 'DIA' ? 'Día' : 'Noche' }}</span>
+                </td>
+                <td>
+                  <span class="type-tag">{{
+                    operator.rol === 'ADMINISTRADOR' ? 'Administrador' : 'Operador'
+                  }}</span>
                 </td>
                 <td class="row-actions">
                   <button

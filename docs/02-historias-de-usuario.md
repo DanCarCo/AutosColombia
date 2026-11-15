@@ -59,8 +59,10 @@ Mockups: ver [03-mockups-figma.md](03-mockups-figma.md).
 - Código y tipo vacíos se rechazan (422).
 
 ### HU-07 · Gestionar operadores
-**Como** administrador **quiero** registrar operadores con usuario, contraseña y turno **para** que puedan iniciar sesión.
-- **Cuando** creo un operador con usuario único, contraseña y turno DIA o NOCHE, **entonces** queda registrado y la respuesta **no** incluye la contraseña.
+**Como** administrador **quiero** registrar operadores con usuario, contraseña, turno y rol **para** que puedan iniciar sesión con los permisos que les corresponden.
+- **Cuando** creo un operador con usuario único, contraseña, turno DIA o NOCHE y rol ADMINISTRADOR u OPERADOR, **entonces** queda registrado y la respuesta **no** incluye la contraseña.
+- **Cuando** envío un rol distinto de ADMINISTRADOR u OPERADOR, **entonces** se rechaza (422) y no se crea la cuenta.
+- **Cuando** una cuenta con rol OPERADOR intenta crear usuarios, **entonces** la API responde 403 y la pantalla de operadores no está disponible.
 - **Cuando** edito sin escribir contraseña, **entonces** la contraseña actual no cambia.
 - **Cuando** repito el usuario, **entonces** veo «Ya existe un operador con ese usuario» (409).
 - **Cuando** elimino un operador con estancias o pagos registrados, **entonces** no se elimina (409).
@@ -108,7 +110,10 @@ Mockups: ver [03-mockups-figma.md](03-mockups-figma.md).
 - **Cuando** ingreso usuario y contraseña correctos, **entonces** accedo y veo mi nombre con la opción *Cerrar sesión*.
 - **Cuando** ingreso datos incorrectos, **entonces** veo «Usuario o contraseña incorrectos» sin revelar cuál falló (401).
 - **Cuando** intento abrir *Control de acceso* sin sesión, **entonces** la pantalla redirige a *Iniciar sesión*.
-- **Cuando** cierro sesión, **entonces** se elimina el token y se exige iniciar sesión de nuevo.
+- **Cuando** cierro sesión, **entonces** el servidor revoca el token: reutilizarlo responde 401 aunque se conserve una copia.
+- **Cuando** inicio sesión como ADMINISTRADOR, **entonces** el menú muestra Operadores, Celdas, Vehículos, Clientes, Mensualidades y Reportes, y no Control de acceso.
+- **Cuando** inicio sesión como OPERADOR, **entonces** el menú muestra Control de acceso, Mensualidades y Reportes, y no las pantallas de administración (la API responde 403 si las intenta).
+- **Cuando** una operación exige un rol que no tengo, **entonces** la API responde 403 «No tienes permisos para esta operación.»; sin sesión responde 401.
 
 > **La retroalimentación de la Actividad 1 pedía completar los criterios de
 > aceptación de HU-09 a HU-12:** quedan completos arriba (celdas iniciales y

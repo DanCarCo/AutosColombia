@@ -59,7 +59,7 @@ def test_login_usuario_inexistente_y_password_incorrecta_dan_el_mismo_mensaje():
 
 def test_login_correcto_emite_token_valido():
     session = MagicMock()
-    operador = Operador(id=3, usuario="jperez", password_hash=hash_password("correcta"), turno="DIA")
+    operador = Operador(id=3, usuario="jperez", password_hash=hash_password("correcta"), turno="DIA", rol="OPERADOR")
     session.scalar.return_value = operador
     operador_resultado, token, minutos = login(session, LoginCrear(usuario="jperez", password="correcta"),
                                                settings=SETTINGS)
@@ -129,7 +129,7 @@ def test_login_endpoint_credenciales_invalidas_no_revela_cual_parte_fallo(api):
 def test_login_endpoint_exitoso_devuelve_token_y_operador_sin_password(api):
     client, session = api
     operador = Operador(id=1, nombre="Prueba", telefono="001", usuario="jperez",
-                        password_hash=hash_password("correcta"), turno="DIA")
+                        password_hash=hash_password("correcta"), turno="DIA", rol="OPERADOR")
     session.scalar.return_value = operador
     response = client.post("/auth/login", json={"usuario": "jperez", "password": "correcta"})
     assert response.status_code == 200
@@ -138,3 +138,45 @@ def test_login_endpoint_exitoso_devuelve_token_y_operador_sin_password(api):
     assert "password" not in body["operador"]
     assert "password_hash" not in body["operador"]
     assert body["operador"]["usuario"] == "jperez"
+
+
+def test_token_incluye_rol_y_jti_unico(monkeypatch):
+    import jwt as pyjwt
+    op = Operador(id=7, usuario="x", turno="DIA", rol="ADMINISTRADOR")
+    t1, _ = crear_token(op, SETTINGS)
+    t2, _ = crear_token(op, SETTINGS)
+    p1 = pyjwt.decode(t1, SETTINGS.secret_key, algorithms=["HS256"])
+    p2 = pyjwt.decode(t2, SETTINGS.secret_key, algorithms=["HS256"])
+    assert p1["rol"] == "ADMINISTRADOR" and p1["jti"] != p2["jti"]
+
+
+def test_token_revocado_es_401(monkeypatch):
+    from app import auth as auth_module
+    from app.models import TokenRevocado
+    monkeypatch.setattr(auth_module, "load_auth_settings", lambda: SETTINGS)
+    token, _ = crear_token(Operador(id=5, usuario="x", turno="DIA", rol="OPERADOR"), SETTINGS)
+    credenciales = HTTPAuthorizationCredentials(scheme="Bearer", credentials=token)
+    session = MagicMock()
+    session.get.side_effect = lambda modelo, clave: TokenRevocado(jti=clave) if modelo is TokenRevocado else None
+    with pytest.raises(AuthError) as result:
+        operador_actual(credenciales=credenciales, session=session)
+    assert result.value.status_code == 401 and "cerrada" in result.value.detail
+
+
+def test_logout_revoca_el_token_y_responde_204(api, monkeypatch):
+    from app import auth as auth_module
+    from app.models import TokenRevocado
+    monkeypatch.setattr(auth_module, "load_auth_settings", lambda: SETTINGS)
+    client, session = api
+    token, _ = crear_token(Operador(id=5, usuario="x", turno="DIA", rol="OPERADOR"), SETTINGS)
+    session.get.return_value = None
+    response = client.post("/auth/logout", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 204
+    revocado = [c.args[0] for c in session.add.call_args_list if isinstance(c.args[0], TokenRevocado)]
+    assert len(revocado) == 1
+    session.commit.assert_called()
+
+
+def test_logout_sin_sesion_es_401(api):
+    client, _ = api
+    assert client.post("/auth/logout").status_code == 401

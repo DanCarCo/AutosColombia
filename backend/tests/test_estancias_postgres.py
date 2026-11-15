@@ -6,6 +6,7 @@ from threading import Barrier
 from uuid import uuid4
 
 from fastapi.testclient import TestClient
+from conftest import sesion_como
 import pytest
 from sqlalchemy import delete, event, func, select, text
 from sqlalchemy.orm import Session
@@ -25,7 +26,7 @@ def datos():
     engine = get_engine()
     with engine.connect() as c:
         assert c.scalar(text('SELECT current_database()')) == 'autos_colombia'
-        assert c.scalar(text('SELECT version_num FROM alembic_version')) == '0004'
+        assert c.scalar(text('SELECT version_num FROM alembic_version')) == '0005'
     token = 'TEST-EST-' + uuid4().hex.upper()
     settings = load_auth_settings()
     with Session(engine) as s, s.begin():
@@ -40,7 +41,7 @@ def datos():
         cells = [Celda(codigo=f'{token}-{n}', tipo='Libre') for n in range(2)]
         operators = [
             Operador(nombre=f'{token}-{n}', telefono='001', usuario=f'{token}-{n}',
-                     password_hash=hash_password('clave-de-prueba'), turno='DIA')
+                     password_hash=hash_password('clave-de-prueba'), turno='DIA', rol='OPERADOR')
             for n in range(2)
         ]
         s.add_all(vehicles + cells + operators)
@@ -90,7 +91,7 @@ def test_recorrido_y_rechazos_sin_cambios_parciales(datos):
     d = datos
     with TestClient(app) as client:
         url = '/estancias/vehiculo/' + d['placas'][0]
-        outside = client.get(url)
+        outside = client.get(url, headers=auth(d))
         assert outside.status_code == 200
         assert outside.json()['estancia'] is None and not outside.json()['esta_dentro']
         assert outside.json()['vehiculo']['id'] == d['v'][0]
@@ -108,7 +109,7 @@ def test_recorrido_y_rechazos_sin_cambios_parciales(datos):
                                 headers=auth(d)).status_code == 404
             assert cantidad(d) == 0
         missing = 'INEXISTENTE-' + uuid4().hex
-        assert client.get('/estancias/vehiculo/' + missing).status_code == 404
+        assert client.get('/estancias/vehiculo/' + missing, headers=auth(d)).status_code == 404
         assert client.post('/estancias/salida', json={'placa': missing}, headers=auth(d)).status_code == 404
 
         before = datetime.now(timezone.utc)
@@ -122,7 +123,7 @@ def test_recorrido_y_rechazos_sin_cambios_parciales(datos):
         assert before <= datetime.fromisoformat(opened['entrada']) <= datetime.now(timezone.utc)
         assert opened['salida'] is None and opened['operador_salida_id'] is None
         assert opened['operador_entrada_id'] == d['o'][0]
-        inside = client.get(url).json()
+        inside = client.get(url, headers=auth(d)).json()
         assert inside['esta_dentro'] and inside['estancia']['id'] == opened['id']
         assert inside['estancia']['celda']['id'] == d['c'][0]
 
@@ -135,7 +136,7 @@ def test_recorrido_y_rechazos_sin_cambios_parciales(datos):
         assert closed.json()['operador_salida_id'] == d['o'][1]
         assert datetime.fromisoformat(closed.json()['salida']) >= datetime.fromisoformat(opened['entrada'])
         assert client.post('/estancias/salida', json={'placa': d['placas'][0]}, headers=auth(d)).status_code == 409
-        assert client.get(url).json()['estancia'] is None
+        assert client.get(url, headers=auth(d)).json()['estancia'] is None
         with Session(get_engine()) as s:
             saved = s.get(Estancia, opened['id'])
             assert saved.operador_salida_id == d['o'][1]
@@ -144,14 +145,14 @@ def test_recorrido_y_rechazos_sin_cambios_parciales(datos):
         # celda 0 quedó libre al salir el vehículo 0; el vehículo 1 entra ahí "por error".
         assert client.post('/estancias/entrada', json=entrada(d, v=1), headers=auth(d)).status_code == 201
         assert cantidad(d) == 2
-        assert client.get('/estancias/vehiculo/' + d['placas'][1]).json()['estancia']['celda']['id'] == d['c'][0]
+        assert client.get('/estancias/vehiculo/' + d['placas'][1], headers=auth(d)).json()['estancia']['celda']['id'] == d['c'][0]
 
         # RF-11: corrige la celda del vehículo 1 (estaba en la 0, equivocada) a la 1, que está libre.
         cambio = client.patch('/estancias/celda', json={'placa': d['placas'][1], 'celda_id': d['c'][1]},
                               headers=auth(d))
         assert cambio.status_code == 200
         assert cambio.json()['celda_id'] == d['c'][1]
-        assert client.get('/estancias/vehiculo/' + d['placas'][1]).json()['estancia']['celda']['id'] == d['c'][1]
+        assert client.get('/estancias/vehiculo/' + d['placas'][1], headers=auth(d)).json()['estancia']['celda']['id'] == d['c'][1]
         # El vehículo 0 (fuera) no tiene estancia abierta que mover.
         assert client.patch('/estancias/celda', json={'placa': d['placas'][0], 'celda_id': d['c'][0]},
                             headers=auth(d)).status_code == 409
@@ -159,9 +160,10 @@ def test_recorrido_y_rechazos_sin_cambios_parciales(datos):
         assert client.patch('/estancias/celda', json={'placa': d['placas'][1], 'celda_id': 9223372036854775807},
                             headers=auth(d)).status_code == 404
 
-        for route in ('/health', '/vehiculos?limit=1', '/celdas?limit=1', '/operadores?limit=1',
-                      '/clientes?limit=1', '/celdas/disponibles', '/reportes/resumen'):
-            assert client.get(route).status_code == 200
+        with sesion_como('ADMINISTRADOR'):
+            for route in ('/health', '/vehiculos?limit=1', '/celdas?limit=1', '/operadores?limit=1',
+                          '/clientes?limit=1', '/celdas/disponibles', '/reportes/resumen'):
+                assert client.get(route).status_code == 200
 
 
 def test_entrada_rechaza_sin_mensualidad_vigente(datos):

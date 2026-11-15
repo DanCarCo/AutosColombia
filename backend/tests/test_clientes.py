@@ -9,6 +9,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.database import get_session
 from app.main import app
+from conftest import sesion_como
 from app.models import Cliente
 from app.schemas.cliente import ClienteActualizar, ClienteCrear
 from app.services.cliente import delete_client
@@ -78,7 +79,7 @@ def api():
 
     app.dependency_overrides[get_session] = override
     try:
-        with TestClient(app) as client:
+        with sesion_como("ADMINISTRADOR"), TestClient(app) as client:
             yield client, session
     finally:
         app.dependency_overrides.pop(get_session, None)

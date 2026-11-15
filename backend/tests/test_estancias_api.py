@@ -7,7 +7,7 @@ from app.models import Operador
 
 
 def _operador_falso() -> Operador:
-    return Operador(id=1, nombre="Prueba", telefono="001", usuario="prueba", turno="DIA")
+    return Operador(id=1, nombre="Prueba", telefono="001", usuario="prueba", turno="DIA", rol="OPERADOR")
 
 
 @pytest.fixture

@@ -11,6 +11,9 @@ class Base(DeclarativeBase):
     pass
 
 
+ROLES = ("ADMINISTRADOR", "OPERADOR")
+
+
 def required_text(value: str, attribute: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{attribute} debe ser texto no vacío.")
@@ -104,6 +107,7 @@ class Operador(Base):
         CheckConstraint("usuario ~ '[^[:space:]]'", name="ck_operador_usuario_no_vacio"),
         CheckConstraint("password_hash ~ '[^[:space:]]'", name="ck_operador_password_hash_no_vacio"),
         CheckConstraint("turno IN ('DIA', 'NOCHE')", name="ck_operador_turno"),
+        CheckConstraint("rol IN ('ADMINISTRADOR', 'OPERADOR')", name="ck_operador_rol"),
     )
 
     id: Mapped[int] = mapped_column(BigInteger, Identity(always=True), primary_key=True)
@@ -112,6 +116,7 @@ class Operador(Base):
     usuario: Mapped[str] = mapped_column(Text, nullable=False)
     password_hash: Mapped[str] = mapped_column(Text, nullable=False)
     turno: Mapped[str] = mapped_column(Text, nullable=False)
+    rol: Mapped[str] = mapped_column(Text, nullable=False)
 
     @validates("nombre", "telefono", "usuario")
     def validate_text(self, key: str, value: str) -> str:
@@ -126,6 +131,13 @@ class Operador(Base):
         value = required_text(value, key)
         if value not in {"DIA", "NOCHE"}:
             raise ValueError("turno debe ser DIA o NOCHE.")
+        return value
+
+    @validates("rol")
+    def validate_rol(self, key: str, value: str) -> str:
+        value = required_text(value, key)
+        if value not in ROLES:
+            raise ValueError("rol debe ser ADMINISTRADOR u OPERADOR.")
         return value
 
 
@@ -215,3 +227,12 @@ class Pago(Base):
         if not isinstance(value, date) or isinstance(value, datetime):
             raise ValueError(f"{key} debe ser una fecha (sin hora).")
         return value
+
+
+class TokenRevocado(Base):
+    """Sesiones cerradas (RF-16): el identificador del token (jti) deja de autorizar solicitudes."""
+
+    __tablename__ = "token_revocado"
+
+    jti: Mapped[str] = mapped_column(Text, primary_key=True)
+    expira: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

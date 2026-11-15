@@ -5,6 +5,7 @@ from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
+from conftest import sesion_como
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -24,7 +25,7 @@ def client():
         transaction = connection.begin()
         try:
             assert connection.scalar(text("SELECT current_database()")) == "autos_colombia"
-            assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0004"
+            assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0005"
             with Session(bind=connection, join_transaction_mode="create_savepoint") as session:
                 # RF-12: todo vehículo requiere un cliente; se crea uno de respaldo para estas pruebas.
                 cliente = Cliente(nombre="TEST-VEHICULOS", documento="TEST-VEH-" + uuid4().hex, telefono="001")
@@ -36,7 +37,7 @@ def client():
                     yield session
                 app.dependency_overrides[get_session] = override_session
                 try:
-                    with TestClient(app) as api:
+                    with sesion_como("ADMINISTRADOR"), TestClient(app) as api:
                         api.cliente_id = cliente_id  # type: ignore[attr-defined]
                         yield api
                 finally:

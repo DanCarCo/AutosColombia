@@ -112,6 +112,7 @@ classDiagram
         +String usuario
         +String password_hash
         +Turno turno
+        +Rol rol
     }
     class Estancia {
         +Long id
@@ -138,6 +139,11 @@ classDiagram
         DIA
         NOCHE
     }
+    class Rol {
+        <<enumeration>>
+        ADMINISTRADOR
+        OPERADOR
+    }
     Cliente "1" --> "0..*" Vehiculo : posee
     Vehiculo "1" --> "0..*" Estancia : tiene
     Celda "1" --> "0..*" Estancia : aloja
@@ -147,6 +153,7 @@ classDiagram
     Operador "1" --> "0..*" Pago : registra
     Vehiculo ..> TipoVehiculo
     Operador ..> Turno
+    Operador ..> Rol
 ```
 
 Reglas de la base de datos que el diagrama resume: una sola estancia abierta

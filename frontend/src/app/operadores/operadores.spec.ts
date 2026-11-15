@@ -12,6 +12,7 @@ describe('Gestión de operadores', () => {
     telefono: '+57 00123',
     usuario: 'ana.prueba',
     turno: 'DIA' as const,
+    rol: 'OPERADOR' as const,
   };
   const page = { items: [operator], total: 1, offset: 0, limit: 10 };
 
@@ -47,6 +48,8 @@ describe('Gestión de operadores', () => {
     }
     root.querySelector<HTMLSelectElement>('#turno')!.value = 'DIA';
     root.querySelector('#turno')!.dispatchEvent(new Event('change', { bubbles: true }));
+    root.querySelector<HTMLSelectElement>('#rol')!.value = 'OPERADOR';
+    root.querySelector('#rol')!.dispatchEvent(new Event('change', { bubbles: true }));
     root
       .querySelector('form')!
       .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
@@ -60,6 +63,7 @@ describe('Gestión de operadores', () => {
       usuario: 'ana.prueba',
       password: 'clave-secreta',
       turno: 'DIA',
+      rol: 'OPERADOR',
     });
     request.flush(operator);
     http.expectOne('/operadores?offset=0&limit=10').flush(page);
@@ -69,7 +73,7 @@ describe('Gestión de operadores', () => {
   it('rechaza espacios y permite corregir errores 422 de un campo', () => {
     const c = fixture.componentInstance;
     c.newOperator();
-    c.form.setValue({ nombre: ' \t', telefono: ' ', usuario: 'ana', password: 'clave', turno: 'DIA' });
+    c.form.setValue({ nombre: ' \t', telefono: ' ', usuario: 'ana', password: 'clave', turno: 'DIA', rol: 'OPERADOR' });
     c.save();
     expect(c.fieldError('nombre')).toContain('obligatorio');
     expect(c.fieldError('telefono')).toContain('obligatorio');
@@ -80,6 +84,7 @@ describe('Gestión de operadores', () => {
       usuario: 'ana',
       password: 'clave',
       turno: 'DIA',
+      rol: 'OPERADOR',
     });
     c.save();
     http
@@ -107,6 +112,7 @@ describe('Gestión de operadores', () => {
       telefono: '00045',
       usuario: operator.usuario,
       turno: operator.turno,
+      rol: operator.rol,
     });
     request.flush({ ...operator, telefono: '00045' });
     http.expectOne('/operadores?offset=0&limit=10').flush(page);
@@ -184,6 +190,7 @@ describe('Gestión de operadores', () => {
       usuario: 'prueba',
       password: 'clave',
       turno: 'NOCHE',
+      rol: 'OPERADOR',
     });
     c.save();
     http.expectOne('/operadores').error(new ProgressEvent('error'));

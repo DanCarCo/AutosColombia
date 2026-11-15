@@ -1,12 +1,16 @@
-# Incidencias del plan de pruebas PP-02 (ejecución del 15/11/2026)
+# Incidencias del plan de pruebas PP-02
 
-| Id | Descripción | Casos afectados | Impacto | Propuesta |
+Estado al 15/11/2026: **las 4 incidencias están cerradas**; los 30 casos quedaron aprobados en la reejecución.
+
+| Id | Descripción (primera ejecución, commit 0cfb344) | Casos | Solución | Verificación |
 | --- | --- | --- | --- | --- |
-| INC-01 | El sistema no define roles (ADMINISTRADOR / OPERADOR). Todas las cuentas ven el mismo menú y tienen los mismos permisos. | US-01, US-02, US-07, US-08, PE-02, PE-03, PE-04, PE-05 | Alto: el plan acordado exige separación de roles | Agregar rol a `operador`, validarlo en el backend (403) y filtrar el menú por rol |
-| INC-02 | Los endpoints de operadores y celdas no exigen sesión; solo estancias y pagos la exigen. | PE-01 | Crítico: cualquiera con acceso a la API crea o borra usuarios y celdas | Exigir `operador_actual` en `/operadores`, `/celdas`, `/clientes` y `/vehiculos` |
-| INC-03 | El cierre de sesión no revoca el token (JWT sin lista de revocación): sigue válido hasta expirar (480 min). | US-05 (variante revocada), US-06 | Alto | Lista de revocación o tokens de corta duración con renovación |
-| INC-04 | El formulario de entrada lista todas las celdas, incluidas las ocupadas, y rechaza la ocupación solo al registrar. | PE-05 | Medio: la API `/celdas/disponibles` ya filtra correctamente | Usar `/celdas/disponibles` en el selector de entrada |
+| INC-01 | No existían roles; todas las cuentas veían el mismo menú y tenían los mismos permisos. | US-01, US-02, US-07, US-08, PE-02, PE-03, PE-04 | Columna `operador.rol` (migración 0005), `requiere_roles` en la API (403) y menú/guards por rol en el frontend | US-01, US-02, US-07, US-08, PE-02, PE-03, PE-04 aprobados; `tests/test_roles.py` cubre la matriz de permisos |
+| INC-02 | Operadores y celdas no exigían sesión. | PE-01 | Todas las rutas de negocio exigen sesión (401) | PE-01 aprobado |
+| INC-03 | El cierre de sesión no revocaba el token. | US-05, US-06 | `POST /auth/logout` guarda el `jti` en `token_revocado`; el frontend lo llama al cerrar sesión | US-05 y US-06 aprobados (el token reutilizado responde 401) |
+| INC-04 | El formulario de entrada listaba las celdas ocupadas. | PE-05 | El selector usa `/celdas/disponibles` | PE-05 aprobado |
 
-Resultado: 19 casos aprobados y 11 fallidos de 30. Los fallos corresponden a funciones del plan que el sistema no implementa
-(roles y revocación de sesión), no a errores en la gestión de celdas, que aprobó los 13 casos. Los datos de las ejecuciones están
-en los archivos `ID.txt` de esta carpeta; las credenciales y tokens están ocultos.
+Resultado de la reejecución: **30 aprobados, 0 fallidos**. Los archivos `ID.txt` de esta carpeta son la evidencia de la reejecución
+(la de la primera ejecución se sobrescribió; el Excel conserva en cada caso la nota de lo que había fallado). Credenciales y tokens ocultos.
+
+Pendiente de la entrega: aplicar la migración 0005 en la base real (revisar antes con `alembic upgrade 0004:0005 --sql`) y crear el
+primer administrador si hace falta.

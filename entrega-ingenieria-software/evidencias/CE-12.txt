@@ -1,11 +1,12 @@
 CASO CE-12 - Eliminar celda ocupada
 Fecha de ejecución: 15/11/2026
+Versión: sistema con roles (migración 0005, ADMINISTRADOR / OPERADOR) - segunda ejecución del plan
 Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
 Credenciales y tokens ocultos en esta evidencia.
 
 REGISTRO:
-DELETE /celdas/3 -> HTTP 409 {"detail": "La celda tiene registros relacionados y no se puede eliminar."}   # celda con estancia abierta
-GET /celdas/3 -> HTTP 200 {"codigo": "T-OCUP-01", "tipo": "CARRO", "id": 3}
+DELETE /celdas/3 [sesión: administrador] -> HTTP 409 {"detail": "La celda tiene registros relacionados y no se puede eliminar."}   # celda con estancia abierta
+GET /celdas/3 [sesión: administrador] -> HTTP 200 {"codigo": "T-OCUP-01", "tipo": "CARRO", "id": 3}
 BD: estancias de T-OCUP-01 antes=1, después=1; abiertas=1
 
 ESTADO: Aprobado
