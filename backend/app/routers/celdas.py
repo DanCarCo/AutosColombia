@@ -3,17 +3,20 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Path, Query, Response
 from sqlalchemy.orm import Session
 
+from app.auth import operador_actual
 from app.database import get_session
+from app.models import Operador
 from app.schemas.celda import CeldaActualizar, CeldaCrear, CeldaRespuesta, CeldasPagina
 from app.services import celda as service
 
 router = APIRouter(prefix="/celdas", tags=["Celdas"])
 DatabaseSession = Annotated[Session, Depends(get_session)]
+OperadorAutenticado = Annotated[Operador, Depends(operador_actual)]
 CellId = Annotated[int, Path(ge=1, le=9223372036854775807)]
 
 
 @router.post("", response_model=CeldaRespuesta, status_code=201)
-def create(data: CeldaCrear, session: DatabaseSession):
+def create(data: CeldaCrear, session: DatabaseSession, operador: OperadorAutenticado):
     return service.create_cell(session, data)
 
 
@@ -42,12 +45,12 @@ def get_one(id: CellId, session: DatabaseSession):
 
 
 @router.patch("/{id}", response_model=CeldaRespuesta)
-def update(id: CellId, data: CeldaActualizar, session: DatabaseSession):
+def update(id: CellId, data: CeldaActualizar, session: DatabaseSession, operador: OperadorAutenticado):
     return service.update_cell(session, id, data)
 
 
 @router.delete("/{id}", status_code=204)
-def delete(id: CellId, session: DatabaseSession) -> Response:
+def delete(id: CellId, session: DatabaseSession, operador: OperadorAutenticado) -> Response:
     service.delete_cell(session, id)
     return Response(status_code=204)
 

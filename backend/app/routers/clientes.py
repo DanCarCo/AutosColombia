@@ -3,17 +3,20 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Path, Query, Response
 from sqlalchemy.orm import Session
 
+from app.auth import operador_actual
 from app.database import get_session
+from app.models import Operador
 from app.schemas.cliente import ClienteActualizar, ClienteCrear, ClienteRespuesta, ClientesPagina
 from app.services import cliente as service
 
 router = APIRouter(prefix="/clientes", tags=["Clientes"])
 DatabaseSession = Annotated[Session, Depends(get_session)]
+OperadorAutenticado = Annotated[Operador, Depends(operador_actual)]
 ClientId = Annotated[int, Path(ge=1, le=9223372036854775807)]
 
 
 @router.post("", response_model=ClienteRespuesta, status_code=201)
-def create(data: ClienteCrear, session: DatabaseSession):
+def create(data: ClienteCrear, session: DatabaseSession, operador: OperadorAutenticado):
     return service.create_client(session, data)
 
 
@@ -32,11 +35,11 @@ def get_one(id: ClientId, session: DatabaseSession):
 
 
 @router.patch("/{id}", response_model=ClienteRespuesta)
-def update(id: ClientId, data: ClienteActualizar, session: DatabaseSession):
+def update(id: ClientId, data: ClienteActualizar, session: DatabaseSession, operador: OperadorAutenticado):
     return service.update_client(session, id, data)
 
 
 @router.delete("/{id}", status_code=204)
-def delete(id: ClientId, session: DatabaseSession) -> Response:
+def delete(id: ClientId, session: DatabaseSession, operador: OperadorAutenticado) -> Response:
     service.delete_client(session, id)
     return Response(status_code=204)

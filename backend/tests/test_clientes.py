@@ -7,13 +7,18 @@ from fastapi.testclient import TestClient
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 
+from app.auth import operador_actual
 from app.database import get_session
 from app.main import app
-from app.models import Cliente
+from app.models import Cliente, Operador
 from app.schemas.cliente import ClienteActualizar, ClienteCrear
 from app.services.cliente import delete_client
 
 VALIDO = {"nombre": "Juan Pérez", "documento": "123456", "telefono": "3000000000"}
+
+
+def _operador_falso() -> Operador:
+    return Operador(id=99, nombre="Sesión", telefono="001", usuario="sesion", password_hash="x", turno="DIA")
 
 
 @pytest.mark.parametrize("field", ["nombre", "documento", "telefono"])
@@ -77,11 +82,13 @@ def api():
         yield session
 
     app.dependency_overrides[get_session] = override
+    app.dependency_overrides[operador_actual] = _operador_falso
     try:
         with TestClient(app) as client:
             yield client, session
     finally:
         app.dependency_overrides.pop(get_session, None)
+        app.dependency_overrides.pop(operador_actual, None)
 
 
 def test_patch_forbids_id_and_unknown_fields(api):

@@ -7,12 +7,18 @@ from fastapi.testclient import TestClient
 from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
+from app.auth import operador_actual
 from app.database import get_engine, get_session
 from app.main import app
+from app.models import Operador
 
 pytestmark = pytest.mark.skipif(
     os.getenv("RUN_POSTGRES_TESTS") != "1", reason="Requiere PostgreSQL local."
 )
+
+
+def _operador_falso() -> Operador:
+    return Operador(id=99, nombre="Sesión", telefono="001", usuario="sesion", password_hash="x", turno="DIA")
 
 
 def test_operadores_structure_and_crud():
@@ -41,6 +47,7 @@ def test_operadores_structure_and_crud():
                     yield session
 
                 app.dependency_overrides[get_session] = override
+                app.dependency_overrides[operador_actual] = _operador_falso
                 with TestClient(app) as client:
                     initial = client.get("/operadores").json()
                     assert initial["offset"] == 0 and initial["limit"] == 20
@@ -102,4 +109,5 @@ def test_operadores_structure_and_crud():
                     assert client.get("/celdas?limit=1").status_code == 200
         finally:
             app.dependency_overrides.pop(get_session, None)
+            app.dependency_overrides.pop(operador_actual, None)
             transaction.rollback()

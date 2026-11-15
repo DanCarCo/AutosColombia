@@ -16,16 +16,19 @@ export const routes: Routes = [
   {
     path: 'gestion/operadores',
     title: 'Operadores | Autos Colombia',
+    canActivate: [authGuard],
     loadComponent: () => import('./operadores/operadores').then((m) => m.Operadores),
   },
   {
     path: 'gestion/celdas',
     title: 'Celdas | Autos Colombia',
+    canActivate: [authGuard],
     loadComponent: () => import('./celdas/celdas').then((m) => m.Celdas),
   },
   {
     path: 'gestion/clientes',
     title: 'Clientes | Autos Colombia',
+    canActivate: [authGuard],
     loadComponent: () => import('./clientes/clientes').then((m) => m.Clientes),
   },
   {
@@ -38,12 +41,14 @@ export const routes: Routes = [
   {
     path: 'reportes',
     title: 'Reportes | Autos Colombia',
+    canActivate: [authGuard],
     loadComponent: () => import('./reportes/reportes').then((m) => m.Reportes),
   },
   { path: '', pathMatch: 'full', loadComponent: () => import('./home/home').then((m) => m.Home) },
   {
     path: 'gestion/vehiculos',
     title: 'Vehículos | Autos Colombia',
+    canActivate: [authGuard],
     loadComponent: () => import('./vehiculos/vehiculos').then((m) => m.Vehiculos),
   },
   { path: '**', redirectTo: '' },
