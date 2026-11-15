@@ -28,6 +28,18 @@ export const routes: Routes = [
     title: 'Clientes | Autos Colombia',
     loadComponent: () => import('./clientes/clientes').then((m) => m.Clientes),
   },
+  {
+    path: 'gestion/mensualidades',
+    title: 'Mensualidades | Autos Colombia',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./mensualidades/mensualidades').then((m) => m.Mensualidades),
+  },
+  {
+    path: 'reportes',
+    title: 'Reportes | Autos Colombia',
+    loadComponent: () => import('./reportes/reportes').then((m) => m.Reportes),
+  },
   { path: '', pathMatch: 'full', loadComponent: () => import('./home/home').then((m) => m.Home) },
   {
     path: 'gestion/vehiculos',

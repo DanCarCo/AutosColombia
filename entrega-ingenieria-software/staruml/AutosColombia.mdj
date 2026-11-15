@@ -1,96 +1,175 @@
 {
   "_type": "Project",
-  "_id": "prj-9965b77972a6",
+  "_id": "AAAAAA99fc0fc69ac64f=",
   "name": "AutosColombia",
   "ownedElements": [
     {
       "_type": "UMLModel",
-      "_id": "model-886d66e6bf1a",
+      "_id": "AAAAAA6ade6c309c2a0a=",
       "_parent": {
-        "$ref": "prj-9965b77972a6"
+        "$ref": "AAAAAA99fc0fc69ac64f="
       },
       "name": "AutosColombia",
       "ownedElements": [
         {
           "_type": "UMLPackage",
-          "_id": "pkg-976d07428186",
+          "_id": "AAAAAA56049b27615fe3=",
           "_parent": {
-            "$ref": "model-886d66e6bf1a"
+            "$ref": "AAAAAA6ade6c309c2a0a="
           },
           "name": "Dominio",
+          "documentation": "Modelo de dominio; coincide con backend/app/models.py (migraciones 0001 a 0004).",
           "ownedElements": [
             {
               "_type": "UMLEnumeration",
-              "_id": "enum-c344e0f739a5",
+              "_id": "AAAAAAc4884658f485c8=",
               "_parent": {
-                "$ref": "pkg-976d07428186"
+                "$ref": "AAAAAA56049b27615fe3="
               },
               "name": "TipoVehiculo",
-              "documentation": "Valores permitidos por la restricción CHECK ck_vehiculo_tipo.",
+              "documentation": "Valores permitidos por el CHECK ck_vehiculo_tipo.",
               "ownedElements": [
                 {
                   "_type": "UMLEnumerationLiteral",
-                  "_id": "lit-8547dc252e77",
+                  "_id": "AAAAAAeb1d0d63cc8542=",
                   "_parent": {
-                    "$ref": "enum-c344e0f739a5"
+                    "$ref": "AAAAAAc4884658f485c8="
                   },
                   "name": "MOTO"
                 },
                 {
                   "_type": "UMLEnumerationLiteral",
-                  "_id": "lit-b401dec774ed",
+                  "_id": "AAAAAA7882b35c821eed=",
                   "_parent": {
-                    "$ref": "enum-c344e0f739a5"
+                    "$ref": "AAAAAAc4884658f485c8="
                   },
                   "name": "AUTOMOVIL"
                 },
                 {
                   "_type": "UMLEnumerationLiteral",
-                  "_id": "lit-fe91d156583a",
+                  "_id": "AAAAAAa706bf511355ae=",
                   "_parent": {
-                    "$ref": "enum-c344e0f739a5"
+                    "$ref": "AAAAAAc4884658f485c8="
                   },
                   "name": "CAMIONETA"
                 }
               ]
             },
             {
-              "_type": "UMLClass",
-              "_id": "cls-d67b1b1065c0",
+              "_type": "UMLEnumeration",
+              "_id": "AAAAAA85d3727d03ddf4=",
               "_parent": {
-                "$ref": "pkg-976d07428186"
+                "$ref": "AAAAAA56049b27615fe3="
               },
-              "name": "Vehiculo",
-              "documentation": "Tabla vehiculo. Placa normalizada en mayúsculas y única.",
+              "name": "Turno",
+              "documentation": "Valores permitidos por el CHECK ck_operador_turno.",
               "ownedElements": [
                 {
-                  "_type": "UMLAttribute",
-                  "_id": "attr-58b292cc430e",
+                  "_type": "UMLEnumerationLiteral",
+                  "_id": "AAAAAA872d033ade581f=",
                   "_parent": {
-                    "$ref": "cls-d67b1b1065c0"
+                    "$ref": "AAAAAA85d3727d03ddf4="
+                  },
+                  "name": "DIA"
+                },
+                {
+                  "_type": "UMLEnumerationLiteral",
+                  "_id": "AAAAAA4b6b44c1a18d95=",
+                  "_parent": {
+                    "$ref": "AAAAAA85d3727d03ddf4="
+                  },
+                  "name": "NOCHE"
+                }
+              ]
+            },
+            {
+              "_type": "UMLClass",
+              "_id": "AAAAAA0156973b412dea=",
+              "_parent": {
+                "$ref": "AAAAAA56049b27615fe3="
+              },
+              "name": "Cliente",
+              "documentation": "Tabla cliente (RF-12). Dueño de uno o más vehículos.",
+              "attributes": [
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA24c6093311a88e=",
+                  "_parent": {
+                    "$ref": "AAAAAA0156973b412dea="
                   },
                   "name": "id",
                   "visibility": "public",
                   "type": "Long",
-                  "isReadOnly": true,
-                  "documentation": "Clave primaria (BIGINT identity)."
+                  "documentation": "Identidad generada."
                 },
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-e1a8e1bd40c1",
+                  "_id": "AAAAAA7b79a0b5e3bb87=",
                   "_parent": {
-                    "$ref": "cls-d67b1b1065c0"
+                    "$ref": "AAAAAA0156973b412dea="
+                  },
+                  "name": "nombre",
+                  "visibility": "public",
+                  "type": "String"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA32a0cb8cd94871=",
+                  "_parent": {
+                    "$ref": "AAAAAA0156973b412dea="
+                  },
+                  "name": "documento",
+                  "visibility": "public",
+                  "type": "String",
+                  "documentation": "Único (uq_cliente_documento)."
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA2a8690553c17a9=",
+                  "_parent": {
+                    "$ref": "AAAAAA0156973b412dea="
+                  },
+                  "name": "telefono",
+                  "visibility": "public",
+                  "type": "String"
+                }
+              ]
+            },
+            {
+              "_type": "UMLClass",
+              "_id": "AAAAAA69529f1c8e49dd=",
+              "_parent": {
+                "$ref": "AAAAAA56049b27615fe3="
+              },
+              "name": "Vehiculo",
+              "documentation": "Tabla vehiculo. Todo vehículo pertenece a un cliente (RF-12, RF-13).",
+              "attributes": [
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAAd969e4c4dd22dd=",
+                  "_parent": {
+                    "$ref": "AAAAAA69529f1c8e49dd="
+                  },
+                  "name": "id",
+                  "visibility": "public",
+                  "type": "Long"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA08101d6b9f41c7=",
+                  "_parent": {
+                    "$ref": "AAAAAA69529f1c8e49dd="
                   },
                   "name": "placa",
                   "visibility": "public",
                   "type": "String",
-                  "documentation": "Única; sin espacios; se guarda en mayúsculas."
+                  "documentation": "Única; normalizada a mayúsculas."
                 },
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-22cff7b9c151",
+                  "_id": "AAAAAA7aa17fa77f921b=",
                   "_parent": {
-                    "$ref": "cls-d67b1b1065c0"
+                    "$ref": "AAAAAA69529f1c8e49dd="
                   },
                   "name": "color",
                   "visibility": "public",
@@ -98,20 +177,20 @@
                 },
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-96cc67b75d77",
+                  "_id": "AAAAAA3033890cc0182f=",
                   "_parent": {
-                    "$ref": "cls-d67b1b1065c0"
+                    "$ref": "AAAAAA69529f1c8e49dd="
                   },
                   "name": "modelo",
                   "visibility": "public",
                   "type": "Integer",
-                  "documentation": "Año del vehículo, 1900-2200 (API) / 1-9999 (BD)."
+                  "documentation": "Año entre 1900 y 2200 (CHECK ck_vehiculo_modelo_anio, migración 0004)."
                 },
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-cf7540d7a082",
+                  "_id": "AAAAAA2aca32d41ace16=",
                   "_parent": {
-                    "$ref": "cls-d67b1b1065c0"
+                    "$ref": "AAAAAA69529f1c8e49dd="
                   },
                   "name": "marca",
                   "visibility": "public",
@@ -119,53 +198,62 @@
                 },
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-bb80094c65a1",
+                  "_id": "AAAAAAd2fe227990004b=",
                   "_parent": {
-                    "$ref": "cls-d67b1b1065c0"
+                    "$ref": "AAAAAA69529f1c8e49dd="
                   },
                   "name": "tipo",
                   "visibility": "public",
-                  "type": {
-                    "$ref": "enum-c344e0f739a5"
-                  }
+                  "type": "TipoVehiculo"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA366e5a409d9f3d=",
+                  "_parent": {
+                    "$ref": "AAAAAA69529f1c8e49dd="
+                  },
+                  "name": "cliente_id",
+                  "visibility": "public",
+                  "type": "Long",
+                  "documentation": "FK a cliente; obligatoria."
                 }
               ]
             },
             {
               "_type": "UMLClass",
-              "_id": "cls-ca6957e10173",
+              "_id": "AAAAAA4003cdb7a8bb43=",
               "_parent": {
-                "$ref": "pkg-976d07428186"
+                "$ref": "AAAAAA56049b27615fe3="
               },
               "name": "Celda",
-              "documentation": "Tabla celda. Código normalizado en mayúsculas y único.",
-              "ownedElements": [
+              "documentation": "Tabla celda (RF-06, RF-10). El parqueadero inicia con 80: 10 MOTO y 70 CARRO.",
+              "attributes": [
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-618bddd45f73",
+                  "_id": "AAAAAA7a8efd602882bf=",
                   "_parent": {
-                    "$ref": "cls-ca6957e10173"
+                    "$ref": "AAAAAA4003cdb7a8bb43="
                   },
                   "name": "id",
                   "visibility": "public",
-                  "type": "Long",
-                  "isReadOnly": true
+                  "type": "Long"
                 },
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-33945d56cafb",
+                  "_id": "AAAAAAf23193f9cb5264=",
                   "_parent": {
-                    "$ref": "cls-ca6957e10173"
+                    "$ref": "AAAAAA4003cdb7a8bb43="
                   },
                   "name": "codigo",
                   "visibility": "public",
-                  "type": "String"
+                  "type": "String",
+                  "documentation": "Único y normalizado a mayúsculas."
                 },
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-85013d95e6cb",
+                  "_id": "AAAAAAd893b54a5127b7=",
                   "_parent": {
-                    "$ref": "cls-ca6957e10173"
+                    "$ref": "AAAAAA4003cdb7a8bb43="
                   },
                   "name": "tipo",
                   "visibility": "public",
@@ -176,29 +264,28 @@
             },
             {
               "_type": "UMLClass",
-              "_id": "cls-76bdaf5fd6f9",
+              "_id": "AAAAAA49d64fde9ca0aa=",
               "_parent": {
-                "$ref": "pkg-976d07428186"
+                "$ref": "AAAAAA56049b27615fe3="
               },
               "name": "Operador",
-              "documentation": "Tabla operador.",
-              "ownedElements": [
+              "documentation": "Tabla operador (RF-07, RF-16). Inicia sesión con usuario y contraseña.",
+              "attributes": [
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-035f89b30142",
+                  "_id": "AAAAAAaf8c47d76d740e=",
                   "_parent": {
-                    "$ref": "cls-76bdaf5fd6f9"
+                    "$ref": "AAAAAA49d64fde9ca0aa="
                   },
                   "name": "id",
                   "visibility": "public",
-                  "type": "Long",
-                  "isReadOnly": true
+                  "type": "Long"
                 },
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-90c7f45f64ae",
+                  "_id": "AAAAAA7a2517df07e784=",
                   "_parent": {
-                    "$ref": "cls-76bdaf5fd6f9"
+                    "$ref": "AAAAAA49d64fde9ca0aa="
                   },
                   "name": "nombre",
                   "visibility": "public",
@@ -206,41 +293,72 @@
                 },
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-7a95fabcc44e",
+                  "_id": "AAAAAAe70ebbc94c69ab=",
                   "_parent": {
-                    "$ref": "cls-76bdaf5fd6f9"
+                    "$ref": "AAAAAA49d64fde9ca0aa="
                   },
                   "name": "telefono",
                   "visibility": "public",
                   "type": "String"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAAfb322c5da88818=",
+                  "_parent": {
+                    "$ref": "AAAAAA49d64fde9ca0aa="
+                  },
+                  "name": "usuario",
+                  "visibility": "public",
+                  "type": "String",
+                  "documentation": "Único."
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAAeacf43057389fd=",
+                  "_parent": {
+                    "$ref": "AAAAAA49d64fde9ca0aa="
+                  },
+                  "name": "password_hash",
+                  "visibility": "public",
+                  "type": "String",
+                  "documentation": "PBKDF2-SHA256; nunca la contraseña en claro."
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAAc96f6d3389b40f=",
+                  "_parent": {
+                    "$ref": "AAAAAA49d64fde9ca0aa="
+                  },
+                  "name": "turno",
+                  "visibility": "public",
+                  "type": "Turno"
                 }
               ]
             },
             {
               "_type": "UMLClass",
-              "_id": "cls-2dcd140c1c29",
+              "_id": "AAAAAA71fbfec85a1459=",
               "_parent": {
-                "$ref": "pkg-976d07428186"
+                "$ref": "AAAAAA56049b27615fe3="
               },
               "name": "Estancia",
-              "documentation": "Tabla estancia. Como máximo una estancia abierta (salida IS NULL) por vehículo y por celda (índices únicos parciales uq_estancia_vehiculo_abierta y uq_estancia_celda_abierta).",
-              "ownedElements": [
+              "documentation": "Tabla estancia. Como máximo una estancia abierta por vehículo y por celda (índices únicos parciales).",
+              "attributes": [
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-b549283a847e",
+                  "_id": "AAAAAA8d0957ce0b7130=",
                   "_parent": {
-                    "$ref": "cls-2dcd140c1c29"
+                    "$ref": "AAAAAA71fbfec85a1459="
                   },
                   "name": "id",
                   "visibility": "public",
-                  "type": "Long",
-                  "isReadOnly": true
+                  "type": "Long"
                 },
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-582cf18460e2",
+                  "_id": "AAAAAA320deb794cae41=",
                   "_parent": {
-                    "$ref": "cls-2dcd140c1c29"
+                    "$ref": "AAAAAA71fbfec85a1459="
                   },
                   "name": "entrada",
                   "visibility": "public",
@@ -248,991 +366,1933 @@
                 },
                 {
                   "_type": "UMLAttribute",
-                  "_id": "attr-fc4bd6fdf56d",
+                  "_id": "AAAAAA7924b353539639=",
                   "_parent": {
-                    "$ref": "cls-2dcd140c1c29"
+                    "$ref": "AAAAAA71fbfec85a1459="
                   },
                   "name": "salida",
                   "visibility": "public",
                   "type": "DateTime",
-                  "multiplicity": "0..1",
-                  "documentation": "Nula mientras la estancia está abierta."
+                  "documentation": "Nula mientras la estancia está abierta.",
+                  "multiplicity": "0..1"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA3582008f71d350=",
+                  "_parent": {
+                    "$ref": "AAAAAA71fbfec85a1459="
+                  },
+                  "name": "vehiculo_id",
+                  "visibility": "public",
+                  "type": "Long"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAAbda548c8f2d04d=",
+                  "_parent": {
+                    "$ref": "AAAAAA71fbfec85a1459="
+                  },
+                  "name": "celda_id",
+                  "visibility": "public",
+                  "type": "Long"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA751eb24f428e08=",
+                  "_parent": {
+                    "$ref": "AAAAAA71fbfec85a1459="
+                  },
+                  "name": "operador_entrada_id",
+                  "visibility": "public",
+                  "type": "Long"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA1b9fa388f99337=",
+                  "_parent": {
+                    "$ref": "AAAAAA71fbfec85a1459="
+                  },
+                  "name": "operador_salida_id",
+                  "visibility": "public",
+                  "type": "Long",
+                  "documentation": "Obligatoria si y solo si hay salida.",
+                  "multiplicity": "0..1"
+                }
+              ],
+              "operations": [
+                {
+                  "_type": "UMLOperation",
+                  "_id": "AAAAAA4444dbfacf066d=",
+                  "_parent": {
+                    "$ref": "AAAAAA71fbfec85a1459="
+                  },
+                  "name": "esta_abierta()",
+                  "visibility": "public"
                 },
                 {
                   "_type": "UMLOperation",
-                  "_id": "op-a77af8ef6713",
+                  "_id": "AAAAAAc0aa0b1f98aceb=",
                   "_parent": {
-                    "$ref": "cls-2dcd140c1c29"
+                    "$ref": "AAAAAA71fbfec85a1459="
                   },
-                  "name": "estaAbierta",
-                  "visibility": "public",
-                  "documentation": "Devuelve true si salida es nula."
-                },
-                {
-                  "_type": "UMLOperation",
-                  "_id": "op-7a028902b15c",
-                  "_parent": {
-                    "$ref": "cls-2dcd140c1c29"
-                  },
-                  "name": "cerrar",
-                  "visibility": "public",
-                  "documentation": "Valida fechas y asigna el cierre; lanza error si ya está cerrada.",
-                  "ownedElements": [
-                    {
-                      "_type": "UMLParameter",
-                      "_id": "par-f06ffa2111c6",
-                      "_parent": {
-                        "$ref": "op-7a028902b15c"
-                      },
-                      "name": "fechaSalida",
-                      "type": "DateTime",
-                      "direction": "in"
-                    },
-                    {
-                      "_type": "UMLParameter",
-                      "_id": "par-b10b39359421",
-                      "_parent": {
-                        "$ref": "op-7a028902b15c"
-                      },
-                      "name": "operador",
-                      "type": {
-                        "$ref": "cls-76bdaf5fd6f9"
-                      },
-                      "direction": "in"
-                    },
-                    {
-                      "_type": "UMLParameter",
-                      "_id": "par-f36f6f152cd2",
-                      "_parent": {
-                        "$ref": "op-7a028902b15c"
-                      },
-                      "name": "return",
-                      "direction": "return",
-                      "type": "void"
-                    }
-                  ]
+                  "name": "cerrar(fecha_salida, operador)",
+                  "visibility": "public"
                 }
               ]
             },
             {
-              "_type": "UMLAssociation",
-              "_id": "assoc-dd7487fd597a",
+              "_type": "UMLClass",
+              "_id": "AAAAAA08fa68110b1dca=",
               "_parent": {
-                "$ref": "pkg-976d07428186"
+                "$ref": "AAAAAA56049b27615fe3="
               },
-              "name": "",
-              "ownedElements": [
+              "name": "Pago",
+              "documentation": "Tabla pago (RF-14). Mensualidad de un vehículo: un mes calendario.",
+              "attributes": [
                 {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-e31a7a68b3aa",
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA0c26dbdcd9b872=",
                   "_parent": {
-                    "$ref": "assoc-dd7487fd597a"
+                    "$ref": "AAAAAA08fa68110b1dca="
                   },
-                  "name": "vehiculo",
-                  "reference": {
-                    "$ref": "cls-d67b1b1065c0"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
+                  "name": "id",
+                  "visibility": "public",
+                  "type": "Long"
                 },
                 {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-bd4e7883e7ae",
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAAad0a26b1f99570=",
                   "_parent": {
-                    "$ref": "assoc-dd7487fd597a"
+                    "$ref": "AAAAAA08fa68110b1dca="
                   },
-                  "name": "estancias",
-                  "reference": {
-                    "$ref": "cls-2dcd140c1c29"
+                  "name": "vehiculo_id",
+                  "visibility": "public",
+                  "type": "Long"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAAcd6e60ecd60219=",
+                  "_parent": {
+                    "$ref": "AAAAAA08fa68110b1dca="
                   },
-                  "multiplicity": "0..*",
-                  "navigable": true
+                  "name": "operador_id",
+                  "visibility": "public",
+                  "type": "Long"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA13091547a5a3a9=",
+                  "_parent": {
+                    "$ref": "AAAAAA08fa68110b1dca="
+                  },
+                  "name": "monto",
+                  "visibility": "public",
+                  "type": "Decimal",
+                  "documentation": "Lo calcula el servidor según el tipo de vehículo; nunca lo envía el cliente."
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA76cca67661f7f7=",
+                  "_parent": {
+                    "$ref": "AAAAAA08fa68110b1dca="
+                  },
+                  "name": "periodo_inicio",
+                  "visibility": "public",
+                  "type": "Date"
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA920990c25cd0c4=",
+                  "_parent": {
+                    "$ref": "AAAAAA08fa68110b1dca="
+                  },
+                  "name": "periodo_fin",
+                  "visibility": "public",
+                  "type": "Date",
+                  "documentation": "Mayor o igual que periodo_inicio."
+                },
+                {
+                  "_type": "UMLAttribute",
+                  "_id": "AAAAAA8c5eda3a80bf62=",
+                  "_parent": {
+                    "$ref": "AAAAAA08fa68110b1dca="
+                  },
+                  "name": "fecha_pago",
+                  "visibility": "public",
+                  "type": "DateTime"
                 }
               ]
             },
             {
               "_type": "UMLAssociation",
-              "_id": "assoc-f19e8914c0da",
+              "_id": "AAAAAA055d12030962d7=",
               "_parent": {
-                "$ref": "pkg-976d07428186"
+                "$ref": "AAAAAA56049b27615fe3="
               },
-              "name": "",
-              "ownedElements": [
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-322da828b70e",
-                  "_parent": {
-                    "$ref": "assoc-f19e8914c0da"
-                  },
-                  "name": "celda",
-                  "reference": {
-                    "$ref": "cls-ca6957e10173"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
+              "name": "posee",
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA72a15574cda202=",
+                "_parent": {
+                  "$ref": "AAAAAA055d12030962d7="
                 },
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-6e0e31970bfa",
-                  "_parent": {
-                    "$ref": "assoc-f19e8914c0da"
-                  },
-                  "name": "estancias",
-                  "reference": {
-                    "$ref": "cls-2dcd140c1c29"
-                  },
-                  "multiplicity": "0..*",
-                  "navigable": true
-                }
-              ]
+                "name": "cliente",
+                "reference": {
+                  "$ref": "AAAAAA0156973b412dea="
+                },
+                "multiplicity": "1",
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA4370cbf1854413=",
+                "_parent": {
+                  "$ref": "AAAAAA055d12030962d7="
+                },
+                "name": "vehiculos",
+                "reference": {
+                  "$ref": "AAAAAA69529f1c8e49dd="
+                },
+                "multiplicity": "0..*",
+                "navigable": true
+              }
             },
             {
               "_type": "UMLAssociation",
-              "_id": "assoc-62de5649024b",
+              "_id": "AAAAAAde1e9df34b1700=",
               "_parent": {
-                "$ref": "pkg-976d07428186"
+                "$ref": "AAAAAA56049b27615fe3="
+              },
+              "name": "tiene",
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAa0bd952922f694=",
+                "_parent": {
+                  "$ref": "AAAAAAde1e9df34b1700="
+                },
+                "name": "vehiculo",
+                "reference": {
+                  "$ref": "AAAAAA69529f1c8e49dd="
+                },
+                "multiplicity": "1",
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA17c46cae93b389=",
+                "_parent": {
+                  "$ref": "AAAAAAde1e9df34b1700="
+                },
+                "name": "estancias",
+                "reference": {
+                  "$ref": "AAAAAA71fbfec85a1459="
+                },
+                "multiplicity": "0..*",
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAA9b60debb8bfa06=",
+              "_parent": {
+                "$ref": "AAAAAA56049b27615fe3="
+              },
+              "name": "aloja",
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAb9ec2fe4e82884=",
+                "_parent": {
+                  "$ref": "AAAAAA9b60debb8bfa06="
+                },
+                "name": "celda",
+                "reference": {
+                  "$ref": "AAAAAA4003cdb7a8bb43="
+                },
+                "multiplicity": "1",
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA50fb242b94184e=",
+                "_parent": {
+                  "$ref": "AAAAAA9b60debb8bfa06="
+                },
+                "name": "estancias",
+                "reference": {
+                  "$ref": "AAAAAA71fbfec85a1459="
+                },
+                "multiplicity": "0..*",
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAA8d8eb7038bef29=",
+              "_parent": {
+                "$ref": "AAAAAA56049b27615fe3="
               },
               "name": "registra entrada",
-              "ownedElements": [
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-a5306bf18abf",
-                  "_parent": {
-                    "$ref": "assoc-62de5649024b"
-                  },
-                  "name": "operadorEntrada",
-                  "reference": {
-                    "$ref": "cls-76bdaf5fd6f9"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAcac48c25051b15=",
+                "_parent": {
+                  "$ref": "AAAAAA8d8eb7038bef29="
                 },
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-a49f76f52c4a",
-                  "_parent": {
-                    "$ref": "assoc-62de5649024b"
-                  },
-                  "name": "estanciasEntrada",
-                  "reference": {
-                    "$ref": "cls-2dcd140c1c29"
-                  },
-                  "multiplicity": "0..*",
-                  "navigable": true
-                }
-              ]
+                "name": "operadorEntrada",
+                "reference": {
+                  "$ref": "AAAAAA49d64fde9ca0aa="
+                },
+                "multiplicity": "1",
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA957711c399fdba=",
+                "_parent": {
+                  "$ref": "AAAAAA8d8eb7038bef29="
+                },
+                "name": "estanciasAbiertas",
+                "reference": {
+                  "$ref": "AAAAAA71fbfec85a1459="
+                },
+                "multiplicity": "0..*",
+                "navigable": true
+              }
             },
             {
               "_type": "UMLAssociation",
-              "_id": "assoc-7b414dd023f9",
+              "_id": "AAAAAA20e71104c36791=",
               "_parent": {
-                "$ref": "pkg-976d07428186"
+                "$ref": "AAAAAA56049b27615fe3="
               },
               "name": "registra salida",
-              "ownedElements": [
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-0a15ee90ac90",
-                  "_parent": {
-                    "$ref": "assoc-7b414dd023f9"
-                  },
-                  "name": "operadorSalida",
-                  "reference": {
-                    "$ref": "cls-76bdaf5fd6f9"
-                  },
-                  "multiplicity": "0..1",
-                  "navigable": true
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAdc049680e02245=",
+                "_parent": {
+                  "$ref": "AAAAAA20e71104c36791="
                 },
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-c5ebe8d22aa3",
-                  "_parent": {
-                    "$ref": "assoc-7b414dd023f9"
-                  },
-                  "name": "estanciasSalida",
-                  "reference": {
-                    "$ref": "cls-2dcd140c1c29"
-                  },
-                  "multiplicity": "0..*",
-                  "navigable": true
-                }
-              ]
+                "name": "operadorSalida",
+                "reference": {
+                  "$ref": "AAAAAA49d64fde9ca0aa="
+                },
+                "multiplicity": "0..1",
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA1e21d17e55dcaf=",
+                "_parent": {
+                  "$ref": "AAAAAA20e71104c36791="
+                },
+                "name": "estanciasCerradas",
+                "reference": {
+                  "$ref": "AAAAAA71fbfec85a1459="
+                },
+                "multiplicity": "0..*",
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAAcd6e48bc8157df=",
+              "_parent": {
+                "$ref": "AAAAAA56049b27615fe3="
+              },
+              "name": "cubre",
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA57b1da671eca54=",
+                "_parent": {
+                  "$ref": "AAAAAAcd6e48bc8157df="
+                },
+                "name": "vehiculo",
+                "reference": {
+                  "$ref": "AAAAAA69529f1c8e49dd="
+                },
+                "multiplicity": "1",
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA21b074f444ad21=",
+                "_parent": {
+                  "$ref": "AAAAAAcd6e48bc8157df="
+                },
+                "name": "pagos",
+                "reference": {
+                  "$ref": "AAAAAA08fa68110b1dca="
+                },
+                "multiplicity": "0..*",
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAAc86f9835a48e87=",
+              "_parent": {
+                "$ref": "AAAAAA56049b27615fe3="
+              },
+              "name": "registra",
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAee4371ba57ad2b=",
+                "_parent": {
+                  "$ref": "AAAAAAc86f9835a48e87="
+                },
+                "name": "operador",
+                "reference": {
+                  "$ref": "AAAAAA49d64fde9ca0aa="
+                },
+                "multiplicity": "1",
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA5a75af9671e2fa=",
+                "_parent": {
+                  "$ref": "AAAAAAc86f9835a48e87="
+                },
+                "name": "pagosRegistrados",
+                "reference": {
+                  "$ref": "AAAAAA08fa68110b1dca="
+                },
+                "multiplicity": "0..*",
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA42cb3c794405ee=",
+              "_parent": {
+                "$ref": "AAAAAA56049b27615fe3="
+              },
+              "source": {
+                "$ref": "AAAAAA69529f1c8e49dd="
+              },
+              "target": {
+                "$ref": "AAAAAAc4884658f485c8="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA796af5178b8284=",
+              "_parent": {
+                "$ref": "AAAAAA56049b27615fe3="
+              },
+              "source": {
+                "$ref": "AAAAAA49d64fde9ca0aa="
+              },
+              "target": {
+                "$ref": "AAAAAA85d3727d03ddf4="
+              }
             },
             {
               "_type": "UMLClassDiagram",
-              "_id": "diag-fb9c13f287bd",
+              "_id": "AAAAAAf909587b6b6f80=",
               "_parent": {
-                "$ref": "pkg-976d07428186"
+                "$ref": "AAAAAA56049b27615fe3="
               },
               "name": "Diagrama de clases",
               "model": {
-                "$ref": "pkg-976d07428186"
+                "$ref": "AAAAAA56049b27615fe3="
               },
+              "documentation": "Arrastra aquí las 6 clases y las 2 enumeraciones: Cliente, Vehiculo, Celda, Operador, Estancia, Pago.",
               "defaultDiagram": true
             }
           ]
         },
         {
           "_type": "UMLPackage",
-          "_id": "pkg-b906619b2e33",
+          "_id": "AAAAAA5981417e5244f0=",
           "_parent": {
-            "$ref": "model-886d66e6bf1a"
+            "$ref": "AAAAAA6ade6c309c2a0a="
           },
           "name": "CasosDeUso",
+          "documentation": "Actores y casos de uso. CU-nn corresponde a docs/02-historias-de-usuario.md.",
           "ownedElements": [
             {
               "_type": "UMLActor",
-              "_id": "actor-1a1ee948570a",
+              "_id": "AAAAAAb73cf66c727d1c=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "Operador de parqueadero"
+              "name": "Operador de parqueadero",
+              "documentation": "Atiende el acceso. Inicia sesión como operador."
             },
             {
               "_type": "UMLActor",
-              "_id": "actor-b259ccf88f74",
+              "_id": "AAAAAA426f9b87d946b9=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "Administrador de catálogos"
+              "name": "Administrador de catálogos",
+              "documentation": "Mantiene operadores, clientes, vehículos y celdas. También inicia sesión como operador."
             },
             {
               "_type": "UMLUseCase",
-              "_id": "uc-bc60c2dd1692",
+              "_id": "AAAAAAe38d82123423ba=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "Registrar entrada de vehículo"
+              "name": "CU-01 Iniciar sesión",
+              "documentation": "RF-16, HU-14"
             },
             {
               "_type": "UMLUseCase",
-              "_id": "uc-30666db0cb98",
+              "_id": "AAAAAA9b8c33056dff4c=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "Registrar salida de vehículo"
+              "name": "CU-02 Registrar entrada de vehículo",
+              "documentation": "RF-03, HU-03. Exige mensualidad vigente."
             },
             {
               "_type": "UMLUseCase",
-              "_id": "uc-359e02bc13e5",
+              "_id": "AAAAAA89d12a0a2583e0=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "Consultar estado de vehículo"
+              "name": "CU-03 Registrar salida de vehículo",
+              "documentation": "RF-04, HU-04"
             },
             {
               "_type": "UMLUseCase",
-              "_id": "uc-e7bb3ce39f24",
+              "_id": "AAAAAAf0874a4138c629=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "Gestionar vehículos"
+              "name": "CU-04 Consultar estado de vehículo",
+              "documentation": "RF-05, HU-05"
             },
             {
               "_type": "UMLUseCase",
-              "_id": "uc-1829617c9bfa",
+              "_id": "AAAAAA77c278e8426d04=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "Gestionar celdas"
+              "name": "CU-05 Corregir celda de la estancia",
+              "documentation": "RF-11, HU-10"
             },
             {
               "_type": "UMLUseCase",
-              "_id": "uc-0981a482b1aa",
+              "_id": "AAAAAAb73092cb29f8ce=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "Gestionar operadores"
+              "name": "CU-06 Gestionar vehículos",
+              "documentation": "RF-01, RF-02, RF-13, HU-01, HU-02, HU-11"
             },
             {
               "_type": "UMLUseCase",
-              "_id": "uc-2a2f73093bae",
+              "_id": "AAAAAA4c83596e8ea802=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "Verificar estado de la API"
+              "name": "CU-07 Gestionar celdas",
+              "documentation": "RF-06, HU-06"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAAa4a8a79c9a0e5a=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-08 Consultar celdas disponibles",
+              "documentation": "RF-10, HU-09"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAA53e20446304f70=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-09 Gestionar operadores",
+              "documentation": "RF-07, HU-07"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAA45d2dee91432c0=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-10 Gestionar clientes",
+              "documentation": "RF-12, HU-11"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAA4c6dfbdc6dbc38=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-11 Registrar mensualidad",
+              "documentation": "RF-14, HU-12"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAA83f83c7b8b2879=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-12 Consultar vigencia de mensualidad",
+              "documentation": "RF-14, HU-12"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAAf4bd6b4cc48924=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-13 Validar mensualidad vigente",
+              "documentation": "RF-14. Incluido en CU-02."
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAA7e674e66f9cc32=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-14 Consultar resumen del parqueadero",
+              "documentation": "RF-15, HU-13"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAA642c403577f75c=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-15 Verificar estado de la API",
+              "documentation": "GET /health"
             },
             {
               "_type": "UMLAssociation",
-              "_id": "assoc-c872de754368",
+              "_id": "AAAAAAe529afd81e8810=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "",
-              "ownedElements": [
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-1263c51b863e",
-                  "_parent": {
-                    "$ref": "assoc-c872de754368"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "actor-1a1ee948570a"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA1bcde62300da99=",
+                "_parent": {
+                  "$ref": "AAAAAAe529afd81e8810="
                 },
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-1c720d2a6866",
-                  "_parent": {
-                    "$ref": "assoc-c872de754368"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "uc-bc60c2dd1692"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
-                }
-              ]
+                "reference": {
+                  "$ref": "AAAAAAb73cf66c727d1c="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAab574669c62d13=",
+                "_parent": {
+                  "$ref": "AAAAAAe529afd81e8810="
+                },
+                "reference": {
+                  "$ref": "AAAAAAe38d82123423ba="
+                },
+                "navigable": true
+              }
             },
             {
               "_type": "UMLAssociation",
-              "_id": "assoc-1e51afccd7ab",
+              "_id": "AAAAAA45d25fbe9a39f5=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "",
-              "ownedElements": [
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-3516e605b878",
-                  "_parent": {
-                    "$ref": "assoc-1e51afccd7ab"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "actor-1a1ee948570a"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA77894ee1175f4a=",
+                "_parent": {
+                  "$ref": "AAAAAA45d25fbe9a39f5="
                 },
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-dc5d0d03f960",
-                  "_parent": {
-                    "$ref": "assoc-1e51afccd7ab"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "uc-30666db0cb98"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
-                }
-              ]
+                "reference": {
+                  "$ref": "AAAAAAb73cf66c727d1c="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA342ffa4c677a81=",
+                "_parent": {
+                  "$ref": "AAAAAA45d25fbe9a39f5="
+                },
+                "reference": {
+                  "$ref": "AAAAAA9b8c33056dff4c="
+                },
+                "navigable": true
+              }
             },
             {
               "_type": "UMLAssociation",
-              "_id": "assoc-a4323858f6b0",
+              "_id": "AAAAAA43f9cdf02dc8e6=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "",
-              "ownedElements": [
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-0e9b9d026812",
-                  "_parent": {
-                    "$ref": "assoc-a4323858f6b0"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "actor-1a1ee948570a"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA98bdabc413dc4a=",
+                "_parent": {
+                  "$ref": "AAAAAA43f9cdf02dc8e6="
                 },
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-35fa9246a3a2",
-                  "_parent": {
-                    "$ref": "assoc-a4323858f6b0"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "uc-359e02bc13e5"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
-                }
-              ]
+                "reference": {
+                  "$ref": "AAAAAAb73cf66c727d1c="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAc784531ec06ee6=",
+                "_parent": {
+                  "$ref": "AAAAAA43f9cdf02dc8e6="
+                },
+                "reference": {
+                  "$ref": "AAAAAA89d12a0a2583e0="
+                },
+                "navigable": true
+              }
             },
             {
               "_type": "UMLAssociation",
-              "_id": "assoc-34dd3e369fe9",
+              "_id": "AAAAAAfe72c516ac4858=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "",
-              "ownedElements": [
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-d5f5b2e93d93",
-                  "_parent": {
-                    "$ref": "assoc-34dd3e369fe9"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "actor-1a1ee948570a"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA0ccd872ab41773=",
+                "_parent": {
+                  "$ref": "AAAAAAfe72c516ac4858="
                 },
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-9b3131f00f32",
-                  "_parent": {
-                    "$ref": "assoc-34dd3e369fe9"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "uc-2a2f73093bae"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
-                }
-              ]
+                "reference": {
+                  "$ref": "AAAAAAb73cf66c727d1c="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA5b0b277721081e=",
+                "_parent": {
+                  "$ref": "AAAAAAfe72c516ac4858="
+                },
+                "reference": {
+                  "$ref": "AAAAAAf0874a4138c629="
+                },
+                "navigable": true
+              }
             },
             {
               "_type": "UMLAssociation",
-              "_id": "assoc-df362465b063",
+              "_id": "AAAAAA3a73d443845e30=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "",
-              "ownedElements": [
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-c51f4f8d9c1a",
-                  "_parent": {
-                    "$ref": "assoc-df362465b063"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "actor-b259ccf88f74"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAf106d3b9c90bed=",
+                "_parent": {
+                  "$ref": "AAAAAA3a73d443845e30="
                 },
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-a4b6b8f1e2a3",
-                  "_parent": {
-                    "$ref": "assoc-df362465b063"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "uc-e7bb3ce39f24"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
-                }
-              ]
+                "reference": {
+                  "$ref": "AAAAAAb73cf66c727d1c="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA2e699ae8f9902d=",
+                "_parent": {
+                  "$ref": "AAAAAA3a73d443845e30="
+                },
+                "reference": {
+                  "$ref": "AAAAAA77c278e8426d04="
+                },
+                "navigable": true
+              }
             },
             {
               "_type": "UMLAssociation",
-              "_id": "assoc-9159b6b4306a",
+              "_id": "AAAAAA27129d12680ca0=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "",
-              "ownedElements": [
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-3f7f5f0a8dae",
-                  "_parent": {
-                    "$ref": "assoc-9159b6b4306a"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "actor-b259ccf88f74"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA54bcd442436445=",
+                "_parent": {
+                  "$ref": "AAAAAA27129d12680ca0="
                 },
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-198414a2970d",
-                  "_parent": {
-                    "$ref": "assoc-9159b6b4306a"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "uc-1829617c9bfa"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
-                }
-              ]
+                "reference": {
+                  "$ref": "AAAAAAb73cf66c727d1c="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA627c499530ce27=",
+                "_parent": {
+                  "$ref": "AAAAAA27129d12680ca0="
+                },
+                "reference": {
+                  "$ref": "AAAAAAa4a8a79c9a0e5a="
+                },
+                "navigable": true
+              }
             },
             {
               "_type": "UMLAssociation",
-              "_id": "assoc-e35bbb7894b8",
+              "_id": "AAAAAA18bd3773d88cb7=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "",
-              "ownedElements": [
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-8f16cbaa8ebf",
-                  "_parent": {
-                    "$ref": "assoc-e35bbb7894b8"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "actor-b259ccf88f74"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA0b28b803055984=",
+                "_parent": {
+                  "$ref": "AAAAAA18bd3773d88cb7="
                 },
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-244038e82e13",
-                  "_parent": {
-                    "$ref": "assoc-e35bbb7894b8"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "uc-0981a482b1aa"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
-                }
-              ]
+                "reference": {
+                  "$ref": "AAAAAAb73cf66c727d1c="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA816635eaa5bf1a=",
+                "_parent": {
+                  "$ref": "AAAAAA18bd3773d88cb7="
+                },
+                "reference": {
+                  "$ref": "AAAAAA4c6dfbdc6dbc38="
+                },
+                "navigable": true
+              }
             },
             {
               "_type": "UMLAssociation",
-              "_id": "assoc-c70d27d95cd9",
+              "_id": "AAAAAA6e86bdc4b545b2=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "",
-              "ownedElements": [
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-15d01003a0dc",
-                  "_parent": {
-                    "$ref": "assoc-c70d27d95cd9"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "actor-b259ccf88f74"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA9ebf0a45e86b5b=",
+                "_parent": {
+                  "$ref": "AAAAAA6e86bdc4b545b2="
                 },
-                {
-                  "_type": "UMLAssociationEnd",
-                  "_id": "end-92651000c6f1",
-                  "_parent": {
-                    "$ref": "assoc-c70d27d95cd9"
-                  },
-                  "name": "",
-                  "reference": {
-                    "$ref": "uc-2a2f73093bae"
-                  },
-                  "multiplicity": "1",
-                  "navigable": true
-                }
-              ]
+                "reference": {
+                  "$ref": "AAAAAAb73cf66c727d1c="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA263d1b1c5762c1=",
+                "_parent": {
+                  "$ref": "AAAAAA6e86bdc4b545b2="
+                },
+                "reference": {
+                  "$ref": "AAAAAA83f83c7b8b2879="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAAfc4781b403c9a3=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA3e5d13077b4697=",
+                "_parent": {
+                  "$ref": "AAAAAAfc4781b403c9a3="
+                },
+                "reference": {
+                  "$ref": "AAAAAAb73cf66c727d1c="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA47500ed062c72b=",
+                "_parent": {
+                  "$ref": "AAAAAAfc4781b403c9a3="
+                },
+                "reference": {
+                  "$ref": "AAAAAA7e674e66f9cc32="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAA2bc7f0ba3a629b=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAeae35e8356fb07=",
+                "_parent": {
+                  "$ref": "AAAAAA2bc7f0ba3a629b="
+                },
+                "reference": {
+                  "$ref": "AAAAAA426f9b87d946b9="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAa0ccc75035ab55=",
+                "_parent": {
+                  "$ref": "AAAAAA2bc7f0ba3a629b="
+                },
+                "reference": {
+                  "$ref": "AAAAAAe38d82123423ba="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAAa1bf709f88c553=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAc3a5a87038ee35=",
+                "_parent": {
+                  "$ref": "AAAAAAa1bf709f88c553="
+                },
+                "reference": {
+                  "$ref": "AAAAAA426f9b87d946b9="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA46cc66b8e42449=",
+                "_parent": {
+                  "$ref": "AAAAAAa1bf709f88c553="
+                },
+                "reference": {
+                  "$ref": "AAAAAAb73092cb29f8ce="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAAe74b80d783baeb=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAe7cf7e424ca27a=",
+                "_parent": {
+                  "$ref": "AAAAAAe74b80d783baeb="
+                },
+                "reference": {
+                  "$ref": "AAAAAA426f9b87d946b9="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAebf48bbf868c0e=",
+                "_parent": {
+                  "$ref": "AAAAAAe74b80d783baeb="
+                },
+                "reference": {
+                  "$ref": "AAAAAA4c83596e8ea802="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAAefb11cd3af259a=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA861d08033152e8=",
+                "_parent": {
+                  "$ref": "AAAAAAefb11cd3af259a="
+                },
+                "reference": {
+                  "$ref": "AAAAAA426f9b87d946b9="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA76173585d74e28=",
+                "_parent": {
+                  "$ref": "AAAAAAefb11cd3af259a="
+                },
+                "reference": {
+                  "$ref": "AAAAAAa4a8a79c9a0e5a="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAAcf910e5a91867b=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAe521e64e58c01a=",
+                "_parent": {
+                  "$ref": "AAAAAAcf910e5a91867b="
+                },
+                "reference": {
+                  "$ref": "AAAAAA426f9b87d946b9="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA3131e4d46315cf=",
+                "_parent": {
+                  "$ref": "AAAAAAcf910e5a91867b="
+                },
+                "reference": {
+                  "$ref": "AAAAAA53e20446304f70="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAA4a379fab5f44aa=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA3d6533118d0abe=",
+                "_parent": {
+                  "$ref": "AAAAAA4a379fab5f44aa="
+                },
+                "reference": {
+                  "$ref": "AAAAAA426f9b87d946b9="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA14f77b64019629=",
+                "_parent": {
+                  "$ref": "AAAAAA4a379fab5f44aa="
+                },
+                "reference": {
+                  "$ref": "AAAAAA45d2dee91432c0="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAAad8d4a0d52e82c=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA3b1ea1796947f7=",
+                "_parent": {
+                  "$ref": "AAAAAAad8d4a0d52e82c="
+                },
+                "reference": {
+                  "$ref": "AAAAAA426f9b87d946b9="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA87ff612adf4e27=",
+                "_parent": {
+                  "$ref": "AAAAAAad8d4a0d52e82c="
+                },
+                "reference": {
+                  "$ref": "AAAAAA7e674e66f9cc32="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAA35c1d917460f76=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA0f61e4cc74d3ee=",
+                "_parent": {
+                  "$ref": "AAAAAA35c1d917460f76="
+                },
+                "reference": {
+                  "$ref": "AAAAAA426f9b87d946b9="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA0ced164a664e50=",
+                "_parent": {
+                  "$ref": "AAAAAA35c1d917460f76="
+                },
+                "reference": {
+                  "$ref": "AAAAAA642c403577f75c="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLInclude",
+              "_id": "AAAAAA51cc51d1786f20=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "source": {
+                "$ref": "AAAAAA9b8c33056dff4c="
+              },
+              "target": {
+                "$ref": "AAAAAAf4bd6b4cc48924="
+              }
+            },
+            {
+              "_type": "UMLInclude",
+              "_id": "AAAAAA1c79ac1df27b2b=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "source": {
+                "$ref": "AAAAAA9b8c33056dff4c="
+              },
+              "target": {
+                "$ref": "AAAAAAe38d82123423ba="
+              }
+            },
+            {
+              "_type": "UMLInclude",
+              "_id": "AAAAAA827515e40ce80e=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "source": {
+                "$ref": "AAAAAA89d12a0a2583e0="
+              },
+              "target": {
+                "$ref": "AAAAAAe38d82123423ba="
+              }
+            },
+            {
+              "_type": "UMLInclude",
+              "_id": "AAAAAAdf1e52ac1a5bdc=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "source": {
+                "$ref": "AAAAAA77c278e8426d04="
+              },
+              "target": {
+                "$ref": "AAAAAAe38d82123423ba="
+              }
+            },
+            {
+              "_type": "UMLInclude",
+              "_id": "AAAAAA9ad9dc28e32771=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "source": {
+                "$ref": "AAAAAA4c6dfbdc6dbc38="
+              },
+              "target": {
+                "$ref": "AAAAAAe38d82123423ba="
+              }
             },
             {
               "_type": "UMLUseCaseDiagram",
-              "_id": "diag-453ff81b86d8",
+              "_id": "AAAAAAae718b6cad55ef=",
               "_parent": {
-                "$ref": "pkg-b906619b2e33"
+                "$ref": "AAAAAA5981417e5244f0="
               },
-              "name": "Casos de uso",
+              "name": "CU Gestión de usuarios y celdas (iteración 2)",
               "model": {
-                "$ref": "pkg-b906619b2e33"
-              }
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "documentation": "Actores + CU-01, CU-06, CU-07, CU-08, CU-09, CU-10, CU-14.",
+              "defaultDiagram": true
+            },
+            {
+              "_type": "UMLUseCaseDiagram",
+              "_id": "AAAAAA2553c98ecaedd1=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU Operación y pagos",
+              "model": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "documentation": "Operador + CU-01 a CU-05, CU-11, CU-12, CU-13 (con los include)."
             }
           ]
         },
         {
           "_type": "UMLPackage",
-          "_id": "pkg-4d6f10c41fe1",
+          "_id": "AAAAAA49a63d4d933425=",
           "_parent": {
-            "$ref": "model-886d66e6bf1a"
+            "$ref": "AAAAAA6ade6c309c2a0a="
           },
           "name": "Arquitectura",
+          "documentation": "Componentes principales y su comunicación.",
           "ownedElements": [
             {
               "_type": "UMLComponent",
-              "_id": "comp-60d0e6741696",
+              "_id": "AAAAAA753d71bb86242a=",
               "_parent": {
-                "$ref": "pkg-4d6f10c41fe1"
+                "$ref": "AAAAAA49a63d4d933425="
               },
               "name": "Frontend (Angular 22)",
-              "documentation": "Pantallas standalone; ApiService centraliza las llamadas HTTP."
+              "documentation": "Pantallas standalone; servicios HTTP con ApiService; authGuard e interceptor."
             },
             {
               "_type": "UMLComponent",
-              "_id": "comp-3c33d52b0a38",
+              "_id": "AAAAAAdfb2254e3a6cb0=",
               "_parent": {
-                "$ref": "pkg-4d6f10c41fe1"
+                "$ref": "AAAAAA49a63d4d933425="
               },
               "name": "API (FastAPI)",
-              "documentation": "Routers de Vehículos, Celdas, Operadores y Estancias; /health."
+              "documentation": "routers, services, schemas, models, auth y security."
             },
             {
               "_type": "UMLComponent",
-              "_id": "comp-75053b59e1bf",
+              "_id": "AAAAAA8c2c7775ee5645=",
               "_parent": {
-                "$ref": "pkg-4d6f10c41fe1"
+                "$ref": "AAAAAA49a63d4d933425="
               },
               "name": "Base de datos (PostgreSQL)",
-              "documentation": "Tablas vehiculo, celda, operador, estancia; migraciones Alembic."
+              "documentation": "autos_colombia; migraciones Alembic 0001 a 0004."
             },
             {
-              "_type": "UMLInterface",
-              "_id": "iface-656ca5b7b23a",
+              "_type": "UMLDependency",
+              "_id": "AAAAAAe3f8ab0b6415cf=",
               "_parent": {
-                "$ref": "pkg-4d6f10c41fe1"
+                "$ref": "AAAAAA49a63d4d933425="
               },
-              "name": "API REST (JSON)"
-            },
-            {
-              "_type": "UMLInterfaceRealization",
-              "_id": "real-4896cd87a441",
-              "_parent": {
-                "$ref": "pkg-4d6f10c41fe1"
-              },
+              "name": "HTTP JSON",
               "source": {
-                "$ref": "comp-3c33d52b0a38"
+                "$ref": "AAAAAA753d71bb86242a="
               },
               "target": {
-                "$ref": "iface-656ca5b7b23a"
+                "$ref": "AAAAAAdfb2254e3a6cb0="
               }
             },
             {
               "_type": "UMLDependency",
-              "_id": "dep-ea4e31464810",
+              "_id": "AAAAAAa4654c1d7ef62c=",
               "_parent": {
-                "$ref": "pkg-4d6f10c41fe1"
+                "$ref": "AAAAAA49a63d4d933425="
               },
+              "name": "SQLAlchemy y psycopg",
               "source": {
-                "$ref": "comp-60d0e6741696"
+                "$ref": "AAAAAAdfb2254e3a6cb0="
               },
               "target": {
-                "$ref": "iface-656ca5b7b23a"
-              },
-              "name": "HTTP/JSON vía proxy de desarrollo"
-            },
-            {
-              "_type": "UMLDependency",
-              "_id": "dep-e7770fbbef10",
-              "_parent": {
-                "$ref": "pkg-4d6f10c41fe1"
-              },
-              "source": {
-                "$ref": "comp-3c33d52b0a38"
-              },
-              "target": {
-                "$ref": "comp-75053b59e1bf"
-              },
-              "name": "SQL vía SQLAlchemy/psycopg"
+                "$ref": "AAAAAA8c2c7775ee5645="
+              }
             },
             {
               "_type": "UMLComponentDiagram",
-              "_id": "diag-05c38ce7aead",
+              "_id": "AAAAAA7de98d5c154315=",
               "_parent": {
-                "$ref": "pkg-4d6f10c41fe1"
+                "$ref": "AAAAAA49a63d4d933425="
               },
               "name": "Arquitectura del sistema",
               "model": {
-                "$ref": "pkg-4d6f10c41fe1"
-              }
+                "$ref": "AAAAAA49a63d4d933425="
+              },
+              "documentation": "Tres componentes y dos dependencias.",
+              "defaultDiagram": true
             }
           ]
         },
         {
           "_type": "UMLPackage",
-          "_id": "pkg-3fb88b6aa5ea",
+          "_id": "AAAAAA3d801aff7f7c6a=",
           "_parent": {
-            "$ref": "model-886d66e6bf1a"
+            "$ref": "AAAAAA6ade6c309c2a0a="
+          },
+          "name": "Componentes detallados",
+          "documentation": "Componentes internos del frontend y del backend (iteraciones 1 y 2).",
+          "ownedElements": [
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAAfb90770b084840=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "FE Home"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAAdfe00954280ed2=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "FE Login"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAAd65f3575e2dac2=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "FE ControlAcceso"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA99b6106bbc9e43=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "FE Vehiculos"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA3930e9e8069068=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "FE Celdas"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA7725f92005c90c=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "FE Operadores"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA13260e9ba7fc5d=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "FE Clientes"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAAd3430962842b74=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "FE Mensualidades"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA76975e23afb050=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "FE Reportes"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA9c8aef573a94c6=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "ApiService"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAAebce46adbc7a8d=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "CeldasService"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA104ecb007043c1=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "OperadoresService"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA8f135a8808cefc=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "ClientesService"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA7b2d0a309d2ec1=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "EstanciasService"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA6ee9d4e989881c=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "PagosService"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAAde949687d3208d=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "AuthService"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA0213cf83bd57e3=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "authGuard e interceptor"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA3d4b5c9cae7768=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "BE routers"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA14fea52ba794c3=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "BE services"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAAdb85f775d91e82=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "BE schemas"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAAfefa1d510fd0cb=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "BE models"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA6b1d12ce332628=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "BE auth y security"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAA19716f0cc3d22a=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "PostgreSQL"
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA0363e1757ffb36=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAA99b6106bbc9e43="
+              },
+              "target": {
+                "$ref": "AAAAAA9c8aef573a94c6="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA7fa0304f68b783=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAA99b6106bbc9e43="
+              },
+              "target": {
+                "$ref": "AAAAAA8f135a8808cefc="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA28e9bb207c0c0b=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAA3930e9e8069068="
+              },
+              "target": {
+                "$ref": "AAAAAAebce46adbc7a8d="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAca7c3012dbd78d=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAA7725f92005c90c="
+              },
+              "target": {
+                "$ref": "AAAAAA104ecb007043c1="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA4cf18d78070125=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAA13260e9ba7fc5d="
+              },
+              "target": {
+                "$ref": "AAAAAA8f135a8808cefc="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA237dbb21da45b6=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAd65f3575e2dac2="
+              },
+              "target": {
+                "$ref": "AAAAAA7b2d0a309d2ec1="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA1a3bb3feb22f22=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAd65f3575e2dac2="
+              },
+              "target": {
+                "$ref": "AAAAAAde949687d3208d="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAc75c86d3f4b5b0=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAd3430962842b74="
+              },
+              "target": {
+                "$ref": "AAAAAA6ee9d4e989881c="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA2d588dca1cf793=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAd3430962842b74="
+              },
+              "target": {
+                "$ref": "AAAAAA9c8aef573a94c6="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAa93bdfeb1176f4=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAA76975e23afb050="
+              },
+              "target": {
+                "$ref": "AAAAAA6ee9d4e989881c="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAd4097d4cc7057a=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAdfe00954280ed2="
+              },
+              "target": {
+                "$ref": "AAAAAAde949687d3208d="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAe6cb775ff36c06=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAfb90770b084840="
+              },
+              "target": {
+                "$ref": "AAAAAA9c8aef573a94c6="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA04322f6cc87939=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAd65f3575e2dac2="
+              },
+              "target": {
+                "$ref": "AAAAAA0213cf83bd57e3="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAb142252a5c2185=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAd3430962842b74="
+              },
+              "target": {
+                "$ref": "AAAAAA0213cf83bd57e3="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAa2d6eaf38ac2d6=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "HTTP JSON",
+              "source": {
+                "$ref": "AAAAAA9c8aef573a94c6="
+              },
+              "target": {
+                "$ref": "AAAAAA3d4b5c9cae7768="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA021e32b294dd7b=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAA3d4b5c9cae7768="
+              },
+              "target": {
+                "$ref": "AAAAAAdb85f775d91e82="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA0c269adb577d5d=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAA3d4b5c9cae7768="
+              },
+              "target": {
+                "$ref": "AAAAAA14fea52ba794c3="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAe3389b6d30d22e=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAA3d4b5c9cae7768="
+              },
+              "target": {
+                "$ref": "AAAAAA6b1d12ce332628="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAaf6b1ca5e1f738=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAA14fea52ba794c3="
+              },
+              "target": {
+                "$ref": "AAAAAAfefa1d510fd0cb="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA07693b17e23720=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAA6b1d12ce332628="
+              },
+              "target": {
+                "$ref": "AAAAAAfefa1d510fd0cb="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAce93c9e36e5e7b=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "psycopg",
+              "source": {
+                "$ref": "AAAAAAfefa1d510fd0cb="
+              },
+              "target": {
+                "$ref": "AAAAAA19716f0cc3d22a="
+              }
+            },
+            {
+              "_type": "UMLComponentDiagram",
+              "_id": "AAAAAA632ccf07c824bf=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "Componentes frontend y backend (iteraciones 1 y 2)",
+              "model": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "documentation": "Arrastra todos los componentes de este paquete: las dependencias aparecen solas."
+            }
+          ]
+        },
+        {
+          "_type": "UMLPackage",
+          "_id": "AAAAAAc409e9bd3ec95a=",
+          "_parent": {
+            "$ref": "AAAAAA6ade6c309c2a0a="
           },
           "name": "Backend (backend/app)",
           "ownedElements": [
             {
               "_type": "UMLPackage",
-              "_id": "pkg-a2a32c080df5",
+              "_id": "AAAAAAed46c167510504=",
               "_parent": {
-                "$ref": "pkg-3fb88b6aa5ea"
+                "$ref": "AAAAAAc409e9bd3ec95a="
               },
               "name": "routers"
             },
             {
               "_type": "UMLPackage",
-              "_id": "pkg-110f7a58be44",
+              "_id": "AAAAAAe9c750d0e2132e=",
               "_parent": {
-                "$ref": "pkg-3fb88b6aa5ea"
+                "$ref": "AAAAAAc409e9bd3ec95a="
               },
               "name": "services"
             },
             {
               "_type": "UMLPackage",
-              "_id": "pkg-b5bba4727dc9",
+              "_id": "AAAAAAe19677f37fa5cb=",
               "_parent": {
-                "$ref": "pkg-3fb88b6aa5ea"
+                "$ref": "AAAAAAc409e9bd3ec95a="
               },
               "name": "schemas"
             },
             {
               "_type": "UMLPackage",
-              "_id": "pkg-ad09f9726066",
+              "_id": "AAAAAA761435baccbebe=",
               "_parent": {
-                "$ref": "pkg-3fb88b6aa5ea"
+                "$ref": "AAAAAAc409e9bd3ec95a="
               },
               "name": "models"
             },
             {
               "_type": "UMLPackage",
-              "_id": "pkg-aaf2fe36eff5",
+              "_id": "AAAAAA8d29dd8f586eaa=",
               "_parent": {
-                "$ref": "pkg-3fb88b6aa5ea"
+                "$ref": "AAAAAAc409e9bd3ec95a="
               },
-              "name": "database / config"
+              "name": "database y config"
             },
             {
-              "_type": "UMLDependency",
-              "_id": "dep-aeb3bd5de821",
+              "_type": "UMLPackage",
+              "_id": "AAAAAAe89b9cfb4ab482=",
               "_parent": {
-                "$ref": "pkg-3fb88b6aa5ea"
+                "$ref": "AAAAAAc409e9bd3ec95a="
               },
-              "source": {
-                "$ref": "pkg-a2a32c080df5"
-              },
-              "target": {
-                "$ref": "pkg-110f7a58be44"
-              }
-            },
-            {
-              "_type": "UMLDependency",
-              "_id": "dep-2340f29d18cb",
-              "_parent": {
-                "$ref": "pkg-3fb88b6aa5ea"
-              },
-              "source": {
-                "$ref": "pkg-a2a32c080df5"
-              },
-              "target": {
-                "$ref": "pkg-b5bba4727dc9"
-              }
-            },
-            {
-              "_type": "UMLDependency",
-              "_id": "dep-d8f92c38395e",
-              "_parent": {
-                "$ref": "pkg-3fb88b6aa5ea"
-              },
-              "source": {
-                "$ref": "pkg-110f7a58be44"
-              },
-              "target": {
-                "$ref": "pkg-b5bba4727dc9"
-              }
-            },
-            {
-              "_type": "UMLDependency",
-              "_id": "dep-7ed6e57fa76c",
-              "_parent": {
-                "$ref": "pkg-3fb88b6aa5ea"
-              },
-              "source": {
-                "$ref": "pkg-110f7a58be44"
-              },
-              "target": {
-                "$ref": "pkg-ad09f9726066"
-              }
-            },
-            {
-              "_type": "UMLDependency",
-              "_id": "dep-8cd15dc28208",
-              "_parent": {
-                "$ref": "pkg-3fb88b6aa5ea"
-              },
-              "source": {
-                "$ref": "pkg-110f7a58be44"
-              },
-              "target": {
-                "$ref": "pkg-aaf2fe36eff5"
-              }
+              "name": "auth y security"
             }
           ]
         },
         {
           "_type": "UMLPackage",
-          "_id": "pkg-048d8944c0a9",
+          "_id": "AAAAAA789851ab0091d4=",
           "_parent": {
-            "$ref": "model-886d66e6bf1a"
+            "$ref": "AAAAAA6ade6c309c2a0a="
           },
           "name": "Frontend (frontend/src/app)",
           "ownedElements": [
             {
               "_type": "UMLPackage",
-              "_id": "pkg-73f0ded21231",
+              "_id": "AAAAAA5cdf269114ad7f=",
               "_parent": {
-                "$ref": "pkg-048d8944c0a9"
+                "$ref": "AAAAAA789851ab0091d4="
               },
               "name": "home"
             },
             {
               "_type": "UMLPackage",
-              "_id": "pkg-36b22cac8283",
+              "_id": "AAAAAAd23e3fe98312ae=",
               "_parent": {
-                "$ref": "pkg-048d8944c0a9"
+                "$ref": "AAAAAA789851ab0091d4="
+              },
+              "name": "login"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "AAAAAA43460c061a067f=",
+              "_parent": {
+                "$ref": "AAAAAA789851ab0091d4="
               },
               "name": "control-acceso"
             },
             {
               "_type": "UMLPackage",
-              "_id": "pkg-a9aeeaa6c155",
+              "_id": "AAAAAA8a0d620a8b557d=",
               "_parent": {
-                "$ref": "pkg-048d8944c0a9"
+                "$ref": "AAAAAA789851ab0091d4="
               },
               "name": "vehiculos"
             },
             {
               "_type": "UMLPackage",
-              "_id": "pkg-3ead9981b5f4",
+              "_id": "AAAAAAf80e6b7b89ebf8=",
               "_parent": {
-                "$ref": "pkg-048d8944c0a9"
+                "$ref": "AAAAAA789851ab0091d4="
               },
               "name": "celdas"
             },
             {
               "_type": "UMLPackage",
-              "_id": "pkg-425212615779",
+              "_id": "AAAAAA092148eb51adf3=",
               "_parent": {
-                "$ref": "pkg-048d8944c0a9"
+                "$ref": "AAAAAA789851ab0091d4="
               },
               "name": "operadores"
             },
             {
               "_type": "UMLPackage",
-              "_id": "pkg-5f57fde84232",
+              "_id": "AAAAAA3a72c64060023b=",
               "_parent": {
-                "$ref": "pkg-048d8944c0a9"
+                "$ref": "AAAAAA789851ab0091d4="
+              },
+              "name": "clientes"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "AAAAAA7466996638f629=",
+              "_parent": {
+                "$ref": "AAAAAA789851ab0091d4="
+              },
+              "name": "mensualidades"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "AAAAAAfc50e59f44b19d=",
+              "_parent": {
+                "$ref": "AAAAAA789851ab0091d4="
+              },
+              "name": "reportes"
+            },
+            {
+              "_type": "UMLPackage",
+              "_id": "AAAAAA33f11a6856984d=",
+              "_parent": {
+                "$ref": "AAAAAA789851ab0091d4="
               },
               "name": "services"
             },
             {
               "_type": "UMLPackage",
-              "_id": "pkg-9166bf8ddb59",
+              "_id": "AAAAAA14def0f49b541e=",
               "_parent": {
-                "$ref": "pkg-048d8944c0a9"
+                "$ref": "AAAAAA789851ab0091d4="
               },
               "name": "models"
             },
             {
-              "_type": "UMLDependency",
-              "_id": "dep-2a15106211e4",
+              "_type": "UMLPackage",
+              "_id": "AAAAAA3d2ad819267638=",
               "_parent": {
-                "$ref": "pkg-048d8944c0a9"
+                "$ref": "AAAAAA789851ab0091d4="
               },
-              "source": {
-                "$ref": "pkg-73f0ded21231"
-              },
-              "target": {
-                "$ref": "pkg-5f57fde84232"
-              }
+              "name": "guards"
             },
             {
-              "_type": "UMLDependency",
-              "_id": "dep-81a763bdc007",
+              "_type": "UMLPackage",
+              "_id": "AAAAAA3db11671f882e0=",
               "_parent": {
-                "$ref": "pkg-048d8944c0a9"
+                "$ref": "AAAAAA789851ab0091d4="
               },
-              "source": {
-                "$ref": "pkg-36b22cac8283"
-              },
-              "target": {
-                "$ref": "pkg-5f57fde84232"
-              }
-            },
-            {
-              "_type": "UMLDependency",
-              "_id": "dep-b0dea81a2394",
-              "_parent": {
-                "$ref": "pkg-048d8944c0a9"
-              },
-              "source": {
-                "$ref": "pkg-a9aeeaa6c155"
-              },
-              "target": {
-                "$ref": "pkg-5f57fde84232"
-              }
-            },
-            {
-              "_type": "UMLDependency",
-              "_id": "dep-161efa3f39d7",
-              "_parent": {
-                "$ref": "pkg-048d8944c0a9"
-              },
-              "source": {
-                "$ref": "pkg-3ead9981b5f4"
-              },
-              "target": {
-                "$ref": "pkg-5f57fde84232"
-              }
-            },
-            {
-              "_type": "UMLDependency",
-              "_id": "dep-1652a771f536",
-              "_parent": {
-                "$ref": "pkg-048d8944c0a9"
-              },
-              "source": {
-                "$ref": "pkg-425212615779"
-              },
-              "target": {
-                "$ref": "pkg-5f57fde84232"
-              }
-            },
-            {
-              "_type": "UMLDependency",
-              "_id": "dep-5abc6d6a6d3d",
-              "_parent": {
-                "$ref": "pkg-048d8944c0a9"
-              },
-              "source": {
-                "$ref": "pkg-5f57fde84232"
-              },
-              "target": {
-                "$ref": "pkg-9166bf8ddb59"
-              }
+              "name": "interceptors"
             }
           ]
         },
         {
-          "_type": "UMLDependency",
-          "_id": "dep-9e309d6aa09e",
-          "_parent": {
-            "$ref": "model-886d66e6bf1a"
-          },
-          "source": {
-            "$ref": "pkg-5f57fde84232"
-          },
-          "target": {
-            "$ref": "pkg-3fb88b6aa5ea"
-          },
-          "name": "HTTP/JSON (proxy.conf.json)"
-        },
-        {
           "_type": "UMLPackageDiagram",
-          "_id": "diag-5aa10e8080a7",
+          "_id": "AAAAAA93c4a42947ff26=",
           "_parent": {
-            "$ref": "model-886d66e6bf1a"
+            "$ref": "AAAAAA6ade6c309c2a0a="
           },
           "name": "Paquetes",
           "model": {
-            "$ref": "model-886d66e6bf1a"
-          }
+            "$ref": "AAAAAA6ade6c309c2a0a="
+          },
+          "documentation": "Estructura de carpetas del backend y del frontend."
         }
       ]
     }

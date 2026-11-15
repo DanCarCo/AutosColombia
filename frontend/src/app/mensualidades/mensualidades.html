@@ -1,0 +1,100 @@
+<section class="management" aria-labelledby="mensualidades-title">
+  <header class="heading">
+    <div>
+      <span class="eyebrow">GESTIÓN DE PAGOS</span>
+      <h1 id="mensualidades-title">Mensualidades</h1>
+      <p>
+        Registra la mensualidad de un vehículo y consulta si está vigente. El monto lo calcula el
+        servidor según el tipo de vehículo.
+      </p>
+    </div>
+  </header>
+  @if (success()) {
+    <p class="notice success" role="status">{{ success() }}</p>
+  }
+  @if (error()) {
+    <p class="notice error" role="alert">{{ error() }}</p>
+  }
+  <section class="panel" aria-labelledby="registrar-title">
+    <h2 id="registrar-title">Registrar o consultar mensualidad</h2>
+    <p class="hint">
+      El inicio del periodo es opcional: si lo omites se usa la fecha de hoy. El periodo cubre un
+      mes calendario completo.
+    </p>
+    <form [formGroup]="form" (ngSubmit)="registrar()" novalidate>
+      <fieldset [disabled]="busy()">
+        <legend class="sr-only">Datos de la mensualidad</legend>
+        <div class="form-grid">
+          <div class="field">
+            <label for="vehiculo_id">Vehículo</label>
+            <select id="vehiculo_id" formControlName="vehiculo_id">
+              <option [ngValue]="null">Selecciona un vehículo</option>
+              @for (v of vehiculos(); track v.id) {
+                <option [ngValue]="v.id">{{ v.placa }} · {{ v.tipo }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label for="periodo_inicio">Inicio del periodo (opcional)</label>
+            <input id="periodo_inicio" type="date" formControlName="periodo_inicio" />
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit" class="primary">
+            {{ saving() ? 'Registrando…' : 'Registrar mensualidad' }}</button
+          ><button type="button" (click)="consultar()">Consultar vigencia</button>
+        </div>
+      </fieldset>
+    </form>
+    @if (estado(); as e) {
+      <p class="notice" [class.success]="e.vigente" [class.error]="!e.vigente" role="status">
+        @if (e.vigente && e.pago) {
+          {{ placaDe(e.vehiculo_id) }}: mensualidad vigente del {{ e.pago.periodo_inicio }} al
+          {{ e.pago.periodo_fin }}.
+        } @else {
+          {{ placaDe(e.vehiculo_id) }}: sin mensualidad vigente. No podrá registrar entrada.
+        }
+      </p>
+    }
+  </section>
+  <section class="panel list" aria-label="Pagos registrados" [attr.aria-busy]="loading()">
+    <div class="list-heading">
+      <h2>
+        Pagos registrados <span class="count">{{ total() }}</span>
+      </h2>
+      <button type="button" (click)="cargar()" [disabled]="busy()">Actualizar listado</button>
+    </div>
+    @if (!pagos().length) {
+      <div class="empty">
+        <h3>Aún no hay pagos</h3>
+        <p>Registra una mensualidad para habilitar la entrada del vehículo.</p>
+      </div>
+    } @else {
+      <div class="table-scroll">
+        <table>
+          <caption class="sr-only">
+            Pagos registrados
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Vehículo</th>
+              <th scope="col">Monto</th>
+              <th scope="col">Desde</th>
+              <th scope="col">Hasta</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of pagos(); track p.id) {
+              <tr>
+                <th scope="row">{{ placaDe(p.vehiculo_id) }}</th>
+                <td>{{ p.monto }}</td>
+                <td>{{ p.periodo_inicio }}</td>
+                <td>{{ p.periodo_fin }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</section>

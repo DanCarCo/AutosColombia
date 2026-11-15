@@ -311,7 +311,8 @@ tiene claves foráneas hacia vehículos; no se añaden relaciones para probarla.
 
 ## Clientes, mensualidades, disponibilidad, reasignación de celda y login (RF-10 a RF-16)
 
-Backend únicamente; el frontend de estas pantallas queda pendiente. Resumen de
+Backend; las pantallas de frontend correspondientes ya existen (clientes, login,
+mensualidades, reportes y corrección de celda en control de acceso). Resumen de
 lo añadido (ver el documento de requerimientos para el detalle completo):
 
 - **`POST/GET/PATCH/DELETE /clientes`**: catálogo de clientes (RF-12).

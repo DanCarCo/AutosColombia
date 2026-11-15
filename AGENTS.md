@@ -71,8 +71,16 @@ instalar y ejecutar los proyectos en Windows está en `README.md`.
 - `frontend/src/app/services/clientes.service.ts`: CRUD de clientes y catálogo completo (`todos()`).
 - `frontend/src/app/services/api.service.ts`: llamadas HTTP y base de API centralizadas.
 - `frontend/src/app/models/vehiculo.ts`: contratos de solicitudes, respuestas y tipos.
-- Pendiente en el frontend: pantallas de mensualidades/pagos y de reportes (backend ya
-  expone `POST /pagos`, `GET /vehiculos/{id}/mensualidad` y `GET /reportes/resumen`).
+- `frontend/src/app/mensualidades/` y `services/pagos.service.ts`: registro de mensualidades
+  y consulta de vigencia (RF-14); exige sesión (`authGuard`); nunca envía el monto.
+- `frontend/src/app/reportes/`: resumen de celdas disponibles/totales y clientes (RF-15).
+- `docs/`: documentación de la entrega EA2 (requerimientos, historias de usuario, mockups,
+  diagramas Mermaid, plan de pruebas y StarUML).
+- `entrega-ingenieria-software/staruml/`: modelo `AutosColombia.mdj` generado por
+  `generar_mdj.py` (no editar el `.mdj` a mano; ver `docs/06-staruml.md`);
+  `entrega-ingenieria-software/verificar-entrega.ps1` comprueba lo automatizable.
+- `backend/tests/conftest.py`: si no existe `backend/.env`, fija valores ficticios de JWT y
+  PostgreSQL solo para las pruebas; con un `.env` real no cambia nada.
 - `frontend/src/styles.css`: estilos globales; estilos de componentes en CSS.
 - `frontend/public/`: recursos estáticos que sí se versionan.
 - `frontend/package.json` y `frontend/package-lock.json`: scripts, dependencias

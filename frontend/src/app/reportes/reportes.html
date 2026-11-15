@@ -1,0 +1,33 @@
+<section class="management" aria-labelledby="reportes-title">
+  <header class="heading">
+    <div>
+      <span class="eyebrow">REPORTES</span>
+      <h1 id="reportes-title">Resumen del parqueadero</h1>
+      <p>Celdas disponibles, celdas totales y clientes registrados, al momento de consultar.</p>
+    </div>
+    <button type="button" (click)="cargar()" [disabled]="loading()">Actualizar</button>
+  </header>
+  @if (error()) {
+    <p class="notice error" role="alert">{{ error() }}</p>
+  }
+  <section class="panel" aria-label="Resumen" [attr.aria-busy]="loading()">
+    @if (resumen(); as r) {
+      <dl class="form-grid">
+        <div class="field">
+          <dt>Celdas disponibles</dt>
+          <dd id="celdas-disponibles">{{ r.celdas_disponibles }}</dd>
+        </div>
+        <div class="field">
+          <dt>Celdas totales</dt>
+          <dd id="celdas-totales">{{ r.celdas_totales }}</dd>
+        </div>
+        <div class="field">
+          <dt>Clientes registrados</dt>
+          <dd id="clientes-registrados">{{ r.clientes_registrados }}</dd>
+        </div>
+      </dl>
+    } @else if (loading()) {
+      <p class="empty" role="status">Cargando resumen…</p>
+    }
+  </section>
+</section>
