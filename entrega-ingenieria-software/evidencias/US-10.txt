@@ -1,0 +1,17 @@
+CASO US-10 - Campos obligatorios al crear usuario
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+POST /operadores cuerpo={"telefono": "3000000003", "usuario": "sin_campo", "password": "<redactado>", "turno": "DIA"} -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "nombre"], "msg": "Field required", "input": {"telefono": "3000000003", "usuario": "sin_campo", "password": "<redactado>", "turno": "DIA"}}]}   # omite nombre
+POST /operadores cuerpo={"nombre": "Nueva Persona", "usuario": "sin_campo", "password": "<redactado>", "turno": "DIA"} -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "telefono"], "msg": "Field required", "input": {"nombre": "Nueva Persona", "usuario": "sin_campo", "password": "<redactado>", "turno": "DIA"}}]}   # omite telefono
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "password": "<redactado>", "turno": "DIA"} -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "usuario"], "msg": "Field required", "input": {"nombre": "Nueva Persona", "telefono": "3000000003", "password": "<redactado>", "turno": "DIA"}}]}   # omite usuario
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "sin_campo", "turno": "DIA"} -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "password"], "msg": "Field required", "input": {"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "sin_campo", "turno": "DIA"}}]}   # omite password
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "sin_campo", "password": "<redactado>"} -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "turno"], "msg": "Field required", "input": {"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "sin_campo", "password": "<redactado>"}}]}   # omite turno
+POST /operadores cuerpo={"nombre": "   ", "telefono": "3000000003", "usuario": "sin_campo", "password": "<redactado>", "turno": "DIA"} -> HTTP 422 {"detail": [{"type": "value_error", "loc": ["body", "nombre"], "msg": "Value error, El campo debe ser texto no vacío.", "input": "   ", "ctx": {"error": {}}}]}   # nombre solo espacios
+BD: operadores antes=2, después=2
+Contrato implementado: nombre, telefono, usuario, password y turno (DIA|NOCHE) son obligatorios; no se aceptan campos extra ni textos vacíos.
+
+ESTADO: Aprobado
+RESULTADO: El servidor rechaza con 422 cada omisión (nombre, teléfono, usuario, contraseña, turno) y el nombre de solo espacios; no se creó ninguna cuenta. (Validación del formulario cubierta además por la prueba automática operadores.spec.ts.)

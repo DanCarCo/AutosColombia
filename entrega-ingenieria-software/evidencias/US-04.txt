@@ -1,0 +1,13 @@
+CASO US-04 - Campos obligatorios del login
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+POST /auth/login cuerpo={"usuario": "", "password": "<redactado>"} -> HTTP 422 {"detail": [{"type": "value_error", "loc": ["body", "usuario"], "msg": "Value error, El campo debe ser texto no vacío.", "input": "", "ctx": {"error": {}}}]}   # usuario vacío
+POST /auth/login cuerpo={"usuario": "a", "password": "<redactado>"} -> HTTP 422 {"detail": [{"type": "value_error", "loc": ["body", "password"], "msg": "Value error, El campo debe ser texto no vacío.", "input": "", "ctx": {"error": {}}}]}   # clave vacía
+POST /auth/login cuerpo={} -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "usuario"], "msg": "Field required", "input": {}}, {"type": "missing", "loc": ["body", "password"], "msg": "Field required", "input": {}}]}   # sin campos
+INTERFAZ (login_vacio): {"scenario": "login_vacio", "sinCampos": ["El usuario es obligatorio.", "La contraseña es obligatoria."], "usuarioVacio": ["El usuario es obligatorio."], "claveVacia": ["La contraseña es obligatoria."], "solicitudesAlLogin": 0}
+
+ESTADO: Aprobado
+RESULTADO: La interfaz indica «El usuario es obligatorio.» y «La contraseña es obligatoria.» sin enviar solicitud; el servidor también rechaza con 422 las tres variantes y no crea sesión.

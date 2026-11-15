@@ -1,0 +1,12 @@
+CASO CE-13 - Crear el mismo código simultáneamente
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+Solicitud simultánea 1: POST /celdas cuerpo={"codigo":"T-CONC-01","tipo":"CARRO"} -> HTTP 201 {"codigo":"T-CONC-01","tipo":"CARRO","id":12}
+Solicitud simultánea 2: POST /celdas cuerpo={"codigo":"T-CONC-01","tipo":"CARRO"} -> HTTP 409 {"detail":"Ya existe una celda con ese código."}
+BD: celdas T-CONC-01 = 1
+
+ESTADO: Aprobado
+RESULTADO: Dos solicitudes simultáneas con dos sesiones: una responde 201 y la otra 409; la base persiste exactamente una celda T-CONC-01.

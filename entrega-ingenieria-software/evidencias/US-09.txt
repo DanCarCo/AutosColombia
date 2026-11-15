@@ -1,0 +1,11 @@
+CASO US-09 - Usuario de acceso duplicado
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+POST /operadores cuerpo={"nombre": "Otra Cuenta", "telefono": "3000000002", "usuario": "operador_prueba", "password": "<redactado>", "turno": "NOCHE"} -> HTTP 409 {"detail": "Ya existe un operador con ese usuario."}
+BD: operadores antes=2, después=2; con usuario operador_prueba=1
+
+ESTADO: Aprobado
+RESULTADO: API 409 «Ya existe un operador con ese usuario.»; en la base sigue habiendo una sola cuenta operador_prueba y no cambió el total de operadores (sin datos parciales).

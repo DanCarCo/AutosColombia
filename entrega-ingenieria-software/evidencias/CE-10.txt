@@ -1,0 +1,12 @@
+CASO CE-10 - Eliminar celda sin referencias
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+DELETE /celdas/4 -> HTTP 204 ""
+GET /celdas?limit=100 -> HTTP 200 {"items": [{"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}, {"codigo": "T-HIST-01", "tipo": "CARRO", "id": 2}, {"codigo": "T-OCUP-01", "tipo": "CARRO", "id": 3}, {"codigo": "T-PE04", "tipo": "CARRO", "id": 5}, {"codigo": "T-NUE   # recargar catálogo
+GET /celdas/4 -> HTTP 404 {"detail": "Celda no encontrada."}   # consultar el identificador eliminado
+
+ESTADO: Aprobado
+RESULTADO: DELETE 204; la celda ya no aparece en el catálogo y su identificador responde 404.

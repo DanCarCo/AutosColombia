@@ -1,0 +1,13 @@
+CASO US-08 - Crear una cuenta de administrador
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "admin_nuevo", "password": "<redactado>", "turno": "DIA", "rol": "ADMINISTRADOR"} -> HTTP 422 {"detail": [{"type": "extra_forbidden", "loc": ["body", "rol"], "msg": "Extra inputs are not permitted", "input": "ADMINISTRADOR"}]}   # con rol ADMINISTRADOR
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "admin_nuevo", "password": "<redactado>", "turno": "ADMINISTRADOR"} -> HTTP 422 {"detail": [{"type": "literal_error", "loc": ["body", "turno"], "msg": "Input should be 'DIA' or 'NOCHE'", "input": "ADMINISTRADOR", "ctx": {"expected": "'DIA' or 'NOCHE'"}}]}   # rol enviado como turno
+BD: cuentas admin_nuevo = 0
+
+ESTADO: Fallido
+RESULTADO: No se puede crear una cuenta con rol ADMINISTRADOR: la API responde 422 porque el contrato solo tiene usuario, contraseña y turno (DIA/NOCHE).
+INCIDENCIA: INC-01: el sistema no define roles; no existe el tipo de cuenta administrador.

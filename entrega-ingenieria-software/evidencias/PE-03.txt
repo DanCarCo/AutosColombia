@@ -1,0 +1,14 @@
+CASO PE-03 - Operador intenta administrar celdas
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+GET /celdas?limit=5 -> HTTP 200 {"items": [{"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}, {"codigo": "T-HIST-01", "tipo": "CARRO", "id": 2}, {"codigo": "T-OCUP-01", "tipo": "CARRO", "id": 3}, {"codigo": "T-ELIM-01", "tipo": "CARRO", "id": 4}, {"codigo": "T-   # listar
+POST /celdas cuerpo={"codigo": "T-PE03", "tipo": "CARRO"} -> HTTP 201 {"codigo": "T-PE03", "tipo": "CARRO", "id": 7}   # crear
+PATCH /celdas/7 cuerpo={"tipo": "MOTO"} -> HTTP 200 {"codigo": "T-PE03", "tipo": "MOTO", "id": 7}   # editar
+DELETE /celdas/7 -> HTTP 204 ""   # eliminar (restaura el conjunto)
+
+ESTADO: Fallido
+RESULTADO: Se esperaban 403; la API permitió listar (200), crear (201), editar (200) y eliminar (204) con la sesión de operador. La celda de sonda se eliminó.
+INCIDENCIA: INC-01: sin roles, un operador administra celdas.

@@ -1,0 +1,13 @@
+CASO US-01 - Login del administrador
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+POST /auth/login cuerpo={"usuario": "admin_prueba", "password": "<redactado>"} -> HTTP 200 {"access_token": "<token>", "token_type": "bearer", "expira_minutos": 480, "operador": {"id": 1, "nombre": "Admin Prueba", "telefono": "3000000000", "usuario": "admin_prueba", "turno": "NOCHE"}}   # API de login
+INTERFAZ (menu): {"scenario": "menu", "url": "http://127.0.0.1:4200/control-acceso", "menu": ["Inicio", "Control de acceso", "Operadores", "Celdas", "Vehículos", "Clientes", "Mensualidades", "Reportes"], "sesion": "token guardado", "accesoControl": "http://127.0.0.1:4200/control-acceso"}
+Menú visible: ['Inicio', 'Control de acceso', 'Operadores', 'Celdas', 'Vehículos', 'Clientes', 'Mensualidades', 'Reportes']
+
+ESTADO: Fallido
+RESULTADO: El acceso se concede (API 200 y sesión guardada), pero el menú muestra a la vez Control de acceso, Operadores, Celdas, Vehículos, Clientes, Mensualidades, Reportes: no existe separación por rol. Se esperaba ver solo Crear usuarios y Gestionar celdas, sin entrada/salida.
+INCIDENCIA: INC-01: el sistema no define roles; todas las cuentas ven el mismo menú y tienen los mismos permisos.

@@ -1,0 +1,12 @@
+CASO CE-04 - Crear celda y comprobar persistencia
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+POST /celdas cuerpo={"codigo": "T-NUEVA-01", "tipo": "CARRO"} -> HTTP 201 {"codigo": "T-NUEVA-01", "tipo": "CARRO", "id": 8}
+GET /celdas/8 -> HTTP 200 {"codigo": "T-NUEVA-01", "tipo": "CARRO", "id": 8}   # consulta por otra solicitud
+BD: celdas T-NUEVA-01 = 1; estancias de esa celda = 0
+
+ESTADO: Aprobado
+RESULTADO: API 201; existe una sola celda T-NUEVA-01, se recupera con otra solicitud (200) y no tiene estancias ni se marcó ocupada.

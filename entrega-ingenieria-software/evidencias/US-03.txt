@@ -1,0 +1,12 @@
+CASO US-03 - Credenciales incorrectas
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+POST /auth/login cuerpo={"usuario": "operador_prueba", "password": "<redactado>"} -> HTTP 401 {"detail": "Usuario o contraseña incorrectos."}   # usuario existente, clave incorrecta
+POST /auth/login cuerpo={"usuario": "usuario_inexistente", "password": "<redactado>"} -> HTTP 401 {"detail": "Usuario o contraseña incorrectos."}   # usuario inexistente
+POST /estancias/entrada cuerpo={"placa": "PRB003", "celda_id": 5} -> HTTP 401 {"detail": "Se requiere iniciar sesión."}   # módulo protegido sin sesión
+
+ESTADO: Aprobado
+RESULTADO: Ambas variantes devuelven 401 con el mismo mensaje genérico «Usuario o contraseña incorrectos.»; sin sesión el módulo protegido responde 401 y no se creó ninguna estancia.

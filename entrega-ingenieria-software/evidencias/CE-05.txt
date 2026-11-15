@@ -1,0 +1,12 @@
+CASO CE-05 - Código duplicado normalizado
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+POST /celdas cuerpo={"codigo": "T-LIBRE-01", "tipo": "CARRO"} -> HTTP 409 {"detail": "Ya existe una celda con ese código."}
+POST /celdas cuerpo={"codigo": "  t-libre-01  ", "tipo": "CARRO"} -> HTTP 409 {"detail": "Ya existe una celda con ese código."}   # con espacios exteriores y minúsculas
+GET /celdas/1 -> HTTP 200 {"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}
+
+ESTADO: Aprobado
+RESULTADO: Ambas variantes devuelven 409 «Ya existe una celda con ese código.»; el registro original conserva sus datos y sigue existiendo una sola T-LIBRE-01.

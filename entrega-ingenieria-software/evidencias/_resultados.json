@@ -1,0 +1,182 @@
+{
+ "CE-02": {
+  "estado": "Aprobado",
+  "real": "API 200 con items=[] y total=0; la pantalla Celdas muestra «Aún no hay celdas» sin error del servidor.",
+  "inc": "",
+  "ev": "evidencias/CE-02.txt; evidencias/CE-02_interfaz.png"
+ },
+ "US-03": {
+  "estado": "Aprobado",
+  "real": "Ambas variantes devuelven 401 con el mismo mensaje genérico «Usuario o contraseña incorrectos.»; sin sesión el módulo protegido responde 401 y no se creó ninguna estancia.",
+  "inc": "",
+  "ev": "evidencias/US-03.txt"
+ },
+ "US-04": {
+  "estado": "Aprobado",
+  "real": "La interfaz indica «El usuario es obligatorio.» y «La contraseña es obligatoria.» sin enviar solicitud; el servidor también rechaza con 422 las tres variantes y no crea sesión.",
+  "inc": "",
+  "ev": "evidencias/US-04.txt; evidencias/US-04_interfaz.png"
+ },
+ "US-01": {
+  "estado": "Fallido",
+  "real": "El acceso se concede (API 200 y sesión guardada), pero el menú muestra a la vez Control de acceso, Operadores, Celdas, Vehículos, Clientes, Mensualidades, Reportes: no existe separación por rol. Se esperaba ver solo Crear usuarios y Gestionar celdas, sin entrada/salida.",
+  "inc": "INC-01: el sistema no define roles; todas las cuentas ven el mismo menú y tienen los mismos permisos.",
+  "ev": "evidencias/US-01.txt; evidencias/US-01_menu.png"
+ },
+ "US-02": {
+  "estado": "Fallido",
+  "real": "El acceso se concede (API 200 y sesión guardada), pero el menú muestra a la vez Control de acceso, Operadores, Celdas, Vehículos, Clientes, Mensualidades, Reportes: no existe separación por rol. Se esperaba ocultar Operadores y Celdas (administración).",
+  "inc": "INC-01: el sistema no define roles; todas las cuentas ven el mismo menú y tienen los mismos permisos.",
+  "ev": "evidencias/US-02.txt; evidencias/US-02_menu.png"
+ },
+ "US-12": {
+  "estado": "Aprobado",
+  "real": "La respuesta de creación no incluye contraseña ni hash; la base guarda un hash pbkdf2_sha256 (no texto plano); el login con la cuenta funciona (200). La evidencia no reproduce secretos.",
+  "inc": "",
+  "ev": "evidencias/US-12.txt"
+ },
+ "US-09": {
+  "estado": "Aprobado",
+  "real": "API 409 «Ya existe un operador con ese usuario.»; en la base sigue habiendo una sola cuenta operador_prueba y no cambió el total de operadores (sin datos parciales).",
+  "inc": "",
+  "ev": "evidencias/US-09.txt"
+ },
+ "US-10": {
+  "estado": "Aprobado",
+  "real": "El servidor rechaza con 422 cada omisión (nombre, teléfono, usuario, contraseña, turno) y el nombre de solo espacios; no se creó ninguna cuenta. (Validación del formulario cubierta además por la prueba automática operadores.spec.ts.)",
+  "inc": "",
+  "ev": "evidencias/US-10.txt"
+ },
+ "US-11": {
+  "estado": "Aprobado",
+  "real": "API 422 y no se crea la cuenta. Observación: el rechazo se debe a que el contrato no tiene campo «rol» (extra=forbid); tampoco se acepta ADMINISTRADOR u OPERADOR, porque el sistema no implementa roles (ver INC-01).",
+  "inc": "",
+  "ev": "evidencias/US-11.txt"
+ },
+ "US-07": {
+  "estado": "Fallido",
+  "real": "La cuenta se crea una sola vez (API 201) y puede iniciar sesión, pero «recibe únicamente permisos de operador» no se cumple: con la sesión nueva se pudo crear otra cuenta (201). No hay perfil separado ni permisos por rol.",
+  "inc": "INC-01: el sistema no define roles ni permisos por rol.",
+  "ev": "evidencias/US-07.txt"
+ },
+ "US-08": {
+  "estado": "Fallido",
+  "real": "No se puede crear una cuenta con rol ADMINISTRADOR: la API responde 422 porque el contrato solo tiene usuario, contraseña y turno (DIA/NOCHE).",
+  "inc": "INC-01: el sistema no define roles; no existe el tipo de cuenta administrador.",
+  "ev": "evidencias/US-08.txt"
+ },
+ "US-05": {
+  "estado": "Fallido",
+  "real": "Vencida: API 401 (sesión expiró). Revocada: la API NO responde 401 (respondió 404, o sea aceptó la sesión), porque el token no puede revocarse.",
+  "inc": "INC-03: el cierre de sesión no revoca el token (JWT sin lista de revocación); sigue válido hasta expirar (480 min).",
+  "ev": "evidencias/US-05.txt"
+ },
+ "US-06": {
+  "estado": "Fallido",
+  "real": "La interfaz sí vuelve al login al cerrar sesión y al abrir /control-acceso (URL: http://127.0.0.1:4200/login?volver=%2Fcontrol-acceso), pero la sesión anterior sigue autorizando por API (respondió 404, no 401).",
+  "inc": "INC-03: el cierre de sesión no revoca el token; basta borrar el almacenamiento del navegador.",
+  "ev": "evidencias/US-06.txt; evidencias/US-06_interfaz.png"
+ },
+ "PE-01": {
+  "estado": "Fallido",
+  "real": "Se esperaba 401 en ambas; la API respondió 201 y 201 y creó el usuario y la celda sin sesión (se eliminaron después para restaurar el conjunto).",
+  "inc": "INC-02: los endpoints de operadores y celdas no exigen sesión (solo estancias y pagos la exigen).",
+  "ev": "evidencias/PE-01.txt"
+ },
+ "PE-02": {
+  "estado": "Fallido",
+  "real": "La interfaz muestra la pantalla de operadores con el botón «Nuevo operador» (URL http://127.0.0.1:4200/gestion/operadores) y la API crea la cuenta (respondió 201, se esperaba 403). Se eliminó después para restaurar.",
+  "inc": "INC-01: sin roles, un operador puede administrar usuarios.",
+  "ev": "evidencias/PE-02.txt; evidencias/PE-02_interfaz.png"
+ },
+ "PE-03": {
+  "estado": "Fallido",
+  "real": "Se esperaban 403; la API permitió listar (200), crear (201), editar (200) y eliminar (204) con la sesión de operador. La celda de sonda se eliminó.",
+  "inc": "INC-01: sin roles, un operador administra celdas.",
+  "ev": "evidencias/PE-03.txt"
+ },
+ "PE-04": {
+  "estado": "Fallido",
+  "real": "Se esperaban 403; la entrada respondió 201 y la salida 200: la cuenta administradora registró y cerró una estancia (dato de prueba aislado: PRB003 / T-PE04).",
+  "inc": "INC-01: sin roles, cualquier cuenta registra accesos.",
+  "ev": "evidencias/PE-04.txt"
+ },
+ "PE-05": {
+  "estado": "Fallido",
+  "real": "La API de disponibilidad es correcta (T-LIBRE-01 sí, T-OCUP-01 no), pero el selector del formulario de entrada lista TODAS las celdas, incluida la ocupada T-OCUP-01, y el menú del operador conserva Operadores y Celdas.",
+  "inc": "INC-04: el formulario de entrada usa /celdas (todas) en vez de /celdas/disponibles; la ocupación solo se rechaza al registrar. Además aplica INC-01.",
+  "ev": "evidencias/PE-05.txt; evidencias/PE-05_interfaz.png"
+ },
+ "CE-01": {
+  "estado": "Aprobado",
+  "real": "El listado muestra T-LIBRE-01 y T-HIST-01 con datos correctos; el total (5) coincide con la base y con la paginación «Página 1 de 1 · 10 por página». Observación: la pantalla no tiene campo de búsqueda; la celda se identifica en el listado.",
+  "inc": "",
+  "ev": "evidencias/CE-01.txt; evidencias/CE-01_interfaz.png"
+ },
+ "CE-03": {
+  "estado": "Aprobado",
+  "real": "API 404 «Celda no encontrada.» sin devolver otra celda. (Mensaje en pantalla cubierto por la prueba automática celdas.spec.ts: «informa 404 al editar…».)",
+  "inc": "",
+  "ev": "evidencias/CE-03.txt"
+ },
+ "CE-04": {
+  "estado": "Aprobado",
+  "real": "API 201; existe una sola celda T-NUEVA-01, se recupera con otra solicitud (200) y no tiene estancias ni se marcó ocupada.",
+  "inc": "",
+  "ev": "evidencias/CE-04.txt"
+ },
+ "CE-05": {
+  "estado": "Aprobado",
+  "real": "Ambas variantes devuelven 409 «Ya existe una celda con ese código.»; el registro original conserva sus datos y sigue existiendo una sola T-LIBRE-01.",
+  "inc": "",
+  "ev": "evidencias/CE-05.txt"
+ },
+ "CE-06": {
+  "estado": "Aprobado",
+  "real": "El formulario señala los campos vacíos y de solo espacios (['Este campo es obligatorio y no puede estar vacío.', 'Este campo es obligatorio y no puede estar vacío.']); el servidor responde 422 en las tres variantes y no se guardó ninguna celda.",
+  "inc": "",
+  "ev": "evidencias/CE-06.txt; evidencias/CE-06_interfaz.png"
+ },
+ "CE-07": {
+  "estado": "Aprobado",
+  "real": "PATCH 200; los cambios persisten al consultar de nuevo, se conserva el identificador y no cambió el número de estancias (no abre ni cierra ocupaciones). Se restauró T-LIBRE-01.",
+  "inc": "",
+  "ev": "evidencias/CE-07.txt"
+ },
+ "CE-08": {
+  "estado": "Aprobado",
+  "real": "API 409; ambas celdas conservan su código anterior (T-NUEVA-01 y T-LIBRE-01).",
+  "inc": "",
+  "ev": "evidencias/CE-08.txt"
+ },
+ "CE-09": {
+  "estado": "Aprobado",
+  "real": "API 404 «Celda no encontrada.»; no se creó ninguna celda ni se modificó otra.",
+  "inc": "",
+  "ev": "evidencias/CE-09.txt"
+ },
+ "CE-10": {
+  "estado": "Aprobado",
+  "real": "DELETE 204; la celda ya no aparece en el catálogo y su identificador responde 404.",
+  "inc": "",
+  "ev": "evidencias/CE-10.txt"
+ },
+ "CE-11": {
+  "estado": "Aprobado",
+  "real": "API 409 «La celda tiene registros relacionados y no se puede eliminar.»; se conservan la celda y su estancia (cerrada) sin cambios.",
+  "inc": "",
+  "ev": "evidencias/CE-11.txt"
+ },
+ "CE-12": {
+  "estado": "Aprobado",
+  "real": "API 409 «La celda tiene registros relacionados y no se puede eliminar.»; se conservan la celda y su estancia (abierta) sin cambios.",
+  "inc": "",
+  "ev": "evidencias/CE-12.txt"
+ },
+ "CE-13": {
+  "estado": "Aprobado",
+  "real": "Dos solicitudes simultáneas con dos sesiones: una responde 201 y la otra 409; la base persiste exactamente una celda T-CONC-01.",
+  "inc": "",
+  "ev": "evidencias/CE-13.txt"
+ }
+}

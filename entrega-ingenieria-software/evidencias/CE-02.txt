@@ -1,0 +1,11 @@
+CASO CE-02 - Catálogo sin registros
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+GET /celdas?offset=0&limit=20 -> HTTP 200 {"items": [], "total": 0, "offset": 0, "limit": 20}   # base de pruebas sin celdas
+INTERFAZ (vacio): captura evidencias/CE-02_interfaz.png: texto «Celdas registradas 0 … Aún no hay celdas. Registra una celda para comenzar.»
+
+ESTADO: Aprobado
+RESULTADO: API 200 con items=[] y total=0; la pantalla Celdas muestra «Aún no hay celdas» sin error del servidor.

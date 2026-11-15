@@ -1,0 +1,12 @@
+CASO US-06 - Cierre de sesión efectivo
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+INTERFAZ (logout): {"scenario": "logout", "tokenAntes": true, "cerroSesion": true, "tokenDespues": false, "urlRutaProtegida": "http://127.0.0.1:4200/login?volver=%2Fcontrol-acceso"}
+PATCH /estancias/celda cuerpo={"placa": "NOEXISTE", "celda_id": 5} -> HTTP 404 {"detail": "Vehículo no encontrado."}   # reutilizar la sesión anterior por API
+
+ESTADO: Fallido
+RESULTADO: La interfaz sí vuelve al login al cerrar sesión y al abrir /control-acceso (URL: http://127.0.0.1:4200/login?volver=%2Fcontrol-acceso), pero la sesión anterior sigue autorizando por API (respondió 404, no 401).
+INCIDENCIA: INC-03: el cierre de sesión no revoca el token; basta borrar el almacenamiento del navegador.

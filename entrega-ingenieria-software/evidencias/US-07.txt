@@ -1,0 +1,15 @@
+CASO US-07 - Crear una cuenta de operador
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+POST /operadores cuerpo={"nombre": "Operador Nuevo", "telefono": "3000000004", "usuario": "operador_nuevo", "password": "<redactado>", "turno": "DIA"} -> HTTP 201 {"id": 5, "nombre": "Operador Nuevo", "telefono": "3000000004", "usuario": "operador_nuevo", "turno": "DIA"}
+Login de la nueva cuenta: 200 con token
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "sonda_permisos", "password": "<redactado>", "turno": "DIA"} -> HTTP 201 {"id": 6, "nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "sonda_permisos", "turno": "DIA"}   # sonda: ¿la cuenta nueva queda limitada a permisos de operador?
+DELETE /operadores/6 -> HTTP 204 ""   # restaurar conjunto de prueba
+BD: cuentas operador_nuevo antes=0, después=1
+
+ESTADO: Fallido
+RESULTADO: La cuenta se crea una sola vez (API 201) y puede iniciar sesión, pero «recibe únicamente permisos de operador» no se cumple: con la sesión nueva se pudo crear otra cuenta (201). No hay perfil separado ni permisos por rol.
+INCIDENCIA: INC-01: el sistema no define roles ni permisos por rol.

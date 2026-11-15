@@ -1,0 +1,10 @@
+CASO CE-03 - Consultar celda inexistente
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+GET /celdas/999999 -> HTTP 404 {"detail": "Celda no encontrada."}
+
+ESTADO: Aprobado
+RESULTADO: API 404 «Celda no encontrada.» sin devolver otra celda. (Mensaje en pantalla cubierto por la prueba automática celdas.spec.ts: «informa 404 al editar…».)

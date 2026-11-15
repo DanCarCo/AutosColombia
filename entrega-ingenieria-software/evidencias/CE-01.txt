@@ -1,0 +1,12 @@
+CASO CE-01 - Listar y buscar celdas
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+GET /celdas?offset=0&limit=10 -> HTTP 200 {"items": [{"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}, {"codigo": "T-HIST-01", "tipo": "CARRO", "id": 2}, {"codigo": "T-OCUP-01", "tipo": "CARRO", "id": 3}, {"codigo": "T-ELIM-01", "tipo": "CARRO", "id": 4}, {"codigo": "T-
+BD: total de celdas = 5
+INTERFAZ (celdas_lista): {"scenario": "celdas_lista", "filas": ["T-LIBRE-01", "T-HIST-01", "T-OCUP-01", "T-ELIM-01", "T-PE04"], "paginacion": "Página 1 de 1 · 10 por página", "contador": "5", "campoBusqueda": false}
+
+ESTADO: Aprobado
+RESULTADO: El listado muestra T-LIBRE-01 y T-HIST-01 con datos correctos; el total (5) coincide con la base y con la paginación «Página 1 de 1 · 10 por página». Observación: la pantalla no tiene campo de búsqueda; la celda se identifica en el listado.

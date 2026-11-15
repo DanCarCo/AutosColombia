@@ -1,0 +1,13 @@
+CASO CE-07 - Editar celda existente
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+PATCH /celdas/1 cuerpo={"codigo": "T-LIBRE-01-ED", "tipo": "MOTO"} -> HTTP 200 {"codigo": "T-LIBRE-01-ED", "tipo": "MOTO", "id": 1}
+GET /celdas/1 -> HTTP 200 {"codigo": "T-LIBRE-01-ED", "tipo": "MOTO", "id": 1}   # recargar y consultar el mismo identificador
+BD: estancias antes=3, después=3; estancias abiertas=1
+PATCH /celdas/1 cuerpo={"codigo": "T-LIBRE-01", "tipo": "CARRO"} -> HTTP 200 {"codigo": "T-LIBRE-01", "tipo": "CARRO", "id": 1}   # restaurar precondición
+
+ESTADO: Aprobado
+RESULTADO: PATCH 200; los cambios persisten al consultar de nuevo, se conserva el identificador y no cambió el número de estancias (no abre ni cierra ocupaciones). Se restauró T-LIBRE-01.

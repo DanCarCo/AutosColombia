@@ -1,0 +1,13 @@
+CASO PE-04 - Administrador intenta registrar accesos
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+POST /estancias/entrada cuerpo={"placa": "PRB003", "celda_id": 5} -> HTTP 201 {"id": 3, "vehiculo_id": 3, "celda_id": 5, "entrada": "2026-11-15T17:06:50.803805Z", "salida": null, "operador_entrada_id": 1, "operador_salida_id": null}   # entrada con sesión de admin_prueba
+POST /estancias/salida cuerpo={"placa": "PRB003"} -> HTTP 200 {"id": 3, "vehiculo_id": 3, "celda_id": 5, "entrada": "2026-11-15T17:06:50.803805Z", "salida": "2026-11-15T17:06:50.839170Z", "operador_entrada_id": 1, "operador_salida_id": 1}   # salida con sesión de admin_prueba
+BD: estancias 2->3
+
+ESTADO: Fallido
+RESULTADO: Se esperaban 403; la entrada respondió 201 y la salida 200: la cuenta administradora registró y cerró una estancia (dato de prueba aislado: PRB003 / T-PE04).
+INCIDENCIA: INC-01: sin roles, cualquier cuenta registra accesos.

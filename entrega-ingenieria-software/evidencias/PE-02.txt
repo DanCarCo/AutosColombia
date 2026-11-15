@@ -1,0 +1,13 @@
+CASO PE-02 - Operador intenta crear usuarios
+Fecha de ejecución: 15/11/2026
+Entorno: API http://127.0.0.1:8000 · Frontend http://127.0.0.1:4200 · PostgreSQL 16 aislado (Docker, base de pruebas)
+Credenciales y tokens ocultos en esta evidencia.
+
+REGISTRO:
+INTERFAZ (ruta): {"scenario": "ruta", "url": "http://127.0.0.1:4200/gestion/operadores", "texto": "GESTIÓN DE OPERADORES Operadores Administra los operadores de Autos Colombia. Nuevo operador Operadores registrados 3 Actualizar listado Operadores registrados Nombre Teléfono Usuario Turno Acciones Admin Prueba 3000000000 admin_prueba Noche EditarEliminar Operador Prueba 3000000000 operador_prueba ", "botonNuevo": true}
+POST /operadores cuerpo={"nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "creado_por_operador", "password": "<redactado>", "turno": "DIA"} -> HTTP 201 {"id": 8, "nombre": "Nueva Persona", "telefono": "3000000003", "usuario": "creado_por_operador", "turno": "DIA"}   # sesión de operador_prueba
+DELETE /operadores/8 -> HTTP 204 ""   # restaurar
+
+ESTADO: Fallido
+RESULTADO: La interfaz muestra la pantalla de operadores con el botón «Nuevo operador» (URL http://127.0.0.1:4200/gestion/operadores) y la API crea la cuenta (respondió 201, se esperaba 403). Se eliminó después para restaurar.
+INCIDENCIA: INC-01: sin roles, un operador puede administrar usuarios.
