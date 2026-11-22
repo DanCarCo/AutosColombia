@@ -16,6 +16,7 @@ El archivo se regenera con
 | Casos de uso ampliados a **CU-01 a CU-15** (inicio de sesión, clientes, mensualidad, validación de mensualidad, celdas disponibles, corrección de celda, resumen) con `«include»`. | Retroalimentación: los casos de uso debían representar clientes, pago y validación de mensualidad. |
 | Nuevo paquete **Componentes detallados** con las pantallas, los servicios y las capas del backend. | Entregable F. |
 | Se corrigió la codificación del texto (tildes y eñes). | La versión anterior tenía caracteres dañados (`�`). |
+| Casos de uso ampliados a **CU-16, CU-17 y CU-18** (decidir continuidad del periodo, renovar sin mover la fecha, iniciar mensualidad nueva) con `«include»`/`«extend»` sobre CU-11. Nuevo diagrama `CU Gestión de pagos (iteración 3)`. `Pago.periodo_inicio` documenta la regla de los 5 días. | Iteración 3: gestión de pagos (RF-18, HU-15). |
 
 Los diagramas que trae son **contenedores con nombre**; el contenido se dibuja
 en un par de minutos arrastrando elementos (abajo). **Verificado el 14/11/2026 en
@@ -34,6 +35,7 @@ que los ids son únicos y que todas las referencias existen.
 | Clases (retroalimentación) | `Dominio ▸ Diagrama de clases` | Las 6 clases y las 2 enumeraciones |
 | B — casos de uso | `CasosDeUso ▸ CU Gestión de usuarios y celdas (iteración 2)` | Los 2 actores y CU-01, 06, 07, 08, 09, 10, 14 |
 | B — casos de uso | `CasosDeUso ▸ CU Operación y pagos` | Actor Operador y CU-01 a CU-05, 11, 12, 13 |
+| B — casos de uso (iteración 3) | `CasosDeUso ▸ CU Gestión de pagos (iteración 3)` | Actor Operador y CU-11, 12, 16, 17, 18 |
 | F — componentes | `Arquitectura ▸ Arquitectura del sistema` | Los 3 componentes |
 | F — componentes | `Componentes detallados ▸ Componentes frontend y backend` | Todos los componentes del paquete |
 | E — secuencia | Crear 7 diagramas en `Dominio` (o un paquete nuevo) | Ver [04-diagramas.md](04-diagramas.md), secciones 4 a 10 |

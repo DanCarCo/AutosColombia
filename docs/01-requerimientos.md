@@ -13,7 +13,8 @@ entradas y salidas de vehículos, usuarios (operadores y clientes), celdas y pag
 | Iteración | Alcance |
 | --- | --- |
 | **1** | Gestión de la entrada y salida de vehículos (vehículos, estancias, consulta de estado). |
-| **2** | Gestión de usuarios (operadores, clientes, inicio de sesión) y gestión de celdas. Incluye pagos (mensualidades) y reportes, porque la entrada depende de la mensualidad. |
+| **2** | Gestión de usuarios (operadores, clientes, inicio de sesión) y gestión de celdas. Incluye el registro básico de pagos (mensualidades) y reportes, porque la entrada depende de la mensualidad. |
+| **3** | Gestión de pagos: registro del pago en efectivo y continuidad del periodo de la mensualidad. Un pago hasta 5 días después de vencida la renueva sin mover la fecha; pasado ese margen (o en el primer pago) empieza una mensualidad nueva desde hoy. La fecha solo se mueve por cancelación y un nuevo contrato. |
 
 ## Requerimientos funcionales
 
@@ -36,8 +37,9 @@ entradas y salidas de vehículos, usuarios (operadores y clientes), celdas y pag
 | RF-15 | 2 | **Reporte resumen**: celdas disponibles, celdas totales y clientes registrados. | `GET /reportes/resumen` · `/reportes` |
 | RF-16 | 2 | **Inicio y cierre de sesión** de operadores con usuario y contraseña; token JWT con el rol. Todas las operaciones (salvo el login y `/health`) exigen sesión, y el operador que actúa se toma del token. **Cerrar sesión revoca el token** en el servidor. | `POST /auth/login`, `POST /auth/logout` · `/login` |
 | RF-17 | 2 | **Roles y permisos.** Ver el detalle de qué puede hacer cada rol, por recurso, justo debajo de esta tabla. | `requiere_roles` en el backend · `rolGuard` y menú por rol en el frontend |
+| RF-18 | 3 | **Continuidad del periodo de la mensualidad.** El periodo no es un dato de entrada: lo calcula siempre el servidor. Si el vehículo tiene un pago anterior y este se registra hasta **5 días** después de que venció (`DIAS_GRACIA_RENOVACION`), el nuevo periodo continúa justo donde quedó (`periodo_fin` anterior **+ 1 día**): un pago extemporáneo dentro del margen no mueve la mensualidad. Pasado ese margen, o si es el primer pago del vehículo, el periodo inicia **hoy** (mensualidad nueva). La fecha solo se mueve por una cancelación y el inicio de un contrato nuevo, que no se automatiza. | `app/services/pago.py::_periodo_inicio_automatico` · `POST /pagos` · `/gestion/mensualidades` |
 
-> La numeración RF-10 a RF-17 es la que ya usan el código y los comentarios del
+> La numeración RF-10 a RF-18 es la que ya usan el código y los comentarios del
 > repositorio. RF-01 a RF-09 agrupan lo de la iteración 1 y las reglas
 > transversales. Si tu documento de la Actividad 1 numera distinto, conserva la
 > numeración de ese documento y usa la columna *Evidencia* para enlazar.
@@ -77,7 +79,8 @@ API, porque el permiso se exige en el backend, no solo se oculta en pantalla.
 | RNF-07 | Mantenibilidad | Separación en capas y cobertura de pruebas automáticas. | `routers` → `services` → `models`; `schemas` para contratos; 209 pruebas backend y 71 frontend. |
 | RNF-08 | Portabilidad | Debe ejecutarse en Windows con herramientas verificadas. | Python 3.13, Node.js 24, npm 11, PostgreSQL; comandos PowerShell en `README.md`. |
 | RNF-09 | Trazabilidad | Se registra quién actúa y cuándo. | `Estancia` guarda operador y fecha de entrada y salida; `Pago` guarda operador y `fecha_pago`. |
-| RNF-10 | Evolución del esquema | Los cambios de base de datos se versionan. | Migraciones Alembic `0001` a `0004`; nunca se aplican sin autorización. |
+| RNF-10 | Evolución del esquema | Los cambios de base de datos se versionan. | Migraciones Alembic `0001` a `0005`; nunca se aplican sin autorización. |
+| RNF-11 | Reglas de negocio | La continuidad de la mensualidad es una regla del servidor, no una opción de pantalla: el cliente nunca envía ni puede forzar el periodo. | `PagoCrear` solo acepta `vehiculo_id` (`extra="forbid"`); el periodo lo calcula siempre `services/pago.py`. |
 
 ## Alcance no cubierto
 
@@ -87,4 +90,8 @@ Declarado de forma explícita para no presentar como hecho lo que no lo está:
   registra, no se procesa un pago real.
 - No hay un editor de permisos: los dos roles (ADMINISTRADOR y OPERADOR) y sus
   permisos están fijos en el código; no hay más roles ni permisos configurables.
+- La **cancelación de un contrato y el inicio de uno nuevo** (el único caso en
+  que la fecha de la mensualidad se mueve fuera de la regla de los 5 días) no
+  está automatizada: no hay una operación de "cancelar" que reinicie el
+  periodo; hoy se logra únicamente dejando que pase el margen de gracia.
 - Falta una revisión visual en móvil y una auditoría de accesibilidad completa.

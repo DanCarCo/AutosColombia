@@ -24,7 +24,7 @@ con los campos reales de cada formulario.
 | 43 | **Entrada rechazada: sin mensualidad** (nuevo) | HU-03, HU-12 | `/control-acceso` (402) |
 | 42 | **Corregir celda** (nuevo) | HU-10 | `/control-acceso` |
 | 21–24 | Clientes: listado, nuevo, editar, detalle | HU-11 | `/gestion/clientes` |
-| 27–29 | Mensualidades: listado, nueva, renovar | HU-12 | `/gestion/mensualidades` |
+| 27–29 | Mensualidades: listado, nueva, renovar | HU-12, HU-15 | `/gestion/mensualidades` |
 | 30 | Reportes / Resumen | HU-13 | `/reportes` |
 | 36–37 | Estados: sin resultados, validación y guardado | HU-01 a HU-12 | Mensajes de error y estados vacíos |
 | 38–40 | Sistema visual (colores, botones, campos, tablas) | — | Tema de la aplicación |
@@ -35,7 +35,7 @@ con los campos reales de cada formulario.
 | --- | --- | --- |
 | Modelo de cobro | Tarifa por minuto ($100), tolerancia de 5 min, cobro y comprobante de pago al salir | Mensualidad: la entrada exige mensualidad vigente; la salida solo cierra la estancia y libera la celda, sin cobro |
 | Precios | Planes de $280.000 / $140.000 / $180.000 | Tarifa fija por tipo: Moto $100.000; Automóvil y Camioneta $250.000; el servidor calcula el monto |
-| Mensualidades | Planes, celda fija, pago inicial, medio de pago, referencia, saldos | Tipo de vehículo, inicio (opcional) y fin calculado; sin saldos. «Editar o renovar» pasó a **Renovar** |
+| Mensualidades | Planes, celda fija, pago inicial, medio de pago, referencia, saldos | Solo se elige el vehículo: el servidor calcula monto, inicio y fin (RF-18, iteración 3); nunca se piden como dato. Pago hasta 5 días tarde = **Renovar** (continúa); si no, mensualidad nueva. Sin saldos |
 | Operadores | Documento, correo, rol, estado, turnos por horario | Nombre, teléfono, usuario, contraseña (opcional al editar), turno **DIA / NOCHE** y rol **ADMINISTRADOR / OPERADOR** (RF-17) |
 | Clientes | Tipo de cliente, tipo de documento, email, dirección, vehículos vinculados, observaciones | Nombre, documento y teléfono |
 | Vehículos | Modelo / línea libre, notas, tipo «Carro» | Modelo = **año 1900–2200**, sin notas, tipos Automóvil / Moto / Camioneta |

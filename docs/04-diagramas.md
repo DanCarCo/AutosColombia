@@ -16,9 +16,10 @@ cómo abrirlo y exportar las imágenes del PDF: [06-staruml.md](06-staruml.md).
 | --- | --- | --- | --- |
 | 1 | Casos de uso — gestión de usuarios y celdas (iteración 2) | B | [1](#1-casos-de-uso--gestión-de-usuarios-y-celdas-iteración-2) |
 | 2 | Casos de uso — operación y pagos (iteración 1 y mensualidades) | B | [2](#2-casos-de-uso--operación-y-pagos) |
+| 2b | Casos de uso — gestión de pagos (iteración 3) | B | [2b](#2b-casos-de-uso--gestión-de-pagos-iteración-3) |
 | 3 | Diagrama de clases (incluye Cliente y Pago) | Retroalimentación | [3](#3-diagrama-de-clases) |
-| 4–10 | Diagramas de secuencia (iteraciones 1 y 2) | E | [4](#diagramas-de-secuencia) |
-| 11 | Diagrama de componentes (iteraciones 1 y 2) | F | [11](#11-diagrama-de-componentes) |
+| 4–10 | Diagramas de secuencia (iteraciones 1 a 3) | E | [4](#diagramas-de-secuencia) |
+| 11 | Diagrama de componentes (iteraciones 1 a 3) | F | [11](#11-diagrama-de-componentes) |
 
 ## 1. Casos de uso — gestión de usuarios y celdas (iteración 2)
 
@@ -76,6 +77,31 @@ flowchart LR
 ```
 
 CU-15 *Verificar estado de la API* (`GET /health`) lo usa la pantalla de inicio.
+
+## 2b. Casos de uso — gestión de pagos (iteración 3)
+
+Detalla CU-11 *Registrar mensualidad*: la decisión automática entre continuar
+el periodo vigente o iniciar uno nuevo (RF-18, HU-15).
+
+```mermaid
+flowchart LR
+    op(["Operador de parqueadero"])
+    subgraph Sistema["Sistema Autos Colombia — Gestión de pagos (iteración 3)"]
+        cu11(["CU-11 Registrar mensualidad"])
+        cu12(["CU-12 Consultar vigencia"])
+        cu16{"¿Pago hasta 5 días después\ndel periodo_fin anterior?"}
+        cu17(["CU-17 Renovar sin mover la fecha\n(periodo_fin + 1 día)"])
+        cu18(["CU-18 Iniciar mensualidad nueva\n(desde hoy)"])
+    end
+    op --- cu11
+    op --- cu12
+    cu11 -. "«include»" .-> cu16
+    cu16 -- "sí, o es el primer pago: no" --> cu17
+    cu16 -- "no" --> cu18
+```
+
+CU-17 y CU-18 son casos de uso de sistema: el operador no elige entre ellos,
+el servidor decide según `_periodo_inicio_automatico` (`DIAS_GRACIA_RENOVACION = 5`).
 
 ## 3. Diagrama de clases
 
@@ -385,7 +411,7 @@ sequenceDiagram
     end
 ```
 
-### 9. Registrar mensualidad (RF-14)
+### 9. Registrar mensualidad (RF-14, RF-18)
 
 ```mermaid
 sequenceDiagram
@@ -395,15 +421,24 @@ sequenceDiagram
     participant API as POST /pagos
     participant Srv as services.pago
     participant BD as PostgreSQL
-    Operador->>UI: Elige el vehículo y, si quiere, la fecha de inicio
-    UI->>API: POST /pagos solo con vehiculo_id y periodo_inicio
+    Operador->>UI: Elige el vehículo (pago en efectivo)
+    UI->>API: POST /pagos solo con vehiculo_id
     API->>API: operador_actual valida el token
     API->>Srv: register_payment(datos, operador)
     Srv->>BD: Busca el vehículo
     alt Vehículo inexistente
         Srv-->>UI: 404 Vehículo no encontrado
     else Vehículo existe
-        Srv->>Srv: Calcula monto por tipo y fin de periodo
+        Srv->>BD: Busca el último pago del vehículo (por periodo_fin)
+        Srv->>Srv: Calcula monto por tipo
+        alt Sin pago anterior
+            Srv->>Srv: periodo_inicio = hoy (mensualidad nueva)
+        else dias_desde_fin <= 5 (DIAS_GRACIA_RENOVACION)
+            Srv->>Srv: periodo_inicio = periodo_fin anterior + 1 día (renovación, no se mueve)
+        else dias_desde_fin > 5
+            Srv->>Srv: periodo_inicio = hoy (mensualidad nueva)
+        end
+        Srv->>Srv: Calcula periodo_fin (mes calendario desde periodo_inicio)
         Srv->>BD: INSERT pago con operador y fecha
         BD-->>Srv: pago creado
         Srv-->>UI: 201 pago
@@ -463,7 +498,7 @@ flowchart LR
         routers --> services
         services --> models
     end
-    DB[("PostgreSQL — autos_colombia, migraciones Alembic 0001 a 0004")]
+    DB[("PostgreSQL — autos_colombia, migraciones Alembic 0001 a 0005")]
     FE -- "HTTP JSON, proxy de desarrollo" --> BE
     models -- "psycopg" --> DB
 ```

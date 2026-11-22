@@ -125,8 +125,9 @@ def construir() -> dict:
     pago = clase(dom, "Pago", [
         ("id", "Long"), ("vehiculo_id", "Long"), ("operador_id", "Long"),
         ("monto", "Decimal", "Lo calcula el servidor según el tipo de vehículo; nunca lo envía el cliente."),
-        ("periodo_inicio", "Date"), ("periodo_fin", "Date", "Mayor o igual que periodo_inicio."), ("fecha_pago", "DateTime")],
-        "Tabla pago (RF-14). Mensualidad de un vehículo: un mes calendario.")
+        ("periodo_inicio", "Date", "Lo calcula el servidor (RF-18): continúa el anterior + 1 día si el pago llega hasta 5 días tarde, o empieza hoy."),
+        ("periodo_fin", "Date", "Mayor o igual que periodo_inicio."), ("fecha_pago", "DateTime")],
+        "Tabla pago (RF-14, RF-18). Mensualidad de un vehículo: un mes calendario; el periodo nunca es un dato de entrada.")
     asociacion(dom, cliente, "cliente", "1", vehiculo, "vehiculos", "0..*", "posee")
     asociacion(dom, vehiculo, "vehiculo", "1", estancia, "estancias", "0..*", "tiene")
     asociacion(dom, celda, "celda", "1", estancia, "estancias", "0..*", "aloja")
@@ -157,11 +158,14 @@ def construir() -> dict:
         ("CU-08", "Consultar celdas disponibles", "RF-10, HU-09"),
         ("CU-09", "Gestionar operadores", "RF-07, HU-07"),
         ("CU-10", "Gestionar clientes", "RF-12, HU-11"),
-        ("CU-11", "Registrar mensualidad", "RF-14, HU-12"),
+        ("CU-11", "Registrar mensualidad", "RF-14, RF-18, HU-12, HU-15"),
         ("CU-12", "Consultar vigencia de mensualidad", "RF-14, HU-12"),
         ("CU-13", "Validar mensualidad vigente", "RF-14. Incluido en CU-02."),
         ("CU-14", "Consultar resumen del parqueadero", "RF-15, HU-13"),
         ("CU-15", "Verificar estado de la API", "GET /health"),
+        ("CU-16", "Decidir continuidad del periodo", "RF-18, HU-15. Incluido en CU-11 (iteración 3)."),
+        ("CU-17", "Renovar sin mover la fecha", "RF-18, HU-15. Pago hasta 5 días tarde: periodo_fin anterior + 1 día."),
+        ("CU-18", "Iniciar mensualidad nueva", "RF-18, HU-15. Primer pago, o más de 5 días tarde: periodo desde hoy."),
     ]
     for codigo, nombre, doc in definiciones:
         casos[codigo] = agregar(cu, nodo("UMLUseCase", cu, f"{codigo} {nombre}", documentation=doc))
@@ -175,13 +179,18 @@ def construir() -> dict:
     usa(operador_a, ["CU-01", "CU-02", "CU-03", "CU-04", "CU-05", "CU-08", "CU-11", "CU-12", "CU-14"])
     usa(admin_a, ["CU-01", "CU-06", "CU-07", "CU-08", "CU-09", "CU-10", "CU-14", "CU-15"])
     for origen, destino in [("CU-02", "CU-13"), ("CU-02", "CU-01"), ("CU-03", "CU-01"),
-                            ("CU-05", "CU-01"), ("CU-11", "CU-01")]:
+                            ("CU-05", "CU-01"), ("CU-11", "CU-01"), ("CU-11", "CU-16")]:
         agregar(cu, nodo("UMLInclude", cu, "", source=ref(casos[origen]), target=ref(casos[destino]),
+                         _k=f"{origen}-{destino}"))
+    for origen, destino in [("CU-16", "CU-17"), ("CU-16", "CU-18")]:
+        agregar(cu, nodo("UMLExtend", cu, "", source=ref(casos[origen]), target=ref(casos[destino]),
                          _k=f"{origen}-{destino}"))
     diagrama(cu, "UMLUseCaseDiagram", "CU Gestión de usuarios y celdas (iteración 2)",
              "Actores + CU-01, CU-06, CU-07, CU-08, CU-09, CU-10, CU-14.", True)
     diagrama(cu, "UMLUseCaseDiagram", "CU Operación y pagos",
              "Operador + CU-01 a CU-05, CU-11, CU-12, CU-13 (con los include).")
+    diagrama(cu, "UMLUseCaseDiagram", "CU Gestión de pagos (iteración 3)",
+             "Operador + CU-11, CU-12, CU-16 (incluido en CU-11), CU-17 y CU-18 (extienden a CU-16 según los días desde periodo_fin).")
 
     # --------------------------------------------------------------- Arquitectura
     arq = paquete(modelo, "Arquitectura", "Componentes principales y su comunicación.")
@@ -190,12 +199,12 @@ def construir() -> dict:
     c_api = agregar(arq, nodo("UMLComponent", arq, "API (FastAPI)",
                               documentation="routers, services, schemas, models, auth y security."))
     c_db = agregar(arq, nodo("UMLComponent", arq, "Base de datos (PostgreSQL)",
-                             documentation="autos_colombia; migraciones Alembic 0001 a 0004."))
+                             documentation="autos_colombia; migraciones Alembic 0001 a 0005."))
     agregar(arq, nodo("UMLDependency", arq, "HTTP JSON", source=ref(c_fe), target=ref(c_api), _k="fe-api"))
     agregar(arq, nodo("UMLDependency", arq, "SQLAlchemy y psycopg", source=ref(c_api), target=ref(c_db), _k="api-db"))
     diagrama(arq, "UMLComponentDiagram", "Arquitectura del sistema", "Tres componentes y dos dependencias.", True)
 
-    comp = paquete(modelo, "Componentes detallados", "Componentes internos del frontend y del backend (iteraciones 1 y 2).")
+    comp = paquete(modelo, "Componentes detallados", "Componentes internos del frontend y del backend (iteraciones 1 a 3).")
     pantallas = ["Home", "Login", "ControlAcceso", "Vehiculos", "Celdas", "Operadores", "Clientes", "Mensualidades", "Reportes"]
     fe = {n: agregar(comp, nodo("UMLComponent", comp, f"FE {n}")) for n in pantallas}
     fe_serv = {n: agregar(comp, nodo("UMLComponent", comp, n)) for n in
@@ -220,7 +229,7 @@ def construir() -> dict:
                             ("services", "models"), ("auth y security", "models")]:
         agregar(comp, nodo("UMLDependency", comp, "", source=ref(be[origen]), target=ref(be[destino]), _k=f"{origen}-{destino}"))
     agregar(comp, nodo("UMLDependency", comp, "psycopg", source=ref(be["models"]), target=ref(bd), _k="models-bd"))
-    diagrama(comp, "UMLComponentDiagram", "Componentes frontend y backend (iteraciones 1 y 2)",
+    diagrama(comp, "UMLComponentDiagram", "Componentes frontend y backend (iteraciones 1 a 3)",
              "Arrastra todos los componentes de este paquete: las dependencias aparecen solas.")
 
     # Paquetes de código (referencia de estructura)

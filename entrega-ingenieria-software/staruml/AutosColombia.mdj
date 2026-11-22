@@ -485,7 +485,7 @@
                 "$ref": "AAAAAA56049b27615fe3="
               },
               "name": "Pago",
-              "documentation": "Tabla pago (RF-14). Mensualidad de un vehículo: un mes calendario.",
+              "documentation": "Tabla pago (RF-14, RF-18). Mensualidad de un vehículo: un mes calendario; el periodo nunca es un dato de entrada.",
               "attributes": [
                 {
                   "_type": "UMLAttribute",
@@ -536,7 +536,8 @@
                   },
                   "name": "periodo_inicio",
                   "visibility": "public",
-                  "type": "Date"
+                  "type": "Date",
+                  "documentation": "Lo calcula el servidor (RF-18): continúa el anterior + 1 día si el pago llega hasta 5 días tarde, o empieza hoy."
                 },
                 {
                   "_type": "UMLAttribute",
@@ -977,7 +978,7 @@
                 "$ref": "AAAAAA5981417e5244f0="
               },
               "name": "CU-11 Registrar mensualidad",
-              "documentation": "RF-14, HU-12"
+              "documentation": "RF-14, RF-18, HU-12, HU-15"
             },
             {
               "_type": "UMLUseCase",
@@ -1014,6 +1015,33 @@
               },
               "name": "CU-15 Verificar estado de la API",
               "documentation": "GET /health"
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAA259b02f6ebbdb9=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-16 Decidir continuidad del periodo",
+              "documentation": "RF-18, HU-15. Incluido en CU-11 (iteración 3)."
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAAa0c224372aab9a=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-17 Renovar sin mover la fecha",
+              "documentation": "RF-18, HU-15. Pago hasta 5 días tarde: periodo_fin anterior + 1 día."
+            },
+            {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAA0b072c63c0b45c=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-18 Iniciar mensualidad nueva",
+              "documentation": "RF-18, HU-15. Primer pago, o más de 5 días tarde: periodo desde hoy."
             },
             {
               "_type": "UMLAssociation",
@@ -1574,6 +1602,45 @@
               }
             },
             {
+              "_type": "UMLInclude",
+              "_id": "AAAAAA2a6f97292e4cf1=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "source": {
+                "$ref": "AAAAAA4c6dfbdc6dbc38="
+              },
+              "target": {
+                "$ref": "AAAAAA259b02f6ebbdb9="
+              }
+            },
+            {
+              "_type": "UMLExtend",
+              "_id": "AAAAAAc526e59533c1eb=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "source": {
+                "$ref": "AAAAAA259b02f6ebbdb9="
+              },
+              "target": {
+                "$ref": "AAAAAAa0c224372aab9a="
+              }
+            },
+            {
+              "_type": "UMLExtend",
+              "_id": "AAAAAAe04a5b592453eb=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "source": {
+                "$ref": "AAAAAA259b02f6ebbdb9="
+              },
+              "target": {
+                "$ref": "AAAAAA0b072c63c0b45c="
+              }
+            },
+            {
               "_type": "UMLUseCaseDiagram",
               "_id": "AAAAAAae718b6cad55ef=",
               "_parent": {
@@ -1597,6 +1664,18 @@
                 "$ref": "AAAAAA5981417e5244f0="
               },
               "documentation": "Operador + CU-01 a CU-05, CU-11, CU-12, CU-13 (con los include)."
+            },
+            {
+              "_type": "UMLUseCaseDiagram",
+              "_id": "AAAAAAdf0df36f6b7a1a=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU Gestión de pagos (iteración 3)",
+              "model": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "documentation": "Operador + CU-11, CU-12, CU-16 (incluido en CU-11), CU-17 y CU-18 (extienden a CU-16 según los días desde periodo_fin)."
             }
           ]
         },
@@ -1634,7 +1713,7 @@
                 "$ref": "AAAAAA49a63d4d933425="
               },
               "name": "Base de datos (PostgreSQL)",
-              "documentation": "autos_colombia; migraciones Alembic 0001 a 0004."
+              "documentation": "autos_colombia; migraciones Alembic 0001 a 0005."
             },
             {
               "_type": "UMLDependency",
@@ -1686,7 +1765,7 @@
             "$ref": "AAAAAA6ade6c309c2a0a="
           },
           "name": "Componentes detallados",
-          "documentation": "Componentes internos del frontend y del backend (iteraciones 1 y 2).",
+          "documentation": "Componentes internos del frontend y del backend (iteraciones 1 a 3).",
           "ownedElements": [
             {
               "_type": "UMLComponent",
@@ -2149,11 +2228,11 @@
             },
             {
               "_type": "UMLComponentDiagram",
-              "_id": "AAAAAA632ccf07c824bf=",
+              "_id": "AAAAAA8817f49a174149=",
               "_parent": {
                 "$ref": "AAAAAA3d801aff7f7c6a="
               },
-              "name": "Componentes frontend y backend (iteraciones 1 y 2)",
+              "name": "Componentes frontend y backend (iteraciones 1 a 3)",
               "model": {
                 "$ref": "AAAAAA3d801aff7f7c6a="
               },

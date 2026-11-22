@@ -11,9 +11,9 @@ celdas). Ambos inician sesión como operador.
 
 Mockups: ver [03-mockups-figma.md](03-mockups-figma.md).
 
-| Historia | HU-01 | HU-02 | HU-03 | HU-04 | HU-05 | HU-06 | HU-07 | HU-08 | HU-09 | HU-10 | HU-11 | HU-12 | HU-13 | HU-14 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Requerimiento | RF-01 | RF-02 | RF-03 | RF-04 | RF-05 | RF-06 | RF-07 | RF-08, RF-09 | RF-10 | RF-11 | RF-12, RF-13 | RF-14 | RF-15 | RF-16 |
+| Historia | HU-01 | HU-02 | HU-03 | HU-04 | HU-05 | HU-06 | HU-07 | HU-08 | HU-09 | HU-10 | HU-11 | HU-12 | HU-13 | HU-14 | HU-15 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Requerimiento | RF-01 | RF-02 | RF-03 | RF-04 | RF-05 | RF-06 | RF-07 | RF-08, RF-09 | RF-10 | RF-11 | RF-12, RF-13 | RF-14 | RF-15 | RF-16 | RF-18 |
 
 ## Iteración 1 — Entrada y salida de vehículos
 
@@ -97,11 +97,22 @@ Mockups: ver [03-mockups-figma.md](03-mockups-figma.md).
 
 ### HU-12 · Registrar mensualidad y validarla en la entrada *(RF-14)*
 **Como** operador **quiero** registrar la mensualidad de un vehículo **para** que pueda entrar.
-- **Cuando** registro el pago de un vehículo en *Mensualidades*, **entonces** el sistema calcula el monto según el tipo (MOTO $100.000; AUTOMOVIL o CAMIONETA $250.000) y el periodo de un mes calendario desde hoy (o desde la fecha indicada).
-- **Cuando** intento enviar un monto desde el cliente, **entonces** la API lo rechaza (422): el monto no se acepta del cliente.
+- **Cuando** registro el pago en efectivo de un vehículo en *Mensualidades* eligiendo solo el vehículo, **entonces** el sistema calcula el monto según el tipo (MOTO $100.000; AUTOMOVIL o CAMIONETA $250.000) y el periodo (ver HU-15: nunca lo indico yo).
+- **Cuando** intento enviar un monto o un periodo desde el cliente, **entonces** la API lo rechaza (422): ninguno de los dos se acepta del cliente.
+- **Cuando** elijo el vehículo, **entonces** la pantalla trae automáticamente su mensualidad vigente, sin un botón aparte.
 - **Cuando** consulto la vigencia, **entonces** veo si hoy está dentro del periodo pagado y las fechas del periodo.
 - **Cuando** registro la entrada de un vehículo sin mensualidad vigente, **entonces** se rechaza con 402.
 - **Cuando** no hay sesión, **entonces** registrar un pago exige iniciar sesión (401).
+
+## Iteración 3 — Gestión de pagos
+
+### HU-15 · Pagar extemporáneo sin perder la fecha de la mensualidad *(RF-18)*
+**Como** operador **quiero** que un pago en efectivo que llega algunos días tarde **no** corra la fecha de la mensualidad **para** no premiar la demora ni perjudicar al cliente que paga apenas unos días después.
+- **Dado** que el vehículo tiene una mensualidad cuyo `periodo_fin` fue hace **5 días o menos**, **cuando** registro un nuevo pago, **entonces** el periodo nuevo empieza al día siguiente del `periodo_fin` anterior (renovación): la mensualidad **no se mueve** por la demora.
+- **Dado** que el vehículo tiene una mensualidad cuyo `periodo_fin` fue hace **más de 5 días**, **cuando** registro un nuevo pago, **entonces** el periodo nuevo empieza **hoy** (mensualidad nueva).
+- **Dado** que es el **primer pago** del vehículo, **cuando** lo registro, **entonces** el periodo empieza **hoy**.
+- **Cuando** intento enviar `periodo_inicio` en la solicitud, **entonces** la API lo rechaza (422): el inicio del periodo nunca es un dato de entrada, lo decide siempre el servidor con esta regla.
+- **Dado** que quiero mover la fecha de la mensualidad por una razón distinta a un pago (por ejemplo, una cancelación y un contrato nuevo), **entonces** hoy no hay una operación para eso: solo se automatiza la continuidad o el reinicio por pago (ver *Alcance no cubierto* en [01-requerimientos.md](01-requerimientos.md)).
 
 ### HU-13 · Consultar el resumen del parqueadero *(RF-15)*
 **Como** administrador **quiero** ver cuántas celdas hay libres y cuántos clientes están registrados **para** tomar decisiones rápidas.
