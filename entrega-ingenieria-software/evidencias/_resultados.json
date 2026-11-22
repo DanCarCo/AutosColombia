@@ -133,8 +133,8 @@
  },
  "CE-06": {
   "estado": "Aprobado",
-  "real": "El formulario señala los campos vacíos y de solo espacios (['El usuario es obligatorio.', 'La contraseña es obligatoria.']); el servidor responde 422 en las tres variantes y no se guardó ninguna celda.",
-  "inc": "",
+  "real": "El formulario de Celdas señala Código y Tipo con «Este campo es obligatorio y no puede estar vacío.» (ver captura); el servidor responde 422 en las tres variantes y no se guardó ninguna celda.",
+  "inc": "INC-05 (corrección documental: el texto original citaba por error los mensajes del login)",
   "ev": "evidencias/CE-06.txt; evidencias/CE-06_interfaz.png"
  },
  "CE-07": {

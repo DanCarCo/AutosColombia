@@ -23,6 +23,7 @@ Mockups: ver [03-mockups-figma.md](03-mockups-figma.md).
 - **Cuando** repito una placa existente, **entonces** veo el mensaje «Ya existe un vehículo con esa placa» (409).
 - **Cuando** el modelo está fuera de 1900–2200 o hay campos vacíos, **entonces** no se guarda y se señala el campo.
 - **Cuando** no elijo cliente, **entonces** no se puede guardar (todo vehículo tiene dueño).
+- **Cuando** una cuenta con rol OPERADOR intenta registrar un vehículo, **entonces** la API responde 403 (RF-17): solo ADMINISTRADOR escribe vehículos.
 
 ### HU-02 · Consultar, editar y eliminar vehículos
 **Como** administrador **quiero** mantener la lista de vehículos **para** corregir datos o retirar los que ya no se usan.
@@ -30,6 +31,7 @@ Mockups: ver [03-mockups-figma.md](03-mockups-figma.md).
 - **Cuando** edito un vehículo y guardo, **entonces** se actualiza y se muestra confirmación.
 - **Cuando** elimino un vehículo sin registros relacionados, **entonces** desaparece tras confirmar.
 - **Cuando** el vehículo tiene estancias o pagos, **entonces** no se elimina y se explica el motivo (409).
+- Consultar (listar y ver el detalle) funciona con cualquier sesión; editar y eliminar exigen rol ADMINISTRADOR (403 para OPERADOR, RF-17).
 
 ### HU-03 · Registrar entrada
 **Como** operador **quiero** registrar la entrada de un vehículo a una celda **para** saber qué celda ocupa.
@@ -57,6 +59,7 @@ Mockups: ver [03-mockups-figma.md](03-mockups-figma.md).
 - **Cuando** repito un código, **entonces** veo «Ya existe una celda con ese código» (409).
 - **Cuando** elimino una celda con estancias registradas, **entonces** no se elimina (409).
 - Código y tipo vacíos se rechazan (422).
+- **Cuando** una cuenta con rol OPERADOR intenta crear, listar, editar o eliminar celdas, **entonces** la API responde 403 (RF-17): solo consulta `GET /celdas/disponibles`, no `/celdas`.
 
 ### HU-07 · Gestionar operadores
 **Como** administrador **quiero** registrar operadores con usuario, contraseña, turno y rol **para** que puedan iniciar sesión con los permisos que les corresponden.

@@ -35,12 +35,34 @@ entradas y salidas de vehículos, usuarios (operadores y clientes), celdas y pag
 | RF-14 | 2 | Registrar **mensualidades**: el monto lo calcula el servidor según el tipo de vehículo (MOTO $100.000; AUTOMOVIL y CAMIONETA $250.000); el periodo cubre un mes calendario. Consultar la vigencia. La entrada exige mensualidad vigente. | `POST /pagos`, `GET /pagos`, `GET /vehiculos/{id}/mensualidad` · `/gestion/mensualidades` |
 | RF-15 | 2 | **Reporte resumen**: celdas disponibles, celdas totales y clientes registrados. | `GET /reportes/resumen` · `/reportes` |
 | RF-16 | 2 | **Inicio y cierre de sesión** de operadores con usuario y contraseña; token JWT con el rol. Todas las operaciones (salvo el login y `/health`) exigen sesión, y el operador que actúa se toma del token. **Cerrar sesión revoca el token** en el servidor. | `POST /auth/login`, `POST /auth/logout` · `/login` |
-| RF-17 | 2 | **Roles y permisos.** ADMINISTRADOR: crea y gestiona operadores, celdas, clientes y vehículos; **no** registra accesos. OPERADOR: registra entradas, salidas y correcciones de celda, y consulta celdas disponibles; **no** administra usuarios ni celdas. Ambos registran mensualidades y ven el resumen. Un rol sin permiso recibe 403 y la interfaz oculta lo que no le corresponde. | `requiere_roles` en el backend · `rolGuard` y menú por rol en el frontend |
+| RF-17 | 2 | **Roles y permisos.** Ver el detalle de qué puede hacer cada rol, por recurso, justo debajo de esta tabla. | `requiere_roles` en el backend · `rolGuard` y menú por rol en el frontend |
 
 > La numeración RF-10 a RF-17 es la que ya usan el código y los comentarios del
 > repositorio. RF-01 a RF-09 agrupan lo de la iteración 1 y las reglas
 > transversales. Si tu documento de la Actividad 1 numera distinto, conserva la
 > numeración de ese documento y usa la columna *Evidencia* para enlazar.
+
+### RF-17 en detalle: qué puede hacer cada rol
+
+No alcanza con decir "ADMINISTRADOR gestiona, OPERADOR no administra": lectura
+y escritura tienen reglas distintas por recurso, y así está implementado:
+
+| Recurso | ADMINISTRADOR | OPERADOR | Cualquier sesión (sin importar el rol) |
+| --- | --- | --- | --- |
+| Operadores (`/operadores`) | Crear, editar, eliminar, listar y consultar | Sin acceso (403) | — |
+| Celdas (`/celdas`) | Crear, editar, eliminar, listar y consultar | Sin acceso a `/celdas` (403) | `GET /celdas/disponibles` (RF-10) |
+| Clientes (`/clientes`) | Crear, editar, eliminar | Sin escritura (403) | Listar y consultar |
+| Vehículos (`/vehiculos`) | Crear, editar, eliminar | Sin escritura (403) | Listar y consultar |
+| Estancias (`/estancias/entrada`, `/salida`, `/celda`) | Sin acceso (403): no registra accesos | Registrar entrada, salida y corregir celda | Consultar estado por placa (`GET /estancias/vehiculo/{placa}`) |
+| Mensualidades (`/pagos`) | Registrar y consultar | Registrar y consultar | Consultar vigencia (`GET /vehiculos/{id}/mensualidad`) |
+| Reportes (`/reportes/resumen`) | Consultar | Consultar | Consultar |
+
+Reglas transversales: sin sesión, toda operación (salvo `/auth/login` y
+`/health`) responde **401**. Con sesión pero sin el rol que exige el recurso,
+responde **403** «No tienes permisos para esta operación.». El menú del
+frontend (`app.html`) solo muestra las pantallas que el rol de la sesión puede
+usar; intentar una ruta oculta por URL directa también recibe el 403 de la
+API, porque el permiso se exige en el backend, no solo se oculta en pantalla.
 
 ## Requerimientos no funcionales
 

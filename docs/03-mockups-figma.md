@@ -36,12 +36,12 @@ con los campos reales de cada formulario.
 | Modelo de cobro | Tarifa por minuto ($100), tolerancia de 5 min, cobro y comprobante de pago al salir | Mensualidad: la entrada exige mensualidad vigente; la salida solo cierra la estancia y libera la celda, sin cobro |
 | Precios | Planes de $280.000 / $140.000 / $180.000 | Tarifa fija por tipo: Moto $100.000; Automóvil y Camioneta $250.000; el servidor calcula el monto |
 | Mensualidades | Planes, celda fija, pago inicial, medio de pago, referencia, saldos | Tipo de vehículo, inicio (opcional) y fin calculado; sin saldos. «Editar o renovar» pasó a **Renovar** |
-| Operadores | Documento, correo, rol, estado, turnos por horario | Nombre, teléfono, usuario, contraseña (opcional al editar) y turno **DIA / NOCHE** |
+| Operadores | Documento, correo, rol, estado, turnos por horario | Nombre, teléfono, usuario, contraseña (opcional al editar), turno **DIA / NOCHE** y rol **ADMINISTRADOR / OPERADOR** (RF-17) |
 | Clientes | Tipo de cliente, tipo de documento, email, dirección, vehículos vinculados, observaciones | Nombre, documento y teléfono |
 | Vehículos | Modelo / línea libre, notas, tipo «Carro» | Modelo = **año 1900–2200**, sin notas, tipos Automóvil / Moto / Camioneta |
 | Celdas | Zona, tarifa, mantenimiento, estado inicial, observaciones; 24 celdas | Código y tipo; 80 celdas (10 MOTO y 70 CARRO) |
 | Reporte | Ocupación, ingresos, operadores, filtros y exportaciones | Resumen: celdas disponibles, celdas totales y clientes registrados |
-| Cabecera y menú lateral | Selector de sede «Parqueadero Centro», «Medellín», rol «Administrador» | «Autos Colombia», turno DIA, sin sede ni rol |
+| Cabecera y menú lateral | Selector de sede «Parqueadero Centro», «Medellín», rol «Administrador» fijo | «Autos Colombia», turno y rol real de la sesión (ADMINISTRADOR / OPERADOR, RF-17); sin selector de sede ni de rol — el rol lo asigna quien crea la cuenta, no se elige al navegar |
 | Estado del vehículo | «En parqueadero» / «Finalizado» | «Dentro» / «Fuera» |
 | Faltaban | Inicio de sesión, corregir celda, rechazo por falta de mensualidad | Marcos 41, 42 y 43 |
 
@@ -60,6 +60,18 @@ como diseño de siguientes iteraciones y no como funcionalidad hecha:
 | 33–35 | Configuración: general, tarifas por minuto y reglas operativas |
 
 El marco **«01 - Inicio (versión anterior)»** es un borrador previo; conviene eliminarlo o dejarlo fuera del PDF.
+
+## Pendiente: campo Rol en los formularios de Operadores
+
+Los marcos 11 y 12 (Nuevo operador / Editar operador) no incluían el campo **Rol**
+(ADMINISTRADOR / OPERADOR) cuando se implementó RF-17 — el mockup quedó
+desactualizado respecto al formulario real, que sí lo exige.
+
+- **Marco 11 (Nuevo operador): corregido.** Ya incluye el campo «Rol *» junto a
+  Usuario, coherente con el resto del formulario.
+- **Marco 12 (Editar operador): pendiente.** Todavía no muestra el campo Rol;
+  hay que agregarlo en Figma (junto a Usuario, igual que en el marco 11) y
+  volver a exportarlo.
 
 ## Diferencias que se mantienen (decisión consciente)
 

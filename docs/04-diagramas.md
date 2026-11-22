@@ -279,6 +279,45 @@ sequenceDiagram
     end
 ```
 
+#### 7b. Gestionar operadores — editar y eliminar (RF-07, RF-17)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Administrador
+    participant UI as Operadores (Angular)
+    participant API as PATCH/DELETE /operadores/{id}
+    participant Srv as services.operador
+    participant BD as PostgreSQL
+    Administrador->>UI: Edita datos (o deja la contraseña vacía)
+    UI->>API: PATCH /operadores/{id}
+    API->>API: Exige rol ADMINISTRADOR (solo_administrador)
+    alt Sin rol ADMINISTRADOR
+        API-->>UI: 403 No tienes permisos para esta operación
+    else Rol correcto
+        API->>Srv: update_operador(id, datos)
+        Srv->>BD: UPDATE operador (conserva password_hash si no llega contraseña)
+        alt Usuario repetido
+            BD-->>Srv: Violación de unicidad
+            Srv-->>UI: 409 Ya existe un operador con ese usuario
+        else Correcto
+            BD-->>Srv: operador actualizado
+            Srv-->>UI: 200 operador sin contraseña
+        end
+    end
+    Administrador->>UI: Elimina un operador
+    UI->>API: DELETE /operadores/{id}
+    API->>API: Exige rol ADMINISTRADOR
+    API->>Srv: delete_operador(id)
+    alt Tiene estancias o pagos registrados
+        BD-->>Srv: Violación de clave foránea (RESTRICT)
+        Srv-->>UI: 409 No se puede eliminar: tiene registros relacionados
+    else Sin registros relacionados
+        Srv->>BD: DELETE operador
+        Srv-->>UI: 204 eliminado
+    end
+```
+
 ### 8. Gestionar celdas — crear y consultar disponibles (RF-06, RF-10)
 
 ```mermaid
@@ -304,6 +343,46 @@ sequenceDiagram
     API->>Srv: list_available(offset, limit)
     Srv->>BD: Celdas sin estancia abierta
     BD-->>UI: Página de celdas libres
+```
+
+#### 8b. Gestionar celdas — editar y eliminar (RF-06, RF-17)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Administrador
+    participant UI as Celdas (Angular)
+    participant API as PATCH/DELETE /celdas/{id}
+    participant Srv as services.celda
+    participant BD as PostgreSQL
+    Administrador->>UI: Edita código o tipo
+    UI->>API: PATCH /celdas/{id}
+    API->>API: Exige rol ADMINISTRADOR (solo_administrador)
+    alt Sin rol ADMINISTRADOR
+        API-->>UI: 403 No tienes permisos para esta operación
+    else Rol correcto
+        API->>Srv: update_celda(id, datos)
+        Srv->>Srv: Normaliza el código a mayúsculas
+        Srv->>BD: UPDATE celda
+        alt Código repetido
+            BD-->>Srv: Violación de unicidad
+            Srv-->>UI: 409 Ya existe una celda con ese código
+        else Correcto
+            BD-->>Srv: celda actualizada
+            Srv-->>UI: 200 celda
+        end
+    end
+    Administrador->>UI: Elimina una celda
+    UI->>API: DELETE /celdas/{id}
+    API->>API: Exige rol ADMINISTRADOR
+    API->>Srv: delete_celda(id)
+    alt Tiene estancias relacionadas (libre u ocupada)
+        BD-->>Srv: Violación de clave foránea (RESTRICT)
+        Srv-->>UI: 409 No se puede eliminar: la celda tiene estancias relacionadas
+    else Sin estancias relacionadas
+        Srv->>BD: DELETE celda
+        Srv-->>UI: 204 eliminada
+    end
 ```
 
 ### 9. Registrar mensualidad (RF-14)

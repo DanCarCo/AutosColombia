@@ -8,8 +8,15 @@ REGISTRO:
 POST /celdas cuerpo={"tipo": "CARRO"} [sesión: administrador] -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "codigo"], "msg": "Field required", "input": {"tipo": "CARRO"}}]}   # sin código
 POST /celdas cuerpo={"codigo": "T-SIN-TIPO"} [sesión: administrador] -> HTTP 422 {"detail": [{"type": "missing", "loc": ["body", "tipo"], "msg": "Field required", "input": {"codigo": "T-SIN-TIPO"}}]}   # sin tipo
 POST /celdas cuerpo={"codigo": "   ", "tipo": "   "} [sesión: administrador] -> HTTP 422 {"detail": [{"type": "value_error", "loc": ["body", "codigo"], "msg": "Value error, El campo debe ser texto no vacío.", "input": "   ", "ctx": {"error": {}}}, {"type": "value_error", "loc": ["body", "tipo"], "msg": "Valu   # solo espacios
-INTERFAZ (celdas_form): {"scenario": "celdas_form", "vacio": ["El usuario es obligatorio.", "La contraseña es obligatoria."], "error": "Error: No element found for selector: #codigo"}
+INTERFAZ (celdas_form): {"scenario": "celdas_form", "vacio": ["Este campo es obligatorio y no puede estar vacío.", "Este campo es obligatorio y no puede estar vacío."]}
 BD: celdas antes=6, después=6
 
 ESTADO: Aprobado
-RESULTADO: El formulario señala los campos vacíos y de solo espacios (['El usuario es obligatorio.', 'La contraseña es obligatoria.']); el servidor responde 422 en las tres variantes y no se guardó ninguna celda.
+RESULTADO: El formulario de Celdas señala Código y Tipo con «Este campo es obligatorio y no puede estar vacío.» (ver CE-06_interfaz.png); el servidor responde 422 en las tres variantes y no se guardó ninguna celda.
+
+NOTA (revisión posterior, 21/11/2026): el texto original de este registro citaba
+por error los mensajes del formulario de login ("El usuario es obligatorio.",
+"La contraseña es obligatoria.") y un "Error: No element found for selector:
+#codigo" que no coincidía con la captura adjunta — la captura siempre mostró
+el formulario de Celdas correcto. El caso se había aprobado sin cotejar el
+texto contra la imagen. Ver INCIDENCIAS.md (INC-05).
