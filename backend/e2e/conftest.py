@@ -52,9 +52,17 @@ def pytest_runtest_makereport(item, call):
 def pytest_sessionfinish(session, exitstatus):
     if RESULTADOS:
         SALIDA.mkdir(parents=True, exist_ok=True)
-        (SALIDA / "_resultados_e2e.json").write_text(
+        archivo = SALIDA / "_resultados_e2e.json"
+        previos: dict[str, dict] = {}
+        if archivo.exists():  # conserva los resultados de ejecuciones parciales anteriores
+            try:
+                previos = json.loads(archivo.read_text(encoding="utf-8")).get("resultados", {})
+            except (OSError, ValueError):
+                previos = {}
+        previos.update(RESULTADOS)
+        archivo.write_text(
             json.dumps(
-                {"ejecutado": time.strftime("%Y-%m-%d %H:%M:%S"), "resultados": dict(sorted(RESULTADOS.items()))},
+                {"ejecutado": time.strftime("%Y-%m-%d %H:%M:%S"), "resultados": dict(sorted(previos.items()))},
                 ensure_ascii=False,
                 indent=1,
             ),

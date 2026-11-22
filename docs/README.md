@@ -11,6 +11,7 @@ funciones que dependen de ellas). Todo el contenido refleja el código actual.
 | B, E, F. Casos de uso, secuencia, componentes y clases (Mermaid) | [04-diagramas.md](04-diagramas.md) |
 | G. Plan de pruebas resumido | [05-plan-de-pruebas.md](05-plan-de-pruebas.md) |
 | B, E, F. Modelo de StarUML | [06-staruml.md](06-staruml.md) |
+| G (iteración 3). Plan de pruebas resumido de gestión de pagos | `entrega-ingenieria-software/Plan_Pruebas_Gestion_Pagos_Autos_Colombia.xlsx` |
 | Verificación automática | `entrega-ingenieria-software/verificar-entrega.ps1` |
 | H. Repositorio en GitHub | URL del remoto (`git remote -v`) |
 

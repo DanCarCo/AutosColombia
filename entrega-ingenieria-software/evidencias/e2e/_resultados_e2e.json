@@ -1,116 +1,193 @@
 {
- "ejecutado": "2026-11-21 23:46:08",
+ "ejecutado": "2026-11-22 12:18:27",
  "resultados": {
   "E2E-01": {
    "id": "E2E-01",
    "prueba": "Login del administrador: menú de gestión sin Control de acceso.",
    "estado": "Aprobado",
-   "duracion_s": 1.84,
+   "duracion_s": 1.04,
    "detalle": ""
   },
   "E2E-02": {
    "id": "E2E-02",
    "prueba": "Login del operador: menú con Control de acceso y sin gestión.",
    "estado": "Aprobado",
-   "duracion_s": 0.9,
+   "duracion_s": 0.94,
    "detalle": ""
   },
   "E2E-03": {
    "id": "E2E-03",
    "prueba": "Credenciales incorrectas: mensaje genérico idéntico para usuario inexistente y clave errónea.",
    "estado": "Aprobado",
-   "duracion_s": 1.08,
+   "duracion_s": 1.37,
    "detalle": ""
   },
   "E2E-04": {
    "id": "E2E-04",
    "prueba": "Login con campos vacíos: la interfaz indica los campos obligatorios y no envía la solicitud.",
    "estado": "Aprobado",
-   "duracion_s": 0.54,
+   "duracion_s": 1.2,
    "detalle": ""
   },
   "E2E-05": {
    "id": "E2E-05",
    "prueba": "El administrador crea un operador desde la pantalla Operadores y puede iniciar sesión.",
    "estado": "Aprobado",
-   "duracion_s": 1.47,
+   "duracion_s": 2.67,
    "detalle": ""
   },
   "E2E-06": {
    "id": "E2E-06",
    "prueba": "Operador: campos obligatorios validados en el formulario y usuario duplicado rechazado.",
    "estado": "Aprobado",
-   "duracion_s": 1.42,
+   "duracion_s": 2.15,
    "detalle": ""
   },
   "E2E-07": {
    "id": "E2E-07",
    "prueba": "Celdas: crear, rechazar duplicada, validar obligatorios, editar y eliminar desde la interfaz.",
    "estado": "Aprobado",
-   "duracion_s": 1.9,
+   "duracion_s": 2.76,
    "detalle": ""
   },
   "E2E-08": {
    "id": "E2E-08",
    "prueba": "Clientes y vehículos: el administrador registra un cliente y un vehículo asociado desde la interfaz.",
    "estado": "Aprobado",
-   "duracion_s": 1.5,
+   "duracion_s": 1.96,
    "detalle": ""
   },
   "E2E-09": {
    "id": "E2E-09",
    "prueba": "Control de acceso: la entrada de un vehículo sin mensualidad vigente es rechazada.",
    "estado": "Aprobado",
-   "duracion_s": 1.01,
+   "duracion_s": 1.21,
    "detalle": ""
   },
   "E2E-10": {
    "id": "E2E-10",
    "prueba": "Mensualidades: registrar y consultar vigencia desde la interfaz (monto calculado por el servidor).",
    "estado": "Aprobado",
-   "duracion_s": 1.35,
+   "duracion_s": 1.84,
    "detalle": ""
   },
   "E2E-11": {
    "id": "E2E-11",
    "prueba": "Control de acceso: entrada, duplicada, consulta, corrección de celda y salida.",
    "estado": "Aprobado",
-   "duracion_s": 2.01,
+   "duracion_s": 2.16,
    "detalle": ""
   },
   "E2E-12": {
    "id": "E2E-12",
    "prueba": "Control de acceso: consultar una placa inexistente informa que no está registrada.",
    "estado": "Aprobado",
-   "duracion_s": 0.91,
+   "duracion_s": 1.04,
    "detalle": ""
   },
   "E2E-13": {
    "id": "E2E-13",
    "prueba": "Reportes: la pantalla muestra celdas disponibles/totales y clientes iguales a los de la API.",
    "estado": "Aprobado",
-   "duracion_s": 0.91,
+   "duracion_s": 1.05,
    "detalle": ""
   },
   "E2E-14": {
    "id": "E2E-14",
    "prueba": "Rutas protegidas: sin sesión → login; operador no entra a gestión; administrador no entra a Control de acceso.",
    "estado": "Aprobado",
-   "duracion_s": 1.74,
+   "duracion_s": 2.22,
    "detalle": ""
   },
   "E2E-15": {
    "id": "E2E-15",
    "prueba": "Cierre de sesión: vuelve al login y el token anterior responde 401.",
    "estado": "Aprobado",
-   "duracion_s": 0.79,
+   "duracion_s": 1.24,
    "detalle": ""
   },
   "E2E-16": {
    "id": "E2E-16",
    "prueba": "API: sin sesión 401 en módulos de negocio; operador 403 en gestión; administrador 403 en entradas.",
    "estado": "Aprobado",
-   "duracion_s": 0.08,
+   "duracion_s": 0.11,
+   "detalle": ""
+  },
+  "E2E-P01": {
+   "id": "E2E-P01",
+   "prueba": "Primer pago de un vehículo: la mensualidad empieza hoy y dura un mes calendario (monto $250.000).",
+   "estado": "Aprobado",
+   "duracion_s": 1.52,
+   "detalle": ""
+  },
+  "E2E-P02": {
+   "id": "E2E-P02",
+   "prueba": "El servidor calcula el monto por tipo: moto $100.000, camioneta y automóvil $250.000.",
+   "estado": "Aprobado",
+   "duracion_s": 1.98,
+   "detalle": ""
+  },
+  "E2E-P03": {
+   "id": "E2E-P03",
+   "prueba": "Pago 3 días después de vencida: la mensualidad continúa (inicio = fin anterior + 1 día), sin mover la fecha.",
+   "estado": "Aprobado",
+   "duracion_s": 1.46,
+   "detalle": ""
+  },
+  "E2E-P04": {
+   "id": "E2E-P04",
+   "prueba": "Pago con la mensualidad aún vigente (vence en 5 días): el nuevo periodo continúa al día siguiente del fin.",
+   "estado": "Aprobado",
+   "duracion_s": 1.4,
+   "detalle": ""
+  },
+  "E2E-P05": {
+   "id": "E2E-P05",
+   "prueba": "Pago 10 días después de vencida: es una mensualidad nueva que empieza hoy.",
+   "estado": "Aprobado",
+   "duracion_s": 1.38,
+   "detalle": ""
+  },
+  "E2E-P06": {
+   "id": "E2E-P06",
+   "prueba": "Límite de la gracia: a 5 días continúa el periodo; a 6 días empieza una mensualidad nueva.",
+   "estado": "Aprobado",
+   "duracion_s": 0.2,
+   "detalle": ""
+  },
+  "E2E-P07": {
+   "id": "E2E-P07",
+   "prueba": "La API rechaza (422) monto y periodo_inicio enviados por el cliente y la pantalla no tiene selector de fecha.",
+   "estado": "Aprobado",
+   "duracion_s": 1.12,
+   "detalle": ""
+  },
+  "E2E-P08": {
+   "id": "E2E-P08",
+   "prueba": "Consultar vigencia: avisa si falta el vehículo, muestra la mensualidad vigente y la ausencia de vigencia.",
+   "estado": "Aprobado",
+   "duracion_s": 1.65,
+   "detalle": ""
+  },
+  "E2E-P09": {
+   "id": "E2E-P09",
+   "prueba": "Entrada: sin mensualidad se rechaza (402); tras registrar la mensualidad la entrada se confirma.",
+   "estado": "Aprobado",
+   "duracion_s": 2.65,
+   "detalle": ""
+  },
+  "E2E-P10": {
+   "id": "E2E-P10",
+   "prueba": "API de pagos: 401 sin sesión, 404 con vehículo inexistente y lectura permitida a ambos roles.",
+   "estado": "Aprobado",
+   "duracion_s": 0.24,
+   "detalle": ""
+  },
+  "E2E-P11": {
+   "id": "E2E-P11",
+   "prueba": "El listado «Pagos registrados» muestra el mismo total que la API.",
+   "estado": "Aprobado",
+   "duracion_s": 1.27,
    "detalle": ""
   }
  }

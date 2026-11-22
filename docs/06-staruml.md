@@ -62,8 +62,8 @@ es mejor arrastrar las del modelo.
 ## Diagramas ya dibujados y exportados
 
 `entrega-ingenieria-software/staruml/AutosColombia_con_diagramas.mdj` es el modelo anterior con **todos los diagramas
-dibujados** (13: clases, 2 de casos de uso, 7 de secuencia, 2 de componentes y el de paquetes, que sigue vacío).
-Las imágenes exportadas están en `entrega-ingenieria-software/imagenes/staruml/`. Se usó StarUML 7 en **versión de
+dibujados** (clases, 2 de casos de uso, **9 de secuencia actualizados con las tres iteraciones**, 2 de componentes y el de paquetes, que sigue vacío).
+Las imágenes exportadas están en `entrega-ingenieria-software/imagenes/staruml/` (las secuencias son `staruml_sec_01…09`). Se usó StarUML 7 en **versión de
 prueba**, así que las imágenes llevan la marca «UNREGISTERED»; es aceptable para esta actividad educativa y con una
 licencia se re-exportan sin ella.
 
@@ -75,6 +75,14 @@ Detalles que costó descubrir: las vistas nuevas miden 0 × 0 hasta que se dibuj
 aproximados para que la exportación no recorte; los diagramas de secuencia se importan con
 `mermaid:generate-diagram` (`{code: ...}`), pero hay que recolocar líneas de vida y mensajes (`view.points = new
 type.Points()`); y los archivos JSON de los comandos deben llevar los acentos escapados (`ó`).
+
+## Regenerar las secuencias (iteración 3)
+
+Las 9 secuencias se dibujan desde los bloques `sequenceDiagram` de [04-diagramas.md](04-diagramas.md) (secciones 4 a 10)
+con `python entrega-ingenieria-software/staruml/generar_secuencias.py`, que reemplaza las anteriores en
+`AutosColombia_con_diagramas.mdj` (es repetible). El diagrama «SD Registrar mensualidad (RF-14, RF-18, iteración 3)»
+incluye la decisión de los 5 días. Los `alt`/`else` se aplanan: cada mensaje lleva su condición entre corchetes.
+Las imágenes se exportaron con StarUML 8 (`STARUML_COMMANDS` y `project:export-diagram-to-png`).
 
 ## Regenerar el archivo
 

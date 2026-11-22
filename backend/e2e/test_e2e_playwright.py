@@ -114,7 +114,7 @@ def test_e2e_05_admin_crea_operador_en_interfaz(page, admin, api, claves):
     page.select_option("#turno", "NOCHE")
     page.select_option("#rol", "OPERADOR")
     page.get_by_role("button", name="Guardar operador").click()
-    expect(page.get_by_role("status").filter(has_text=re.compile("operador", re.I))).to_be_visible()
+    expect(page.locator("p.notice.success")).to_contain_text(re.compile("registrado", re.I))
     expect(page.get_by_role("cell", name="operador_ui")).to_be_visible()
     expect(page.get_by_role("cell", name="0031234567")).to_be_visible()  # conserva ceros iniciales
     evidencia(page, "E2E-05")
@@ -187,6 +187,15 @@ def test_e2e_08_clientes_y_vehiculos_en_interfaz(page, admin):
     page.select_option("#tipo", index=1)
     page.select_option("#cliente_id", index=page.locator("#cliente_id option").count() - 1)
     page.get_by_role("button", name="Guardar vehículo").click()
+    expect(page.get_by_text("Cargando vehículos")).to_have_count(0)
+    paginacion = page.get_by_role("navigation", name="Paginación de vehículos")
+    for _ in range(10):  # el listado es paginado: avanza a la última página, donde queda el vehículo nuevo
+        expect(page.get_by_role("button", name="Actualizar listado")).to_be_enabled()  # termina de cargar
+        m = re.search(r"Página (\d+) de (\d+)", paginacion.inner_text())
+        if m is None or m.group(1) == m.group(2):
+            break
+        paginacion.get_by_role("button", name="Siguiente").click()
+        expect(page.get_by_text("Cargando vehículos")).to_have_count(0)
     expect(page.get_by_role("cell", name="UIE2E1")).to_be_visible()
     evidencia(page, "E2E-08")
 
@@ -291,7 +300,13 @@ def test_e2e_15_cierre_de_sesion_revoca_token(page, operador, api):
     assert api.get("/celdas/disponibles", headers={"Authorization": f"Bearer {token}"}).status_code == 200
     page.get_by_role("button", name="Cerrar sesión").click()
     expect(page.get_by_role("link", name="Iniciar sesión")).to_be_visible()
-    assert api.get("/celdas/disponibles", headers={"Authorization": f"Bearer {token}"}).status_code == 401
+    codigo = None
+    for _ in range(20):  # la revocación viaja en segundo plano: espera a que el servidor la registre
+        codigo = api.get("/celdas/disponibles", headers={"Authorization": f"Bearer {token}"}).status_code
+        if codigo == 401:
+            break
+        page.wait_for_timeout(250)
+    assert codigo == 401
     evidencia(page, "E2E-15")
 
 
