@@ -61,6 +61,8 @@ instalar y ejecutar los proyectos en Windows está en `README.md`.
   `operador.rol` (NOT NULL con CHECK; las cuentas existentes pasan a OPERADOR y la de menor
   id a ADMINISTRADOR) y la tabla `token_revocado`.
 - `backend/.env.example`: plantilla pública; conservar cualquier `.env` existente y privado.
+- `backend/e2e/`: pruebas E2E con Playwright (`RUN_E2E=1`, requieren BD aislada porque
+  hacen `TRUNCATE`; ver `backend/README.md`). Resultados en `entrega-ingenieria-software/evidencias/e2e/`.
 - `backend/requirements.txt`: dependencias de ejecución y pruebas con versiones
   exactas, incluidas las transitivas.
 - `backend/.venv/`: entorno virtual local, excluido de Git.

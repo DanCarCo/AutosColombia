@@ -1,0 +1,117 @@
+{
+ "ejecutado": "2026-11-21 23:46:08",
+ "resultados": {
+  "E2E-01": {
+   "id": "E2E-01",
+   "prueba": "Login del administrador: menú de gestión sin Control de acceso.",
+   "estado": "Aprobado",
+   "duracion_s": 1.84,
+   "detalle": ""
+  },
+  "E2E-02": {
+   "id": "E2E-02",
+   "prueba": "Login del operador: menú con Control de acceso y sin gestión.",
+   "estado": "Aprobado",
+   "duracion_s": 0.9,
+   "detalle": ""
+  },
+  "E2E-03": {
+   "id": "E2E-03",
+   "prueba": "Credenciales incorrectas: mensaje genérico idéntico para usuario inexistente y clave errónea.",
+   "estado": "Aprobado",
+   "duracion_s": 1.08,
+   "detalle": ""
+  },
+  "E2E-04": {
+   "id": "E2E-04",
+   "prueba": "Login con campos vacíos: la interfaz indica los campos obligatorios y no envía la solicitud.",
+   "estado": "Aprobado",
+   "duracion_s": 0.54,
+   "detalle": ""
+  },
+  "E2E-05": {
+   "id": "E2E-05",
+   "prueba": "El administrador crea un operador desde la pantalla Operadores y puede iniciar sesión.",
+   "estado": "Aprobado",
+   "duracion_s": 1.47,
+   "detalle": ""
+  },
+  "E2E-06": {
+   "id": "E2E-06",
+   "prueba": "Operador: campos obligatorios validados en el formulario y usuario duplicado rechazado.",
+   "estado": "Aprobado",
+   "duracion_s": 1.42,
+   "detalle": ""
+  },
+  "E2E-07": {
+   "id": "E2E-07",
+   "prueba": "Celdas: crear, rechazar duplicada, validar obligatorios, editar y eliminar desde la interfaz.",
+   "estado": "Aprobado",
+   "duracion_s": 1.9,
+   "detalle": ""
+  },
+  "E2E-08": {
+   "id": "E2E-08",
+   "prueba": "Clientes y vehículos: el administrador registra un cliente y un vehículo asociado desde la interfaz.",
+   "estado": "Aprobado",
+   "duracion_s": 1.5,
+   "detalle": ""
+  },
+  "E2E-09": {
+   "id": "E2E-09",
+   "prueba": "Control de acceso: la entrada de un vehículo sin mensualidad vigente es rechazada.",
+   "estado": "Aprobado",
+   "duracion_s": 1.01,
+   "detalle": ""
+  },
+  "E2E-10": {
+   "id": "E2E-10",
+   "prueba": "Mensualidades: registrar y consultar vigencia desde la interfaz (monto calculado por el servidor).",
+   "estado": "Aprobado",
+   "duracion_s": 1.35,
+   "detalle": ""
+  },
+  "E2E-11": {
+   "id": "E2E-11",
+   "prueba": "Control de acceso: entrada, duplicada, consulta, corrección de celda y salida.",
+   "estado": "Aprobado",
+   "duracion_s": 2.01,
+   "detalle": ""
+  },
+  "E2E-12": {
+   "id": "E2E-12",
+   "prueba": "Control de acceso: consultar una placa inexistente informa que no está registrada.",
+   "estado": "Aprobado",
+   "duracion_s": 0.91,
+   "detalle": ""
+  },
+  "E2E-13": {
+   "id": "E2E-13",
+   "prueba": "Reportes: la pantalla muestra celdas disponibles/totales y clientes iguales a los de la API.",
+   "estado": "Aprobado",
+   "duracion_s": 0.91,
+   "detalle": ""
+  },
+  "E2E-14": {
+   "id": "E2E-14",
+   "prueba": "Rutas protegidas: sin sesión → login; operador no entra a gestión; administrador no entra a Control de acceso.",
+   "estado": "Aprobado",
+   "duracion_s": 1.74,
+   "detalle": ""
+  },
+  "E2E-15": {
+   "id": "E2E-15",
+   "prueba": "Cierre de sesión: vuelve al login y el token anterior responde 401.",
+   "estado": "Aprobado",
+   "duracion_s": 0.79,
+   "detalle": ""
+  },
+  "E2E-16": {
+   "id": "E2E-16",
+   "prueba": "API: sin sesión 401 en módulos de negocio; operador 403 en gestión; administrador 403 en entradas.",
+   "estado": "Aprobado",
+   "duracion_s": 0.08,
+   "detalle": ""
+  }
+ }
+}

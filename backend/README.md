@@ -435,3 +435,17 @@ Generar un valor, por ejemplo:
 - Decidir si se requiere imponer el límite de 10 celdas MOTO / 70 no-MOTO y
   de 2 operadores de día / 1 de noche (hoy son solo datos iniciales, sin
   límite impuesto por el sistema, por decisión explícita).
+
+## Pruebas E2E con Playwright (`backend/e2e/`)
+
+Chromium real contra frontend, API y PostgreSQL. Requieren una base **aislada**: el conftest ejecuta `TRUNCATE` sobre las tablas.
+
+```powershell
+# Una sola vez, desde backend
+.\.venv\Scripts\python.exe -m playwright install chromium
+# Con DB_*/JWT_SECRET en el entorno, migraciones aplicadas, uvicorn en 8000 y npm.cmd start en 4200:
+$env:RUN_E2E = '1'
+.\.venv\Scripts\python.exe -m pytest e2e -q
+```
+
+Sin `RUN_E2E=1` se omiten. Resultados en `entrega-ingenieria-software/evidencias/e2e/` y hoja `E2E_Playwright` del plan de pruebas.
