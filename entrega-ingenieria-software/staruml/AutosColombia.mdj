@@ -1044,6 +1044,15 @@
               "documentation": "RF-18, HU-15. Primer pago, o más de 5 días tarde: periodo desde hoy."
             },
             {
+              "_type": "UMLUseCase",
+              "_id": "AAAAAA494a18138d7f6a=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "name": "CU-19 Consultar movimientos de pago",
+              "documentation": "RF-19, HU-16. Historial con totales, filtros y exportación a CSV."
+            },
+            {
               "_type": "UMLAssociation",
               "_id": "AAAAAAe529afd81e8810=",
               "_parent": {
@@ -1306,6 +1315,35 @@
             },
             {
               "_type": "UMLAssociation",
+              "_id": "AAAAAA7a549cab750490=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA0b8b1171d09412=",
+                "_parent": {
+                  "$ref": "AAAAAA7a549cab750490="
+                },
+                "reference": {
+                  "$ref": "AAAAAAb73cf66c727d1c="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA24122ddcbba236=",
+                "_parent": {
+                  "$ref": "AAAAAA7a549cab750490="
+                },
+                "reference": {
+                  "$ref": "AAAAAA494a18138d7f6a="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
               "_id": "AAAAAA2bc7f0ba3a629b=",
               "_parent": {
                 "$ref": "AAAAAA5981417e5244f0="
@@ -1480,6 +1518,64 @@
             },
             {
               "_type": "UMLAssociation",
+              "_id": "AAAAAA69918b4e56cf7f=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAf2257d3543149a=",
+                "_parent": {
+                  "$ref": "AAAAAA69918b4e56cf7f="
+                },
+                "reference": {
+                  "$ref": "AAAAAA426f9b87d946b9="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAfe44e3097daec3=",
+                "_parent": {
+                  "$ref": "AAAAAA69918b4e56cf7f="
+                },
+                "reference": {
+                  "$ref": "AAAAAA4c6dfbdc6dbc38="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAAd7b702b76413a0=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA2c11a62fd8092b=",
+                "_parent": {
+                  "$ref": "AAAAAAd7b702b76413a0="
+                },
+                "reference": {
+                  "$ref": "AAAAAA426f9b87d946b9="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA1b9efb8516faf1=",
+                "_parent": {
+                  "$ref": "AAAAAAd7b702b76413a0="
+                },
+                "reference": {
+                  "$ref": "AAAAAA83f83c7b8b2879="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
               "_id": "AAAAAAad8d4a0d52e82c=",
               "_parent": {
                 "$ref": "AAAAAA5981417e5244f0="
@@ -1532,6 +1628,35 @@
                 },
                 "reference": {
                   "$ref": "AAAAAA642c403577f75c="
+                },
+                "navigable": true
+              }
+            },
+            {
+              "_type": "UMLAssociation",
+              "_id": "AAAAAA829eea7f24bef5=",
+              "_parent": {
+                "$ref": "AAAAAA5981417e5244f0="
+              },
+              "end1": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAAd9612f398cd595=",
+                "_parent": {
+                  "$ref": "AAAAAA829eea7f24bef5="
+                },
+                "reference": {
+                  "$ref": "AAAAAA426f9b87d946b9="
+                },
+                "navigable": false
+              },
+              "end2": {
+                "_type": "UMLAssociationEnd",
+                "_id": "AAAAAA36a3b1754184f1=",
+                "_parent": {
+                  "$ref": "AAAAAA829eea7f24bef5="
+                },
+                "reference": {
+                  "$ref": "AAAAAA494a18138d7f6a="
                 },
                 "navigable": true
               }
@@ -1616,28 +1741,28 @@
             },
             {
               "_type": "UMLExtend",
-              "_id": "AAAAAAc526e59533c1eb=",
+              "_id": "AAAAAA9d5b173d01abad=",
               "_parent": {
                 "$ref": "AAAAAA5981417e5244f0="
               },
               "source": {
-                "$ref": "AAAAAA259b02f6ebbdb9="
+                "$ref": "AAAAAAa0c224372aab9a="
               },
               "target": {
-                "$ref": "AAAAAAa0c224372aab9a="
+                "$ref": "AAAAAA259b02f6ebbdb9="
               }
             },
             {
               "_type": "UMLExtend",
-              "_id": "AAAAAAe04a5b592453eb=",
+              "_id": "AAAAAA096c04cf258bdc=",
               "_parent": {
                 "$ref": "AAAAAA5981417e5244f0="
               },
               "source": {
-                "$ref": "AAAAAA259b02f6ebbdb9="
+                "$ref": "AAAAAA0b072c63c0b45c="
               },
               "target": {
-                "$ref": "AAAAAA0b072c63c0b45c="
+                "$ref": "AAAAAA259b02f6ebbdb9="
               }
             },
             {
@@ -1675,7 +1800,7 @@
               "model": {
                 "$ref": "AAAAAA5981417e5244f0="
               },
-              "documentation": "Operador + CU-11, CU-12, CU-16 (incluido en CU-11), CU-17 y CU-18 (extienden a CU-16 según los días desde periodo_fin)."
+              "documentation": "Operador y Administrador + CU-11, CU-12, CU-19, CU-16 (incluido en CU-11), CU-17 y CU-18 (extienden a CU-16 según los días desde periodo_fin)."
             }
           ]
         },
@@ -1830,6 +1955,22 @@
                 "$ref": "AAAAAA3d801aff7f7c6a="
               },
               "name": "FE Mensualidades"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAAb83e6cbab3a0d6=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "FE Movimientos"
+            },
+            {
+              "_type": "UMLComponent",
+              "_id": "AAAAAAbb1c6635c47bc3=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "name": "FE RegistrarPago"
             },
             {
               "_type": "UMLComponent",
@@ -2070,6 +2211,97 @@
             },
             {
               "_type": "UMLDependency",
+              "_id": "AAAAAA98a92f4bdf6b90=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAb83e6cbab3a0d6="
+              },
+              "target": {
+                "$ref": "AAAAAA6ee9d4e989881c="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA88432308086259=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAb83e6cbab3a0d6="
+              },
+              "target": {
+                "$ref": "AAAAAA9c8aef573a94c6="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAfedbc1d9db75ce=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAb83e6cbab3a0d6="
+              },
+              "target": {
+                "$ref": "AAAAAA8f135a8808cefc="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAd9dab419aff91f=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAbb1c6635c47bc3="
+              },
+              "target": {
+                "$ref": "AAAAAA6ee9d4e989881c="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAeb12e5c264ed3c=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAbb1c6635c47bc3="
+              },
+              "target": {
+                "$ref": "AAAAAA9c8aef573a94c6="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA40a576d9b9ae0c=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAbb1c6635c47bc3="
+              },
+              "target": {
+                "$ref": "AAAAAA8f135a8808cefc="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAc7f80a75c6e1fe=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAbb1c6635c47bc3="
+              },
+              "target": {
+                "$ref": "AAAAAAde949687d3208d="
+              }
+            },
+            {
+              "_type": "UMLDependency",
               "_id": "AAAAAAa93bdfeb1176f4=",
               "_parent": {
                 "$ref": "AAAAAA3d801aff7f7c6a="
@@ -2128,6 +2360,32 @@
               },
               "source": {
                 "$ref": "AAAAAAd3430962842b74="
+              },
+              "target": {
+                "$ref": "AAAAAA0213cf83bd57e3="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAA7f06a4330c6a30=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAb83e6cbab3a0d6="
+              },
+              "target": {
+                "$ref": "AAAAAA0213cf83bd57e3="
+              }
+            },
+            {
+              "_type": "UMLDependency",
+              "_id": "AAAAAAa68644b3ed97a9=",
+              "_parent": {
+                "$ref": "AAAAAA3d801aff7f7c6a="
+              },
+              "source": {
+                "$ref": "AAAAAAbb1c6635c47bc3="
               },
               "target": {
                 "$ref": "AAAAAA0213cf83bd57e3="

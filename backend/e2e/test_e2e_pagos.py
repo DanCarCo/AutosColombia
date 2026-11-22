@@ -246,3 +246,96 @@ def test_e2e_p11_listado_de_pagos_coincide_con_la_api(page, oper_pg, api, h_oper
     abrir_mensualidades(page, oper_pg)
     expect(page.locator("section.list .count")).to_have_text(str(total))
     evidencia(page, "E2E-P11")
+
+
+def texto_limpio(t: str) -> str:
+    return re.sub(r"\s+", " ", t.replace(" ", " ")).strip()
+
+
+def pesos(valor: int) -> str:
+    return "$ " + f"{valor:,}".replace(",", ".")
+
+
+def test_e2e_p12_movimientos_totales_filtros_y_csv(page, oper_pg, api, h_oper_pg):
+    """Movimientos: el total recaudado coincide con la API; filtra por placa y tipo, pagina y exporta el CSV filtrado."""
+    todos = api.get("/pagos", headers=h_oper_pg, params={"limit": 100}).json()["items"]
+    assert len(todos) > 10, "el escenario debe tener más de una página de pagos"
+    suma = sum(int(float(p["monto"])) for p in todos)
+    login_ui(page, oper_pg["usuario"], oper_pg["password"])
+    page.get_by_role("link", name="Pagos", exact=True).click()
+    expect(page.get_by_role("heading", name="Movimientos")).to_be_visible()
+    expect(page.locator("#total-recaudado")).to_have_text(re.compile(re.escape(pesos(suma)).replace(r"\ ", r"\s")))
+    assert texto_limpio(page.locator("#total-recaudado").inner_text()) == pesos(suma)
+    expect(page.locator("section.list .count")).to_have_text(str(len(todos)))
+    # paginación: 10 por página
+    expect(page.get_by_text(re.compile(r"Página 1 de 2"))).to_be_visible()
+    assert page.locator("tbody tr").count() == 10
+    page.get_by_role("button", name="Siguiente").click()
+    expect(page.get_by_text(re.compile(r"Página 2 de 2"))).to_be_visible()
+    evidencia(page, "E2E-P12")
+    # filtro por tipo de vehículo (moto)
+    page.get_by_role("button", name="Anterior").click()
+    page.select_option("#tipo", "MOTO")
+    filas_moto = page.locator("tbody tr")
+    assert filas_moto.count() >= 1
+    for i in range(filas_moto.count()):
+        assert "$ 100.000" in texto_limpio(filas_moto.nth(i).inner_text())
+    # filtro por placa y exportación CSV de lo filtrado
+    page.fill("#busqueda", "pgm001")
+    expect(page.locator("tbody tr")).to_have_count(1)
+    with page.expect_download() as descarga:
+        page.get_by_role("button", name="Exportar CSV").click()
+    contenido = open(descarga.value.path(), encoding="utf-8-sig").read().splitlines()
+    assert len(contenido) == 2 and "PGM001" in contenido[1] and '"Efectivo"' in contenido[1], contenido
+    page.get_by_role("button", name="Limpiar filtros").click()
+    expect(page.locator("section.list .count")).to_have_text(str(len(todos)))
+
+
+def test_e2e_p13_registrar_pago_desde_la_pantalla_de_pagos(page, oper_pg, api, h_oper_pg, nuevo_vehiculo):
+    """Registrar pago: muestra cliente y vigencia, confirma sin pedir valor ni fecha y aparece en Movimientos."""
+    vid = nuevo_vehiculo("PGX013")
+    login_ui(page, oper_pg["usuario"], oper_pg["password"])
+    page.get_by_role("link", name="Pagos", exact=True).click()
+    page.get_by_role("link", name="+ Registrar pago").click()
+    expect(page.get_by_role("heading", name="Registrar pago")).to_be_visible()
+    assert page.locator("input[type=date], input[type=number]").count() == 0
+    page.select_option("#vehiculo_id", label="PGX013 · AUTOMOVIL")
+    expect(page.locator("#cliente-pago")).to_have_text("Cliente Pagos")
+    expect(page.locator("#vigencia-pago")).to_contain_text("Sin mensualidad vigente")
+    expect(page.get_by_text("Operador Pagos").first).to_be_visible()
+    page.get_by_role("button", name="Confirmar pago").click()
+    aviso = page.locator("p.success")
+    expect(aviso).to_contain_text("registrado")
+    pago = pagos_de(api, h_oper_pg, vid)[0]
+    texto = texto_limpio(aviso.inner_text())
+    assert f"PAG-{pago['id']}" in texto and pago["periodo_inicio"] in texto and pesos(250000) in texto, texto
+    assert pago["periodo_inicio"] == hoy().isoformat() and pago["operador_id"] == oper_pg["id"]
+    evidencia(page, "E2E-P13")
+    page.get_by_role("link", name="Ver movimientos").click()
+    primera = page.locator("tbody tr").first
+    expect(primera).to_contain_text(f"PAG-{pago['id']}")
+    expect(primera).to_contain_text("PGX013")
+    expect(primera).to_contain_text("Vigente")
+    # Cancelar vuelve al historial
+    page.get_by_role("link", name="+ Registrar pago").click()
+    page.get_by_role("button", name="Cancelar").click()
+    expect(page.get_by_role("heading", name="Movimientos")).to_be_visible()
+
+
+def test_e2e_p14_pagos_exige_sesion_y_lo_usan_ambos_roles(page, admin, oper_pg, api, h_admin, nuevo_vehiculo):
+    """Pagos: sin sesión redirige al login; el administrador también registra pagos desde la pantalla."""
+    page.goto(f"{FRONT}/gestion/pagos")
+    page.wait_for_url(re.compile(r"/login"))
+    page.goto(f"{FRONT}/gestion/pagos/nuevo")
+    page.wait_for_url(re.compile(r"/login"))
+    vid = nuevo_vehiculo("PGX014")
+    login_ui(page, admin["usuario"], admin["password"])
+    page.get_by_role("link", name="Pagos", exact=True).click()
+    expect(page.get_by_role("heading", name="Movimientos")).to_be_visible()
+    page.get_by_role("link", name="+ Registrar pago").click()
+    page.select_option("#vehiculo_id", label="PGX014 · AUTOMOVIL")
+    page.get_by_role("button", name="Confirmar pago").click()
+    expect(page.locator("p.success")).to_contain_text("registrado")
+    pago = pagos_de(api, h_admin, vid)[0]
+    assert pago["operador_id"] != oper_pg["id"]  # queda a nombre del administrador de la sesión
+    evidencia(page, "E2E-P14")

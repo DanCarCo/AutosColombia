@@ -35,7 +35,7 @@ que los ids son únicos y que todas las referencias existen.
 | Clases (retroalimentación) | `Dominio ▸ Diagrama de clases` | Las 6 clases y las 2 enumeraciones |
 | B — casos de uso | `CasosDeUso ▸ CU Gestión de usuarios y celdas (iteración 2)` | Los 2 actores y CU-01, 06, 07, 08, 09, 10, 14 |
 | B — casos de uso | `CasosDeUso ▸ CU Operación y pagos` | Actor Operador y CU-01 a CU-05, 11, 12, 13 |
-| B — casos de uso (iteración 3) | `CasosDeUso ▸ CU Gestión de pagos (iteración 3)` | Actor Operador y CU-11, 12, 16, 17, 18 |
+| B — casos de uso (iteración 3) | `CasosDeUso ▸ CU Gestión de pagos (iteración 3)` | Actores Operador y Administrador; CU-11, 12, 16, 17, 18 y 19 |
 | F — componentes | `Arquitectura ▸ Arquitectura del sistema` | Los 3 componentes |
 | F — componentes | `Componentes detallados ▸ Componentes frontend y backend` | Todos los componentes del paquete |
 | E — secuencia | Crear 7 diagramas en `Dominio` (o un paquete nuevo) | Ver [04-diagramas.md](04-diagramas.md), secciones 4 a 10 |
@@ -75,6 +75,14 @@ Detalles que costó descubrir: las vistas nuevas miden 0 × 0 hasta que se dibuj
 aproximados para que la exportación no recorte; los diagramas de secuencia se importan con
 `mermaid:generate-diagram` (`{code: ...}`), pero hay que recolocar líneas de vida y mensajes (`view.points = new
 type.Points()`); y los archivos JSON de los comandos deben llevar los acentos escapados (`ó`).
+
+## Diagramas de la iteración 3 (casos de uso y componentes)
+
+`python entrega-ingenieria-software/staruml/generar_diagramas.py` dibuja en `AutosColombia_con_diagramas.mdj`
+(es repetible) el diagrama «CU Gestión de pagos (iteración 3)» —con el CU-19 nuevo y los `«extend»` de CU-17 y CU-18
+hacia CU-16— y amplía el de componentes a «iteraciones 1 a 3» con FE Movimientos y FE RegistrarPago. Los PNG son
+`staruml_12_cu-gestion-pagos-iter3.png` y `staruml_11b_componentes.png`. `generar_mdj.py` incorpora los mismos
+elementos al modelo base `AutosColombia.mdj`.
 
 ## Regenerar las secuencias (iteración 3)
 

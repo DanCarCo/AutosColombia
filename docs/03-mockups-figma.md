@@ -47,13 +47,14 @@ con los campos reales de cada formulario.
 | Estado del vehículo | «En parqueadero» / «Finalizado» | «Dentro» / «Fuera» |
 | Faltaban | Inicio de sesión, corregir celda, rechazo por falta de mensualidad | Marcos 41, 42 y 43 |
 
-## Marcos 25 y 26 (Pagos): implementados con adaptaciones
+## Marcos 25 y 26 (Pagos): actualizados a lo implementado
 
-Se implementaron con las reglas vigentes, no con el diseño original de Figma: solo **efectivo** (sin tarjeta ni
-transferencia, referencia, observaciones ni saldos), concepto fijo «Mensualidad» y valor y periodo **calculados por el
-servidor** (no editables). *Movimientos* añade el total recaudado y el recaudo por tipo de vehículo en lugar de por
-método, filtros y exportación a CSV. Los marcos en Figma conservan la etiqueta «PROPUESTA FUTURA»: **pendiente
-actualizarlos** para que reflejen lo implementado.
+Se rediseñaron el 22/11/2026 con las reglas vigentes: solo **efectivo** (sin tarjeta, transferencia, referencia de
+operación, observaciones ni saldos), concepto fijo «Mensualidad» y valor y periodo **calculados por el servidor**
+(no editables). *Movimientos* muestra el total recaudado y el recaudo por tipo de vehículo, filtros, estado del
+pago (Vigente, Vencida o Futura) y exportación a CSV. *Registrar pago* solo pide el vehículo y confirma con un aviso
+de pago registrado. Ya no llevan la etiqueta «PROPUESTA FUTURA»; los PNG están en `mockups/25 Pagos` y
+`mockups/26 Pagos` (y en `imagenes/figma/`).
 
 ## Marcos que son propuesta futura
 

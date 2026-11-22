@@ -18,8 +18,8 @@ o de Angular) y el paso **manual** para el video.
 | Frontend (compilación) | `npm.cmd run build` | Compilación correcta |
 | Frontend (pruebas) | `npm.cmd test -- --watch=false` | **75 aprobadas** en 14 archivos |
 | Plan formal PP-02 | `entrega-ingenieria-software/Plan_Pruebas_Usuarios_Celdas_Autos_Colombia.xlsx` | **30 de 30 casos aprobados** (evidencia en `entrega-ingenieria-software/evidencias/`) |
-| Plan formal PP-03 (gestión de pagos) | `entrega-ingenieria-software/Plan_Pruebas_Gestion_Pagos_Autos_Colombia.xlsx` | **15 de 15 casos aprobados** el 22/11/2026 (RF-14 y RF-18); evidencia en `entrega-ingenieria-software/evidencias/e2e/` |
-| E2E con Playwright | `RUN_E2E=1 python -m pytest e2e` (ver `backend/README.md`) | **27 de 27 aprobadas** (16 de la iteración 2 y 11 de pagos) |
+| Plan formal PP-03 (gestión de pagos) | `entrega-ingenieria-software/Plan_Pruebas_Gestion_Pagos_Autos_Colombia.xlsx` | **18 de 18 casos aprobados** el 22/11/2026 (RF-14, RF-18 y RF-19); evidencia en `entrega-ingenieria-software/evidencias/e2e/` |
+| E2E con Playwright | `RUN_E2E=1 python -m pytest e2e` (ver `backend/README.md`) | **30 de 30 aprobadas** (16 de la iteración 2 y 14 de pagos) |
 
 Las pruebas de la matriz de permisos por rol están en `backend/tests/test_roles.py`. La primera ejecución del plan PP-02
 (commit `0cfb344`, sin roles) tuvo 19 aprobados y 11 fallidos; las cuatro incidencias se corrigieron y están cerradas

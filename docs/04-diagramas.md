@@ -81,27 +81,39 @@ CU-15 *Verificar estado de la API* (`GET /health`) lo usa la pantalla de inicio.
 ## 2b. Casos de uso — gestión de pagos (iteración 3)
 
 Detalla CU-11 *Registrar mensualidad*: la decisión automática entre continuar
-el periodo vigente o iniciar uno nuevo (RF-18, HU-15).
+el periodo vigente o iniciar uno nuevo (RF-18, HU-15), y añade CU-19
+*Consultar movimientos de pago* (RF-19, HU-16). Ambos roles registran y consultan pagos (RF-17).
 
 ```mermaid
 flowchart LR
     op(["Operador de parqueadero"])
+    ad(["Administrador de catálogos"])
     subgraph Sistema["Sistema Autos Colombia — Gestión de pagos (iteración 3)"]
         cu11(["CU-11 Registrar mensualidad"])
         cu12(["CU-12 Consultar vigencia"])
-        cu16{"¿Pago hasta 5 días después\ndel periodo_fin anterior?"}
-        cu17(["CU-17 Renovar sin mover la fecha\n(periodo_fin + 1 día)"])
-        cu18(["CU-18 Iniciar mensualidad nueva\n(desde hoy)"])
+        cu19(["CU-19 Consultar movimientos de pago"])
+        cu16(["CU-16 Decidir continuidad del periodo"])
+        cu17(["CU-17 Renovar sin mover la fecha
+(periodo_fin + 1 día)"])
+        cu18(["CU-18 Iniciar mensualidad nueva
+(desde hoy)"])
     end
     op --- cu11
     op --- cu12
+    op --- cu19
+    ad --- cu11
+    ad --- cu12
+    ad --- cu19
     cu11 -. "«include»" .-> cu16
-    cu16 -- "sí, o es el primer pago: no" --> cu17
-    cu16 -- "no" --> cu18
+    cu17 -. "«extend»
+pago hasta 5 días tarde" .-> cu16
+    cu18 -. "«extend»
+primer pago o más de 5 días" .-> cu16
 ```
 
-CU-17 y CU-18 son casos de uso de sistema: el operador no elige entre ellos,
-el servidor decide según `_periodo_inicio_automatico` (`DIAS_GRACIA_RENOVACION = 5`).
+CU-17 y CU-18 son casos de uso de sistema que extienden a CU-16: el operador no elige entre
+ellos, el servidor decide según `_periodo_inicio_automatico` (`DIAS_GRACIA_RENOVACION = 5`).
+En UML la flecha de `«extend»` apunta al caso base (CU-16).
 
 ## 3. Diagrama de clases
 
@@ -479,7 +491,7 @@ sequenceDiagram
 flowchart LR
     subgraph FE["Frontend — Angular 22 (frontend/src/app)"]
         direction TB
-        pantallas["Pantallas standalone: home, login, control-acceso, vehiculos, celdas, operadores, clientes, mensualidades, reportes"]
+        pantallas["Pantallas standalone: home, login, control-acceso, vehiculos, celdas, operadores, clientes, mensualidades, pagos (movimientos y registrar pago), reportes"]
         servicios["Servicios: ApiService, CeldasService, OperadoresService, ClientesService, EstanciasService, PagosService, AuthService"]
         seguridad["authGuard e interceptor de autenticación"]
         pantallas --> servicios
