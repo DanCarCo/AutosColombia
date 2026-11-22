@@ -1,0 +1,138 @@
+<section class="management" aria-labelledby="movimientos-title">
+  <nav class="breadcrumb" aria-label="Ruta de navegación">
+    <span>AutosColombia</span><span aria-hidden="true">/</span><span>Pagos</span
+    ><span aria-hidden="true">/</span><span>Movimientos</span>
+  </nav>
+  <header class="heading">
+    <div>
+      <span class="eyebrow">GESTIÓN DE PAGOS</span>
+      <h1 id="movimientos-title">Movimientos</h1>
+      <p>Historial de mensualidades pagadas en efectivo, con el recaudo de lo que filtres.</p>
+    </div>
+    <div class="actions">
+      <button type="button" (click)="exportarCsv()" [disabled]="loading() || !total()">
+        Exportar CSV
+      </button>
+      <a class="boton primary" routerLink="/gestion/pagos/nuevo">+ Registrar pago</a>
+    </div>
+  </header>
+  @if (error()) {
+    <p class="notice error" role="alert">{{ error() }}</p>
+  }
+  <section class="resumen" aria-label="Recaudo" [attr.aria-busy]="loading()">
+    <article class="tarjeta destacada">
+      <span class="tarjeta-titulo">Total recaudado</span>
+      <strong id="total-recaudado">{{ formatoCop(recaudado()) }}</strong>
+      <span class="tarjeta-detalle">{{ total() }} {{ total() === 1 ? 'pago' : 'pagos' }}</span>
+    </article>
+    @for (t of porTipo(); track t.tipo) {
+      <article class="tarjeta">
+        <span class="tarjeta-titulo">{{ t.tipo }}</span>
+        <strong>{{ formatoCop(t.valor) }}</strong>
+        <span class="tarjeta-detalle">{{ t.pagos }} {{ t.pagos === 1 ? 'pago' : 'pagos' }}</span>
+      </article>
+    }
+  </section>
+  <section class="panel" aria-label="Filtros">
+    <form [formGroup]="filtros" class="filtros" (ngSubmit)="$event.preventDefault()">
+      <div class="field">
+        <label for="busqueda">Referencia, placa o cliente</label>
+        <input id="busqueda" type="search" formControlName="busqueda" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="fecha">Fecha de pago</label>
+        <input id="fecha" type="date" formControlName="fecha" />
+      </div>
+      <div class="field">
+        <label for="tipo">Tipo de vehículo</label>
+        <select id="tipo" formControlName="tipo">
+          <option value="">Todos los tipos</option>
+          @for (tipo of tipos; track tipo) {
+            <option [value]="tipo">{{ tipo }}</option>
+          }
+        </select>
+      </div>
+      <div class="field">
+        <label for="estado">Estado</label>
+        <select id="estado" formControlName="estado">
+          <option value="">Todos los estados</option>
+          <option value="Vigente">Vigente</option>
+          <option value="Vencida">Vencida</option>
+          <option value="Futura">Futura</option>
+        </select>
+      </div>
+      <div class="field acciones-filtro">
+        <button type="button" (click)="limpiar()">Limpiar filtros</button>
+      </div>
+    </form>
+  </section>
+  <section class="panel list" aria-label="Movimientos de pago" [attr.aria-busy]="loading()">
+    <div class="list-heading">
+      <h2>
+        Pagos registrados <span class="count">{{ total() }}</span>
+      </h2>
+      <button type="button" (click)="cargar()" [disabled]="loading()">Actualizar listado</button>
+    </div>
+    @if (loading()) {
+      <p class="empty" role="status">Cargando movimientos…</p>
+    } @else if (!total()) {
+      <div class="empty">
+        <h3>No hay movimientos</h3>
+        <p>Registra una mensualidad o cambia los filtros para ver resultados.</p>
+      </div>
+    } @else {
+      <div class="table-scroll">
+        <table>
+          <caption class="sr-only">
+            Movimientos de pago
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Referencia</th>
+              <th scope="col">Concepto</th>
+              <th scope="col">Placa / cliente</th>
+              <th scope="col">Periodo</th>
+              <th scope="col">Valor COP</th>
+              <th scope="col">Método</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Fecha de pago</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (m of visibles(); track m.pago.id) {
+              <tr>
+                <th scope="row">{{ m.referencia }}</th>
+                <td>Mensualidad</td>
+                <td>{{ m.placa }} · {{ m.cliente }}</td>
+                <td>{{ m.pago.periodo_inicio }} a {{ m.pago.periodo_fin }}</td>
+                <td>{{ formatoCop(m.valor) }}</td>
+                <td>Efectivo</td>
+                <td>
+                  <span
+                    class="estado"
+                    [class.vigente]="m.estado === 'Vigente'"
+                    [class.vencida]="m.estado === 'Vencida'"
+                    >{{ m.estado }}</span
+                  >
+                </td>
+                <td>{{ fechaHora(m.pago.fecha_pago) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+    <nav class="pagination" aria-label="Paginación de movimientos">
+      <span>Mostrando {{ rango() }} de {{ total() }} registros</span>
+      <div class="actions">
+        <button type="button" (click)="irA(pagina() - 1)" [disabled]="pagina() <= 1">
+          Anterior
+        </button>
+        <span>Página {{ pagina() }} de {{ paginas() }}</span>
+        <button type="button" (click)="irA(pagina() + 1)" [disabled]="pagina() >= paginas()">
+          Siguiente
+        </button>
+      </div>
+    </nav>
+  </section>
+</section>

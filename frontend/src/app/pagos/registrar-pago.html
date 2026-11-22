@@ -1,0 +1,114 @@
+<section class="management" aria-labelledby="registrar-pago-title">
+  <nav class="breadcrumb" aria-label="Ruta de navegación">
+    <span>AutosColombia</span><span aria-hidden="true">/</span><span>Pagos</span
+    ><span aria-hidden="true">/</span><span>Registrar pago</span>
+  </nav>
+  <header class="heading">
+    <div>
+      <span class="eyebrow">GESTIÓN DE PAGOS</span>
+      <h1 id="registrar-pago-title">Registrar pago</h1>
+      <p>
+        Registra el pago en efectivo de la mensualidad de un vehículo. El valor y el periodo los
+        calcula el servidor al confirmar.
+      </p>
+    </div>
+  </header>
+  @if (error()) {
+    <p class="notice error" role="alert">{{ error() }}</p>
+  }
+  @if (pagado(); as pago) {
+    <p class="notice success resultado" role="status">
+      <strong>Pago PAG-{{ pago.id }} registrado.</strong>
+      <span
+        >{{ vehiculo()?.placa }}: {{ pago.periodo_inicio }} a {{ pago.periodo_fin }} ·
+        {{ formatoCop(pago.monto) }} en efectivo.</span
+      >
+      <a routerLink="/gestion/pagos">Ver movimientos</a>
+    </p>
+  }
+  <div class="registro">
+    <section class="panel" aria-labelledby="datos-title" [attr.aria-busy]="loading()">
+      <h2 id="datos-title">Datos del pago</h2>
+      <p class="hint">Solo eliges el vehículo; no hay valor ni fecha que escribir.</p>
+      <form [formGroup]="form" (ngSubmit)="confirmar()" novalidate>
+        <fieldset [disabled]="busy()">
+          <legend class="sr-only">Datos del pago</legend>
+          <div class="form-grid">
+            <div class="field">
+              <label for="vehiculo_id">Vehículo *</label>
+              <select id="vehiculo_id" formControlName="vehiculo_id">
+                <option [ngValue]="null">Selecciona un vehículo</option>
+                @for (v of vehiculos(); track v.id) {
+                  <option [ngValue]="v.id">{{ v.placa }} · {{ v.tipo }}</option>
+                }
+              </select>
+              <span class="field-error">
+                @if (form.controls.vehiculo_id.touched && form.controls.vehiculo_id.invalid) {
+                  Selecciona un vehículo.
+                }
+              </span>
+            </div>
+            <div class="field">
+              <span class="etiqueta">Cliente</span>
+              <span class="solo-lectura" id="cliente-pago">{{ cliente()?.nombre ?? '—' }}</span>
+            </div>
+            <div class="field">
+              <span class="etiqueta">Concepto</span>
+              <span class="solo-lectura">Mensualidad</span>
+            </div>
+            <div class="field">
+              <span class="etiqueta">Medio de pago</span>
+              <span class="solo-lectura">Efectivo</span>
+              <span class="hint">El sistema solo registra pagos en efectivo.</span>
+            </div>
+            <div class="field">
+              <span class="etiqueta">Valor a pagar (COP)</span>
+              <span class="solo-lectura">Lo calcula el servidor según el tipo de vehículo</span>
+            </div>
+            <div class="field">
+              <span class="etiqueta">Periodo</span>
+              <span class="solo-lectura"
+                >Lo calcula el servidor (renovación hasta 5 días tarde)</span
+              >
+            </div>
+          </div>
+          <div class="actions">
+            <button type="submit" class="primary">
+              {{ saving() ? 'Registrando…' : 'Confirmar pago' }}</button
+            ><button type="button" (click)="cancelar()">Cancelar</button>
+          </div>
+        </fieldset>
+      </form>
+    </section>
+    <aside class="panel" aria-labelledby="info-title">
+      <h2 id="info-title">Información de registro</h2>
+      @if (vehiculo(); as v) {
+        <dl class="datos-registro">
+          <dt>Cliente</dt>
+          <dd>{{ cliente()?.nombre ?? '—' }}</dd>
+          <dt>Vehículo</dt>
+          <dd>{{ v.placa }} · {{ v.marca }} · {{ v.tipo }}</dd>
+          <dt>Mensualidad actual</dt>
+          <dd id="vigencia-pago">
+            @if (estado(); as e) {
+              @if (e.vigente && e.pago) {
+                Vigente del {{ e.pago.periodo_inicio }} al {{ e.pago.periodo_fin }}
+              } @else {
+                Sin mensualidad vigente: el periodo empezará hoy
+              }
+            } @else {
+              Consultando…
+            }
+          </dd>
+          <dt>Operador</dt>
+          <dd>{{ auth.operador()?.nombre }}</dd>
+        </dl>
+      } @else {
+        <p class="hint">Elige un vehículo para ver su cliente y su mensualidad actual.</p>
+      }
+      <p class="hint">
+        Al confirmar se registra un solo pago y queda a nombre del operador de la sesión.
+      </p>
+    </aside>
+  </div>
+</section>

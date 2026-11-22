@@ -31,7 +31,13 @@
         >
       }
       @if (auth.estaAutenticado()) {
-        <a routerLink="/gestion/mensualidades" routerLinkActive="active" ariaCurrentWhenActive="page"
+        <a routerLink="/gestion/pagos" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >Pagos</a
+        >
+        <a
+          routerLink="/gestion/mensualidades"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
           >Mensualidades</a
         >
         <a routerLink="/reportes" routerLinkActive="active" ariaCurrentWhenActive="page"
@@ -41,7 +47,9 @@
     </nav>
     <div class="sidebar-footer">
       @if (auth.operador(); as operador) {
-        <span class="status"><span class="status-dot" aria-hidden="true"></span>Operación en línea</span>
+        <span class="status"
+          ><span class="status-dot" aria-hidden="true"></span>Operación en línea</span
+        >
         <span>Turno {{ operador.turno === 'DIA' ? 'DIA' : 'NOCHE' }}</span>
       }
     </div>

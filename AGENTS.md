@@ -91,6 +91,8 @@ instalar y ejecutar los proyectos en Windows está en `README.md`.
 - `frontend/src/app/models/vehiculo.ts`: contratos de solicitudes, respuestas y tipos.
 - `frontend/src/app/mensualidades/` y `services/pagos.service.ts`: registro de mensualidades
   y consulta de vigencia (RF-14); exige sesión (`authGuard`); nunca envía el monto.
+- `frontend/src/app/pagos/`: movimientos (historial, totales, filtros y CSV) y registrar pago (RF-19);
+  exigen sesión (`authGuard`); nunca envían valor ni periodo. `shared/formato.ts`: pesos y hora de Bogotá.
 - `frontend/src/app/reportes/`: resumen de celdas disponibles/totales y clientes (RF-15).
 - `docs/`: documentación de la entrega EA2 (requerimientos, historias de usuario, mockups,
   diagramas Mermaid, plan de pruebas y StarUML).

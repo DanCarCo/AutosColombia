@@ -1,0 +1,145 @@
+.breadcrumb {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.heading .actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.boton.primary {
+  background: var(--gradient-brand);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 12px rgb(15 118 110 / 30%);
+}
+
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.tarjeta.destacada {
+  background: var(--gradient-soft);
+  border-color: var(--border-strong);
+}
+
+.tarjeta-titulo {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.tarjeta strong {
+  color: var(--ink);
+  font-size: 1.5rem;
+}
+
+.tarjeta-detalle {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  align-items: end;
+}
+
+.acciones-filtro {
+  justify-content: flex-end;
+}
+
+.estado {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--tint);
+  color: var(--primary-strong);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.estado.vigente {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.estado.vencida {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.solo-lectura {
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-alt);
+  color: var(--ink-soft);
+}
+
+.registro {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.datos-registro {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.datos-registro dt {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.datos-registro dd {
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+
+@media (max-width: 860px) {
+  .registro {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

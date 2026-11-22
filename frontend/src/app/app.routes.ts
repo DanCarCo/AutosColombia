@@ -33,11 +33,22 @@ export const routes: Routes = [
     loadComponent: () => import('./clientes/clientes').then((m) => m.Clientes),
   },
   {
+    path: 'gestion/pagos',
+    title: 'Pagos | Autos Colombia',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pagos/movimientos').then((m) => m.Movimientos),
+  },
+  {
+    path: 'gestion/pagos/nuevo',
+    title: 'Registrar pago | Autos Colombia',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pagos/registrar-pago').then((m) => m.RegistrarPago),
+  },
+  {
     path: 'gestion/mensualidades',
     title: 'Mensualidades | Autos Colombia',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./mensualidades/mensualidades').then((m) => m.Mensualidades),
+    loadComponent: () => import('./mensualidades/mensualidades').then((m) => m.Mensualidades),
   },
   {
     path: 'reportes',

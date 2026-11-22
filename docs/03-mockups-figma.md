@@ -24,6 +24,8 @@ con los campos reales de cada formulario.
 | 43 | **Entrada rechazada: sin mensualidad** (nuevo) | HU-03, HU-12 | `/control-acceso` (402) |
 | 42 | **Corregir celda** (nuevo) | HU-10 | `/control-acceso` |
 | 21–24 | Clientes: listado, nuevo, editar, detalle | HU-11 | `/gestion/clientes` |
+| 25 | Pagos: movimientos (implementado, adaptado) | HU-16 | `/gestion/pagos` |
+| 26 | Pagos: registrar pago (implementado, adaptado) | HU-16 | `/gestion/pagos/nuevo` |
 | 27–29 | Mensualidades: listado, nueva, renovar | HU-12, HU-15 | `/gestion/mensualidades` |
 | 30 | Reportes / Resumen | HU-13 | `/reportes` |
 | 36–37 | Estados: sin resultados, validación y guardado | HU-01 a HU-12 | Mensajes de error y estados vacíos |
@@ -45,6 +47,14 @@ con los campos reales de cada formulario.
 | Estado del vehículo | «En parqueadero» / «Finalizado» | «Dentro» / «Fuera» |
 | Faltaban | Inicio de sesión, corregir celda, rechazo por falta de mensualidad | Marcos 41, 42 y 43 |
 
+## Marcos 25 y 26 (Pagos): implementados con adaptaciones
+
+Se implementaron con las reglas vigentes, no con el diseño original de Figma: solo **efectivo** (sin tarjeta ni
+transferencia, referencia, observaciones ni saldos), concepto fijo «Mensualidad» y valor y periodo **calculados por el
+servidor** (no editables). *Movimientos* añade el total recaudado y el recaudo por tipo de vehículo en lugar de por
+método, filtros y exportación a CSV. Los marcos en Figma conservan la etiqueta «PROPUESTA FUTURA»: **pendiente
+actualizarlos** para que reflejen lo implementado.
+
 ## Marcos que son propuesta futura
 
 El sistema **no** implementa estas pantallas. Siguen en el archivo con la etiqueta
@@ -55,7 +65,6 @@ como diseño de siguientes iteraciones y no como funcionalidad hecha:
 | --- | --- |
 | 13 | Roles y permisos (editor de permisos; los dos roles fijos ya existen, el editor no) |
 | 19–20 | Mapa de celdas |
-| 25–26 | Pagos: movimientos y registrar pago (cobro con medios de pago) |
 | 31–32 | Reportes de ocupación e ingresos |
 | 33–35 | Configuración: general, tarifas por minuto y reglas operativas |
 

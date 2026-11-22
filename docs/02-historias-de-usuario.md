@@ -11,9 +11,9 @@ celdas). Ambos inician sesión como operador.
 
 Mockups: ver [03-mockups-figma.md](03-mockups-figma.md).
 
-| Historia | HU-01 | HU-02 | HU-03 | HU-04 | HU-05 | HU-06 | HU-07 | HU-08 | HU-09 | HU-10 | HU-11 | HU-12 | HU-13 | HU-14 | HU-15 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Requerimiento | RF-01 | RF-02 | RF-03 | RF-04 | RF-05 | RF-06 | RF-07 | RF-08, RF-09 | RF-10 | RF-11 | RF-12, RF-13 | RF-14 | RF-15 | RF-16 | RF-18 |
+| Historia | HU-01 | HU-02 | HU-03 | HU-04 | HU-05 | HU-06 | HU-07 | HU-08 | HU-09 | HU-10 | HU-11 | HU-12 | HU-13 | HU-14 | HU-15 | HU-16 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Requerimiento | RF-01 | RF-02 | RF-03 | RF-04 | RF-05 | RF-06 | RF-07 | RF-08, RF-09 | RF-10 | RF-11 | RF-12, RF-13 | RF-14 | RF-15 | RF-16 | RF-18 | RF-19 |
 
 ## Iteración 1 — Entrada y salida de vehículos
 
@@ -113,6 +113,14 @@ Mockups: ver [03-mockups-figma.md](03-mockups-figma.md).
 - **Dado** que es el **primer pago** del vehículo, **cuando** lo registro, **entonces** el periodo empieza **hoy**.
 - **Cuando** intento enviar `periodo_inicio` en la solicitud, **entonces** la API lo rechaza (422): el inicio del periodo nunca es un dato de entrada, lo decide siempre el servidor con esta regla.
 - **Dado** que quiero mover la fecha de la mensualidad por una razón distinta a un pago (por ejemplo, una cancelación y un contrato nuevo), **entonces** hoy no hay una operación para eso: solo se automatiza la continuidad o el reinicio por pago (ver *Alcance no cubierto* en [01-requerimientos.md](01-requerimientos.md)).
+
+### HU-16 · Consultar los movimientos de pago y registrar un pago *(RF-19)*
+**Como** operador o administrador **quiero** ver el historial de pagos con su recaudo y registrar un pago desde la misma sección **para** saber cuánto se ha recaudado y qué mensualidades están vigentes.
+- **Cuando** abro *Pagos*, **entonces** veo el total recaudado, el recaudo por tipo de vehículo y el listado paginado con referencia, placa, cliente, periodo, valor, método (efectivo), estado y fecha.
+- **Cuando** filtro por referencia, placa o cliente, fecha, tipo o estado, **entonces** el listado y los totales se recalculan con lo filtrado.
+- **Cuando** pulso *Exportar CSV*, **entonces** descargo todo lo filtrado, no solo la página visible.
+- **Cuando** abro *Registrar pago* y elijo un vehículo, **entonces** veo su cliente y su mensualidad actual; el valor y el periodo no se escriben: los calcula el servidor al confirmar (HU-12, HU-15).
+- **Cuando** confirmo, **entonces** se registra un solo pago a nombre del operador de la sesión y aparece su referencia, periodo y valor.
 
 ### HU-13 · Consultar el resumen del parqueadero *(RF-15)*
 **Como** administrador **quiero** ver cuántas celdas hay libres y cuántos clientes están registrados **para** tomar decisiones rápidas.
