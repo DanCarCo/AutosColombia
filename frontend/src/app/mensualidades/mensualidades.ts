@@ -31,6 +31,7 @@ export class Mensualidades {
   readonly estado = signal<MensualidadEstado | null>(null);
   readonly loading = signal(false);
   readonly saving = signal(false);
+  readonly consultando = signal(false);
   readonly busy = computed(() => this.loading() || this.saving());
   readonly error = signal('');
   readonly success = signal('');
@@ -95,10 +96,17 @@ export class Mensualidades {
 
   consultar(): void {
     const id = this.form.controls.vehiculo_id.value;
-    if (id === null || this.busy()) {
+    if (this.busy()) return;
+    if (id === null) {
       this.form.controls.vehiculo_id.markAsTouched();
+      this.estado.set(null);
+      this.error.set('Selecciona un vehículo para consultar su vigencia.');
       return;
     }
+    // Limpia el resultado anterior para que cada consulta se vea como una respuesta nueva.
+    this.estado.set(null);
+    this.success.set('');
+    this.consultando.set(true);
     this.loading.set(true);
     this.error.set('');
     this.pagosApi
@@ -107,10 +115,12 @@ export class Mensualidades {
       .subscribe({
         next: (estado) => {
           this.loading.set(false);
+          this.consultando.set(false);
           this.estado.set(estado);
         },
         error: (error: HttpErrorResponse) => {
           this.loading.set(false);
+          this.consultando.set(false);
           this.error.set(this.mensaje(error));
         },
       });

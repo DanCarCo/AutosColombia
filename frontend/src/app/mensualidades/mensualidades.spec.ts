@@ -69,6 +69,27 @@ describe('Mensualidades (RF-14)', () => {
     expect(c.error()).toContain('Selecciona el vehículo');
   });
 
+  it('el botón Consultar vigencia avisa si no hay vehículo seleccionado', () => {
+    const c = fixture.componentInstance;
+    c.consultar();
+    http.expectNone('/vehiculos/7/mensualidad');
+    expect(c.error()).toContain('Selecciona un vehículo');
+  });
+
+  it('el botón Consultar vigencia vuelve a consultar y muestra el resultado', () => {
+    const c = fixture.componentInstance;
+    c.form.controls.vehiculo_id.setValue(7);
+    http
+      .expectOne('/vehiculos/7/mensualidad')
+      .flush({ vehiculo_id: 7, vigente: false, pago: null });
+    c.consultar();
+    expect(c.consultando()).toBe(true);
+    expect(c.estado()).toBeNull();
+    http.expectOne('/vehiculos/7/mensualidad').flush({ vehiculo_id: 7, vigente: true, pago });
+    expect(c.consultando()).toBe(false);
+    expect(c.estado()?.vigente).toBe(true);
+  });
+
   it('trae la fecha de la mensualidad vigente al elegir el vehículo', () => {
     const c = fixture.componentInstance;
     c.form.controls.vehiculo_id.setValue(7);

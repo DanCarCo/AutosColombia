@@ -38,10 +38,15 @@
         <div class="actions">
           <button type="submit" class="primary">
             {{ saving() ? 'Registrando…' : 'Registrar mensualidad (efectivo)' }}</button
-          ><button type="button" (click)="consultar()">Consultar vigencia</button>
+          ><button type="button" (click)="consultar()">
+            {{ consultando() ? 'Consultando…' : 'Consultar vigencia' }}
+          </button>
         </div>
       </fieldset>
     </form>
+    @if (consultando()) {
+      <p class="notice" role="status">Consultando vigencia…</p>
+    }
     @if (estado(); as e) {
       <p class="notice" [class.success]="e.vigente" [class.error]="!e.vigente" role="status">
         @if (e.vigente && e.pago) {
