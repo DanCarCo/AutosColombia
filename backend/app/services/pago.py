@@ -1,4 +1,10 @@
-"""Mensualidades (RF-14): tarifa fija por tipo de vehículo, calculada en el servidor."""
+"""Mensualidades (RF-14): tarifa y periodo fijados por el servidor, pago en efectivo.
+
+La fecha de la mensualidad no se corre por un pago extemporáneo: si han pasado hasta
+DIAS_GRACIA_RENOVACION días desde que terminó el periodo anterior, el nuevo periodo
+continúa justo donde quedó. Pasado ese margen (o si es el primer pago del vehículo),
+se registra como una mensualidad nueva que empieza hoy.
+"""
 
 import calendar
 from datetime import date, datetime, timedelta, timezone
@@ -17,6 +23,9 @@ MONTO_POR_TIPO: dict[str, Decimal] = {
     "AUTOMOVIL": Decimal("250000"),
     "CAMIONETA": Decimal("250000"),
 }
+
+# Margen de pago extemporáneo que aún cuenta como renovación (no mueve la mensualidad).
+DIAS_GRACIA_RENOVACION = 5
 
 
 class PagoError(Exception):
@@ -64,12 +73,32 @@ def _fin_de_periodo(inicio: date) -> date:
     return date(siguiente_anio, siguiente_mes, inicio.day) - timedelta(days=1)
 
 
+def _ultimo_pago(session: Session, vehiculo_id: int) -> Pago | None:
+    return session.scalar(
+        select(Pago).where(Pago.vehiculo_id == vehiculo_id).order_by(Pago.periodo_fin.desc())
+    )
+
+
+def _periodo_inicio_automatico(session: Session, vehiculo_id: int) -> date:
+    """RF-14: continúa la mensualidad anterior si el pago llega a tiempo (hasta
+    DIAS_GRACIA_RENOVACION días después de que terminó); si no, o si es el primer
+    pago del vehículo, empieza una mensualidad nueva desde hoy."""
+    anterior = _ultimo_pago(session, vehiculo_id)
+    hoy = _hoy()
+    if anterior is None:
+        return hoy
+    dias_desde_fin = (hoy - anterior.periodo_fin).days
+    if dias_desde_fin <= DIAS_GRACIA_RENOVACION:
+        return anterior.periodo_fin + timedelta(days=1)
+    return hoy
+
+
 @database_operation
 def register_payment(session: Session, data: PagoCrear, operador: Operador) -> Pago:
     vehiculo = session.get(Vehiculo, data.vehiculo_id)
     if vehiculo is None:
         raise PagoError(404, "Vehículo no encontrado.")
-    periodo_inicio = data.periodo_inicio or _hoy()
+    periodo_inicio = _periodo_inicio_automatico(session, vehiculo.id)
     pago = Pago(
         vehiculo_id=vehiculo.id,
         operador_id=operador.id,

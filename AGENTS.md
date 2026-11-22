@@ -30,9 +30,14 @@ instalar y ejecutar los proyectos en Windows está en `README.md`.
 - `backend/app/schemas/cliente.py`, `app/routers/clientes.py` y
   `app/services/cliente.py`: CRUD de clientes (dueños de los vehículos).
 - `backend/app/schemas/pago.py`, `app/routers/pagos.py` y `app/services/pago.py`:
-  mensualidades; el monto lo calcula el servidor según el tipo de vehículo,
-  nunca lo acepta del cliente. `ServicioEstancia.entrada` exige mensualidad
-  vigente antes de registrar la entrada.
+  mensualidades en efectivo; el monto y el periodo los calcula el servidor,
+  nunca los acepta del cliente. El periodo no es un dato de entrada: si hay un
+  pago anterior y se registra hasta `DIAS_GRACIA_RENOVACION` (5) días después de
+  que terminó, el nuevo periodo continúa justo donde quedó (un pago
+  extemporáneo no corre la mensualidad); pasado ese margen, o si es el primer
+  pago del vehículo, el periodo empieza hoy (mensualidad nueva).
+  `ServicioEstancia.entrada` exige mensualidad vigente antes de registrar la
+  entrada.
 - `backend/app/routers/reportes.py` y `app/services/reporte.py`: resumen de
   celdas disponibles/totales y clientes registrados.
 - `backend/app/auth.py`, `app/schemas/auth.py`, `app/routers/auth.py` y

@@ -42,13 +42,18 @@ describe('Mensualidades (RF-14)', () => {
   });
   afterEach(() => http.verify());
 
-  it('registra la mensualidad sin enviar monto (lo calcula el servidor)', () => {
+  it('registra la mensualidad sin enviar monto ni periodo (los calcula el servidor)', () => {
     const c = fixture.componentInstance;
     c.form.controls.vehiculo_id.setValue(7);
+    // Elegir el vehículo trae automáticamente su mensualidad vigente.
+    http
+      .expectOne('/vehiculos/7/mensualidad')
+      .flush({ vehiculo_id: 7, vigente: false, pago: null });
     c.registrar();
     const req = http.expectOne({ method: 'POST', url: '/pagos' });
     expect(req.request.body).toEqual({ vehiculo_id: 7 });
     expect(Object.keys(req.request.body)).not.toContain('monto');
+    expect(Object.keys(req.request.body)).not.toContain('periodo_inicio');
     req.flush(pago);
     http
       .expectOne('/pagos?offset=0&limit=100')
@@ -64,10 +69,9 @@ describe('Mensualidades (RF-14)', () => {
     expect(c.error()).toContain('Selecciona el vehículo');
   });
 
-  it('informa cuando el vehículo no tiene mensualidad vigente', () => {
+  it('trae la fecha de la mensualidad vigente al elegir el vehículo', () => {
     const c = fixture.componentInstance;
     c.form.controls.vehiculo_id.setValue(7);
-    c.consultar();
     http
       .expectOne('/vehiculos/7/mensualidad')
       .flush({ vehiculo_id: 7, vigente: false, pago: null });
@@ -77,6 +81,9 @@ describe('Mensualidades (RF-14)', () => {
   it('pide iniciar sesión ante un 401', () => {
     const c = fixture.componentInstance;
     c.form.controls.vehiculo_id.setValue(7);
+    http
+      .expectOne('/vehiculos/7/mensualidad')
+      .flush({ vehiculo_id: 7, vigente: true, pago });
     c.registrar();
     http
       .expectOne({ method: 'POST', url: '/pagos' })

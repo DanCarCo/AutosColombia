@@ -4,8 +4,9 @@
       <span class="eyebrow">GESTIÓN DE PAGOS</span>
       <h1 id="mensualidades-title">Mensualidades</h1>
       <p>
-        Registra la mensualidad de un vehículo y consulta si está vigente. El monto lo calcula el
-        servidor según el tipo de vehículo.
+        Registra el pago en efectivo de la mensualidad de un vehículo. El monto y el periodo los
+        calcula el servidor: un pago hasta 5 días después de vencida la mensualidad la renueva sin
+        mover la fecha; pasado ese plazo, se registra como mensualidad nueva desde hoy.
       </p>
     </div>
   </header>
@@ -18,8 +19,7 @@
   <section class="panel" aria-labelledby="registrar-title">
     <h2 id="registrar-title">Registrar o consultar mensualidad</h2>
     <p class="hint">
-      El inicio del periodo es opcional: si lo omites se usa la fecha de hoy. El periodo cubre un
-      mes calendario completo.
+      Al elegir el vehículo se trae automáticamente la fecha de su mensualidad vigente, si la tiene.
     </p>
     <form [formGroup]="form" (ngSubmit)="registrar()" novalidate>
       <fieldset [disabled]="busy()">
@@ -34,14 +34,10 @@
               }
             </select>
           </div>
-          <div class="field">
-            <label for="periodo_inicio">Inicio del periodo (opcional)</label>
-            <input id="periodo_inicio" type="date" formControlName="periodo_inicio" />
-          </div>
         </div>
         <div class="actions">
           <button type="submit" class="primary">
-            {{ saving() ? 'Registrando…' : 'Registrar mensualidad' }}</button
+            {{ saving() ? 'Registrando…' : 'Registrar mensualidad (efectivo)' }}</button
           ><button type="button" (click)="consultar()">Consultar vigencia</button>
         </div>
       </fieldset>

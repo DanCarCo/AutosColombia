@@ -24,7 +24,6 @@ export class Mensualidades {
 
   readonly form = this.fb.group({
     vehiculo_id: this.fb.control<number | null>(null, Validators.required),
-    periodo_inicio: this.fb.nonNullable.control(''),
   });
   readonly vehiculos = signal<Vehiculo[]>([]);
   readonly pagos = signal<Pago[]>([]);
@@ -40,9 +39,11 @@ export class Mensualidades {
     this.cargar();
     this.form.controls.vehiculo_id.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
+      .subscribe((id) => {
         this.estado.set(null);
         this.success.set('');
+        // Trae la fecha de la mensualidad vigente apenas se elige el vehículo.
+        if (id !== null) this.consultar();
       });
   }
 
@@ -118,7 +119,7 @@ export class Mensualidades {
   registrar(): void {
     if (this.busy()) return;
     this.form.markAllAsTouched();
-    const { vehiculo_id, periodo_inicio } = this.form.getRawValue();
+    const { vehiculo_id } = this.form.getRawValue();
     if (vehiculo_id === null) {
       this.error.set('Selecciona el vehículo al que corresponde la mensualidad.');
       return;
@@ -127,7 +128,7 @@ export class Mensualidades {
     this.error.set('');
     this.success.set('');
     this.pagosApi
-      .registrar({ vehiculo_id, ...(periodo_inicio ? { periodo_inicio } : {}) })
+      .registrar({ vehiculo_id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (pago) => {

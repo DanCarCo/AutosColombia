@@ -1,7 +1,6 @@
 export interface PagoCrear {
   vehiculo_id: number;
-  // Opcional: si se omite, el servidor usa la fecha actual como inicio del periodo.
-  periodo_inicio?: string;
+  // El periodo lo calcula el servidor (RF-14): no es un dato de entrada.
 }
 export interface Pago {
   id: number;

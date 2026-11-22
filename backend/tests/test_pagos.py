@@ -1,5 +1,5 @@
 """RF-14: mensualidad vigente antes de la entrada y registro de pagos."""
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 from unittest.mock import MagicMock
 
@@ -12,7 +12,15 @@ from app.database import get_session
 from app.main import app
 from app.models import Operador, Pago, Vehiculo
 from app.schemas.pago import PagoCrear
-from app.services.pago import MONTO_POR_TIPO, PagoError, _fin_de_periodo, register_payment, vigente_para_vehiculo
+from app.services.pago import (
+    DIAS_GRACIA_RENOVACION,
+    MONTO_POR_TIPO,
+    PagoError,
+    _fin_de_periodo,
+    _hoy,
+    register_payment,
+    vigente_para_vehiculo,
+)
 
 
 @pytest.mark.parametrize("inicio, fin_esperado", [
@@ -44,6 +52,7 @@ def test_monto_se_calcula_en_el_servidor_segun_el_tipo(tipo, monto_esperado):
     """El monto nunca lo decide quien llama: ni el esquema lo acepta ni el servicio lo usa."""
     session = MagicMock()
     session.get.return_value = Vehiculo(id=1, tipo=tipo, cliente_id=1)
+    session.scalar.return_value = None  # sin mensualidad anterior
     operador = Operador(id=9)
     register_payment(session, PagoCrear(vehiculo_id=1), operador)
     pago_creado = session.add.call_args.args[0]
@@ -54,6 +63,47 @@ def test_monto_se_calcula_en_el_servidor_segun_el_tipo(tipo, monto_esperado):
 def test_pago_crear_rechaza_monto_explicito():
     with pytest.raises(ValidationError):
         PagoCrear(vehiculo_id=1, monto=1)
+
+
+def test_pago_crear_rechaza_periodo_inicio_explicito():
+    """RF-14: el periodo lo calcula el servidor; ya no es un dato de entrada."""
+    with pytest.raises(ValidationError):
+        PagoCrear(vehiculo_id=1, periodo_inicio=date(2026, 1, 1))
+
+
+def test_primer_pago_de_un_vehiculo_empieza_hoy():
+    session = MagicMock()
+    session.get.return_value = Vehiculo(id=1, tipo="MOTO", cliente_id=1)
+    session.scalar.return_value = None  # no hay pagos anteriores
+    pago = register_payment(session, PagoCrear(vehiculo_id=1), Operador(id=9))
+    assert pago.periodo_inicio == _hoy()
+
+
+@pytest.mark.parametrize("dias_tarde", [0, 1, DIAS_GRACIA_RENOVACION])
+def test_pago_a_tiempo_o_extemporaneo_dentro_del_margen_no_mueve_la_mensualidad(dias_tarde):
+    """Hasta DIAS_GRACIA_RENOVACION días después de vencida, el nuevo periodo
+    continúa justo donde quedó el anterior: un pago extemporáneo no la corre."""
+    session = MagicMock()
+    session.get.return_value = Vehiculo(id=1, tipo="MOTO", cliente_id=1)
+    fin_anterior = _hoy() - timedelta(days=dias_tarde)
+    session.scalar.return_value = Pago(
+        vehiculo_id=1, periodo_inicio=fin_anterior - timedelta(days=30), periodo_fin=fin_anterior
+    )
+    pago = register_payment(session, PagoCrear(vehiculo_id=1), Operador(id=9))
+    assert pago.periodo_inicio == fin_anterior + timedelta(days=1)
+
+
+def test_pago_mas_alla_del_margen_registra_mensualidad_nueva_desde_hoy():
+    """Pasado el margen de gracia, se trata como una mensualidad nueva, no como
+    continuación: el periodo empieza hoy, sin importar cuándo terminó la anterior."""
+    session = MagicMock()
+    session.get.return_value = Vehiculo(id=1, tipo="MOTO", cliente_id=1)
+    fin_anterior = _hoy() - timedelta(days=DIAS_GRACIA_RENOVACION + 1)
+    session.scalar.return_value = Pago(
+        vehiculo_id=1, periodo_inicio=fin_anterior - timedelta(days=30), periodo_fin=fin_anterior
+    )
+    pago = register_payment(session, PagoCrear(vehiculo_id=1), Operador(id=9))
+    assert pago.periodo_inicio == _hoy()
 
 
 def test_vigente_para_vehiculo_usa_la_fecha_dada_y_devuelve_lo_que_encuentra():
@@ -91,7 +141,8 @@ def api():
 
 
 @pytest.mark.parametrize("payload", [{}, {"vehiculo_id": 0}, {"vehiculo_id": True}, {"vehiculo_id": "1"},
-                                     {"vehiculo_id": 1, "monto": 250000}])
+                                     {"vehiculo_id": 1, "monto": 250000},
+                                     {"vehiculo_id": 1, "periodo_inicio": "2026-01-01"}])
 def test_registrar_pago_invalido(api, payload):
     client, session = api
     assert client.post("/pagos", json=payload).status_code == 422

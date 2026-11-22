@@ -8,12 +8,16 @@ Identificador = Annotated[int, Field(strict=True, ge=1, le=9223372036854775807)]
 
 
 class PagoCrear(BaseModel):
-    """El monto se calcula en el servidor según el tipo de vehículo (RF-14); nunca lo envía el cliente."""
+    """El monto y el periodo se calculan en el servidor (RF-14); el cliente nunca los envía.
+
+    El inicio del periodo no es un dato de entrada: si hay un pago anterior y el pago se
+    registra hasta 5 días después de que terminó, el nuevo periodo continúa justo donde
+    quedó (un pago extemporáneo no corre la mensualidad). Pasados esos 5 días, o si es el
+    primer pago del vehículo, el periodo inicia hoy (nueva mensualidad).
+    """
 
     model_config = ConfigDict(extra="forbid")
     vehiculo_id: Identificador
-    # Si se omite, el servicio usa la fecha del servidor como inicio del periodo.
-    periodo_inicio: date | None = None
 
 
 class PagoRespuesta(BaseModel):

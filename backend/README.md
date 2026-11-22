@@ -324,11 +324,15 @@ lo añadido (ver el documento de requerimientos para el detalle completo):
 - **`PATCH /estancias/celda`** (`{"placa", "celda_id"}`, requiere sesión
   iniciada): mueve la estancia abierta de un vehículo a otra celda, para
   corregir una celda equivocada (RF-11).
-- **`POST /pagos`** (`{"vehiculo_id", "periodo_inicio"?}`, requiere sesión
-  iniciada): registra el pago de la mensualidad; el monto lo calcula el
-  servidor según el tipo de vehículo ($100.000 moto, $250.000
-  automóvil/camioneta) y **nunca** lo acepta del cliente. El periodo cubre
-  un mes calendario completo desde `periodo_inicio` (hoy, si se omite).
+- **`POST /pagos`** (`{"vehiculo_id"}`, requiere sesión iniciada, pago en
+  efectivo): registra el pago de la mensualidad; el monto y el **periodo**
+  los calcula el servidor ($100.000 moto, $250.000 automóvil/camioneta) y
+  **nunca** los acepta del cliente. El periodo cubre un mes calendario
+  completo. Si el vehículo ya tiene un pago anterior y este se registra hasta
+  5 días después de que terminó (`DIAS_GRACIA_RENOVACION`), el nuevo periodo
+  continúa justo donde quedó el anterior (un pago extemporáneo no corre la
+  mensualidad); pasado ese margen, o si es el primer pago del vehículo, el
+  periodo empieza hoy.
 - **`GET /pagos?vehiculo_id=`** y **`GET /vehiculos/{id}/mensualidad`**:
   historial de pagos y si la mensualidad está vigente hoy.
 - **`POST /estancias/entrada`** ahora rechaza con **402** si el vehículo no
