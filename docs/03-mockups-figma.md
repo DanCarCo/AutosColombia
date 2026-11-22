@@ -35,7 +35,7 @@ con los campos reales de cada formulario.
 | --- | --- | --- |
 | Modelo de cobro | Tarifa por minuto ($100), tolerancia de 5 min, cobro y comprobante de pago al salir | Mensualidad: la entrada exige mensualidad vigente; la salida solo cierra la estancia y libera la celda, sin cobro |
 | Precios | Planes de $280.000 / $140.000 / $180.000 | Tarifa fija por tipo: Moto $100.000; Automóvil y Camioneta $250.000; el servidor calcula el monto |
-| Mensualidades | Planes, celda fija, pago inicial, medio de pago, referencia, saldos | Solo se elige el vehículo: el servidor calcula monto, inicio y fin (RF-18, iteración 3); nunca se piden como dato. Pago hasta 5 días tarde = **Renovar** (continúa); si no, mensualidad nueva. Sin saldos |
+| Mensualidades | Planes, celda fija, pago inicial, medio de pago, referencia, saldos | Pago en efectivo por vehículo; el servidor calcula monto y periodo (RF-18, iteración 3; sin selector de fecha); un pago hasta 5 días después de vencida la mensualidad la renueva sin mover la fecha; sin saldos. «Editar o renovar» pasó a **Renovar**. Actualizado el 22/11/2026 (marcos 28 y 29) |
 | Operadores | Documento, correo, rol, estado, turnos por horario | Nombre, teléfono, usuario, contraseña (opcional al editar), turno **DIA / NOCHE** y rol **ADMINISTRADOR / OPERADOR** (RF-17) |
 | Clientes | Tipo de cliente, tipo de documento, email, dirección, vehículos vinculados, observaciones | Nombre, documento y teléfono |
 | Vehículos | Modelo / línea libre, notas, tipo «Carro» | Modelo = **año 1900–2200**, sin notas, tipos Automóvil / Moto / Camioneta |
